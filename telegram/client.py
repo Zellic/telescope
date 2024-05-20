@@ -99,7 +99,8 @@ class TelegramClient:
 		self._stop_event.set()
 		await self._task
 
-	def on_message(self, message):
-		pass
-		# print(repr(message))
-		# print(f"{self.name} - Unhandled message: {message}")
+	def on_message(self, event):
+		if event['@type'] == 'updateConnectionState':
+			if event['state']['@type'] == 'connectionStateReady':
+				# TODO: modules
+				self.send({'@type': 'getChats', 'limit': 100})
