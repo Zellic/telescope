@@ -4,12 +4,13 @@ from telegram.auth.production import ProductionWithPrompt
 from telegram.client import TelegramClient
 from telegram.auth.testaccount import TestAccount
 from telegram.manager import TelegramClientManager
+from tgmodules.savecontacts import SaveContacts
 
 
 async def main():
 	print("main")
 	manager = TelegramClientManager()
-	manager.add_client(TelegramClient(TestAccount()))
+	manager.add_client(TelegramClient(TestAccount(), [SaveContacts()]))
 	# manager.add_client(TelegramClient(ProductionWithPrompt("16466565645")))
 	# client.sendAwaitingReply({'@type': 'getOption', 'name': 'version', '@extra': 1.01234})
 

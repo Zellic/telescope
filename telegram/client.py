@@ -1,13 +1,17 @@
 import asyncio
+from typing import List
 
 from telegram.auth.base import AuthenticationScheme
 from telegram.tdlib import TDLib
 
 class TelegramClient:
-	def __init__(self, auth: AuthenticationScheme):
+	def __init__(self, auth: AuthenticationScheme, modules: List[any]):
 		self.tdlib = TDLib()
 		self.auth = auth
 		self.client_id = self.tdlib.create_client_id()
+
+		self._modules = modules or []
+
 		self._extra_counter = 0
 		self._pending_responses = {}
 		self._lock = asyncio.Lock()
@@ -74,11 +78,13 @@ class TelegramClient:
 
 					method(self)
 					continue
-			# elif event['@type'] == 'updateConnectionState':
-			# 	if event['state']['@type'] == 'connectionStateReady':
-			# 		self.send({'@type': 'getContacts'})
 
-			asyncio.create_task(self.on_message(event))
+			for module in self._modules:
+				func = getattr(module, event['@type'], None)
+
+				if(func is not None):
+					# noinspection PyAsyncCall
+					asyncio.create_task(func(self, event))
 
 	def is_started(self):
 		return self._started
@@ -98,8 +104,8 @@ class TelegramClient:
 		self._stop_event.set()
 		await self._task
 
-	async def on_message(self, event):
-		if event['@type'] == 'updateConnectionState':
-			if event['state']['@type'] == 'connectionStateReady':
-				# TODO: modules
-				wot = await self.sendAwaitingReply({'@type': 'getChats', 'limit': 100})
+	# async def on_message(self, event):
+	# 	if event['@type'] == 'updateConnectionState':
+	# 		if event['state']['@type'] == 'connectionStateReady':
+	# 			# TODO: modules
+	# 			wot = await self.sendAwaitingReply({'@type': 'getChats', 'limit': 100})
