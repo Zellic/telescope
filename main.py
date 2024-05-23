@@ -9,8 +9,8 @@ from telegram.manager import TelegramClientManager
 async def main():
 	print("main")
 	manager = TelegramClientManager()
-	# manager.add_client(TelegramClient(TestAccount()))
-	manager.add_client(TelegramClient(ProductionWithPrompt("16466565645")))
+	manager.add_client(TelegramClient(TestAccount()))
+	# manager.add_client(TelegramClient(ProductionWithPrompt("16466565645")))
 	# client.sendAwaitingReply({'@type': 'getOption', 'name': 'version', '@extra': 1.01234})
 
 	# ugh
