@@ -48,7 +48,6 @@ class TelegramClient:
 				continue
 
 			extra = event.get('@extra')
-
 			if extra is not None:
 				async with self._lock:
 					future = self._pending_responses.pop(extra, None)
@@ -79,7 +78,7 @@ class TelegramClient:
 			# 	if event['state']['@type'] == 'connectionStateReady':
 			# 		self.send({'@type': 'getContacts'})
 
-			self.on_message(event)
+			asyncio.create_task(self.on_message(event))
 
 	def is_started(self):
 		return self._started
@@ -99,8 +98,8 @@ class TelegramClient:
 		self._stop_event.set()
 		await self._task
 
-	def on_message(self, event):
+	async def on_message(self, event):
 		if event['@type'] == 'updateConnectionState':
 			if event['state']['@type'] == 'connectionStateReady':
 				# TODO: modules
-				self.send({'@type': 'getChats', 'limit': 100})
+				wot = await self.sendAwaitingReply({'@type': 'getChats', 'limit': 100})
