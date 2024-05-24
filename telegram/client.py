@@ -101,6 +101,12 @@ class TelegramClient:
 		if(not self.is_started()):
 			raise Exception("Hasn't been started yet")
 
+		for module in self._modules:
+			func = getattr(module, "onClientExit", None)
+
+			if(func is not None):
+				func()
+
 		self._stop_event.set()
 		await self._task
 
