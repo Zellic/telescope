@@ -1,4 +1,5 @@
 tdlib
+.env
 .venv
 .venv2
 accounts
