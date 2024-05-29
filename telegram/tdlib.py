@@ -6,6 +6,7 @@ import sys
 import platform
 
 _log_message_callback_type = CFUNCTYPE(None, c_int, c_char_p)
+LOG_ALL = True
 
 class TDLib:
     _instance = None
@@ -71,7 +72,9 @@ class TDLib:
         return self._td_create_client_id()
 
     def send(self, client_id, query):
-        print("=> " + repr(query))
+        if(LOG_ALL):
+            print("=> " + repr(query))
+
         query = json.dumps(query).encode('utf-8')
         self._td_send(client_id, query)
 
@@ -79,5 +82,7 @@ class TDLib:
         result = self._td_receive(1.0)
         if result:
             result = json.loads(result.decode('utf-8'))
-            print("<= " + repr(result))
+
+            if(LOG_ALL):
+                print("<= " + repr(result))
         return result

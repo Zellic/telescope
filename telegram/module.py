@@ -5,7 +5,7 @@ TelegramEventHandler = Callable[['TelegramClient', str], Awaitable[NoReturn]]
 
 
 # noinspection PyShadowingBuiltins
-def onEvent(type: str):
+def OnEvent(type: str):
 	def decorator(func: TelegramEventHandler):
 		@functools.wraps(func)
 		def wrapper(*args, **kwargs):

@@ -35,15 +35,16 @@ async def main():
 	db = Database(config['DB_DSN'])
 
 	manager = TelegramClientManager()
-	# manager.add_client(TelegramClient(TestAccount(), [SaveContacts()]))
-	manager.add_client(TelegramClient(ProductionWithPrompt("16466565645"), [SaveContacts()]))
-	# client.sendAwaitingReply({'@type': 'getOption', 'name': 'version', '@extra': 1.01234})
+	# manager.add_client(TelegramClient(TestAccount(), [SaveContacts(db)]))
+	manager.add_client(TelegramClient(ProductionWithPrompt("16466565645"), [SaveContacts(db)]))
+	manager.add_client(TelegramClient(ProductionWithPrompt("19295495669"), [SaveContacts(db)]))
+	manager.add_client(TelegramClient(ProductionWithPrompt("14052173620"), [SaveContacts(db)]))
 
 	# TODO: Python's async doesn't make this convenient. instead we probably need every client to be a
 	# task while the run_until_complete loop simply rechecks whether len(manager.clients) > 0 every N
 	# seconds with asyncio.sleep
 	# noinspection PyProtectedMember
-	await asyncio.gather(*[x._task for x in manager.clients])
+	await asyncio.gather(manager.start())
 
 if __name__ == "__main__":
 	loop = asyncio.new_event_loop()
