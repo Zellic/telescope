@@ -36,8 +36,8 @@ async def main():
 
 	manager = TelegramClientManager()
 	# manager.add_client(TelegramClient(TestAccount(), [SaveContacts(db)]))
-	manager.add_client(TelegramClient(ProductionWithPrompt("16466565645"), [SaveContacts(db)]))
-	manager.add_client(TelegramClient(ProductionWithPrompt("19295495669"), [SaveContacts(db)]))
+	# manager.add_client(TelegramClient(ProductionWithPrompt("16466565645"), [SaveContacts(db)]))
+	# manager.add_client(TelegramClient(ProductionWithPrompt("19295495669"), [SaveContacts(db)]))
 	manager.add_client(TelegramClient(ProductionWithPrompt("14052173620"), [SaveContacts(db)]))
 
 	# TODO: Python's async doesn't make this convenient. instead we probably need every client to be a

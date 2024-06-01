@@ -93,27 +93,3 @@ class TelegramClient:
 
 			if (func is not None):
 				func()
-
-	# def is_started(self):
-	# 	return self._started
-	#
-	# def start(self):
-	# 	if(self.is_started()):
-	# 		raise Exception("Already started")
-	#
-	# 	self._started = True
-	# 	self._task = asyncio.get_event_loop().create_task(self._receive_loop())
-	# 	self.send({'@type': 'getOption', 'name': 'version', '@extra': 1.01234})
-	#
-	# async def stop(self):
-	# 	if(not self.is_started()):
-	# 		raise Exception("Hasn't been started yet")
-	#
-	# 	for module in self._modules:
-	# 		func = getattr(module, "onClientExit", None)
-	#
-	# 		if(func is not None):
-	# 			func()
-	#
-	# 	self._stop_event.set()
-	# 	await self._task
