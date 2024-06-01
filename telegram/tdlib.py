@@ -6,7 +6,7 @@ import sys
 import platform
 
 _log_message_callback_type = CFUNCTYPE(None, c_int, c_char_p)
-LOG_ALL = True
+LOG_ALL = False
 
 class TDLib:
     _instance = None
@@ -52,6 +52,7 @@ class TDLib:
         self._td_set_log_message_callback.restype = None
         self._td_set_log_message_callback.argtypes = [c_int, _log_message_callback_type]
 
+    # noinspection PyArgumentList
     @_log_message_callback_type
     @staticmethod
     def _on_log_message_callback(verbosity_level, message):

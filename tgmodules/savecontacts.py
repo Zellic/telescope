@@ -1,4 +1,59 @@
+from dataclasses import dataclass
+from typing import Optional
+
 from telegram.module import TelegramModule, OnEvent
+
+# https://github.com/tdlib/td/blob/f35dea776cdaa8b986e2a634dfabf0dafe659be7/td/generate/scheme/td_api.tl#L993
+@dataclass
+class TelegramContact:
+	id: int
+
+	usernames: Optional[list[str]]
+	phone_number: Optional[str]
+	first_name: Optional[str]
+	last_name: Optional[str]
+
+	"""The user is a close friend of the current user; implies that the user is a contact"""
+	is_close_friend: bool
+
+	"""The user is a contact of the current user."""
+	is_contact: bool
+
+	"""True, if many users reported this user as a fake account."""
+	is_fake: bool
+
+	"""The user is a contact of the current user and the current user is a contact of the user."""
+	is_mutual_contact: bool
+
+	"""True, if the user is a Telegram Premium user"""
+	is_premium: bool
+
+	"""True, if many users reported this user as a scam."""
+	is_scam: bool
+
+	"""	True, if the user is Telegram support account."""
+	is_support: bool
+
+	"""	True, if the user is verified."""
+	is_verified: bool
+
+	"""If false, the user is inaccessible, and the only information known about the user is inside this class. It
+	can't be passed to any method except GetUser."""
+	have_access: bool
+
+	"""True, if the user may restrict new chats with non-contacts. Use canSendMessageToUser to check whether the
+	current user can message the user or try to create a chat with them"""
+	restricts_new_chats: bool
+
+	"""If non-empty, it contains a human-readable description of the reason why access to this user must be restricted"""
+	restriction_reason: Optional[str]
+
+def truthyOrNull(thing):
+	if(thing):
+		return thing
+	else:
+		return None
+
 
 class SaveContacts(TelegramModule):
 	def __init__(self, db):
@@ -16,7 +71,41 @@ class SaveContacts(TelegramModule):
 
 	@OnEvent("updateUser")
 	async def updateUser(self, client, event):
-		self.user_records[event['user']['id']] = event['user']
+		user = event['user']
+
+		if(user['type']['@type'] != "userTypeRegular"):
+			return
+
+		usernames = user.get('usernames', {'active_usernames': []})['active_usernames']
+
+		if(user.get('username', None)):
+			usernames.append(user['username'])
+
+		if(len(usernames) > 0):
+			usernames = list(set(usernames))
+		else:
+			usernames = None
+
+		ours = TelegramContact(
+			user['id'],
+			usernames,
+			truthyOrNull(user.get('phone_number', None)),
+			truthyOrNull(user.get('first_name', None)),
+			truthyOrNull(user.get('last_name', None)),
+			user['is_close_friend'],
+			user['is_contact'],
+			user['is_fake'],
+			user['is_mutual_contact'],
+			user['is_premium'],
+			user['is_scam'],
+			user['is_support'],
+			user['is_verified'],
+			user['have_access'],
+			user['restricts_new_chats'],
+			truthyOrNull(user.get('restriction_reason', None)),
+		)
+
+		self.user_records[event['user']['id']] = ours
 
 	@OnEvent("updateNewChat")
 	async def updateNewChat(self, client, event):
@@ -25,6 +114,11 @@ class SaveContacts(TelegramModule):
 		if(chat['type']['@type'] != "chatTypePrivate"):
 			return
 
-		user = await client.sendAwaitingReply({'@type': 'getUser', 'user_id': chat['type']['user_id']})
+		user = self.user_records.get(chat['type']['user_id'], None)
 
-		print("DM with user: " + self.user_records[chat['type']['user_id']]['first_name'])
+		if(user is None):
+			return
+
+		# user = await client.sendAwaitingReply({'@type': 'getUser', 'user_id': chat['type']['user_id']})
+
+		print("DM with user: " + repr(user))
