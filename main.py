@@ -29,6 +29,9 @@ def read_env_file(file_path):
 
 	return env_dict
 
+def clientFor(phonenumber, db):
+	return TelegramClient(ProductionWithPrompt(phonenumber), [SaveContacts(db, phonenumber)])
+
 # TODO: ignore group chats
 async def main():
 	config = read_env_file(".env")
@@ -36,9 +39,9 @@ async def main():
 
 	manager = TelegramClientManager()
 	# manager.add_client(TelegramClient(TestAccount(), [SaveContacts(db)]))
-	# manager.add_client(TelegramClient(ProductionWithPrompt("16466565645"), [SaveContacts(db)]))
-	# manager.add_client(TelegramClient(ProductionWithPrompt("19295495669"), [SaveContacts(db)]))
-	manager.add_client(TelegramClient(ProductionWithPrompt("14052173620"), [SaveContacts(db)]))
+	# manager.add_client(clientFor("16466565645", db))
+	# manager.add_client(clientFor("19295495669", db))
+	manager.add_client(clientFor("14052173620", db))
 
 	# TODO: Python's async doesn't make this convenient. instead we probably need every client to be a
 	# task while the run_until_complete loop simply rechecks whether len(manager.clients) > 0 every N

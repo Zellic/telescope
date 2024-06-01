@@ -6,7 +6,7 @@ import sys
 import platform
 
 _log_message_callback_type = CFUNCTYPE(None, c_int, c_char_p)
-LOG_ALL = False
+LOG_ALL = True
 
 class TDLib:
     _instance = None

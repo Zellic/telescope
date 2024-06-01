@@ -1,12 +1,18 @@
-from dataclasses import dataclass
-from typing import Optional
+import hashlib
+from dataclasses import dataclass, field
+from typing import Optional, Dict
 
 from telegram.module import TelegramModule, OnEvent
 
 # https://github.com/tdlib/td/blob/f35dea776cdaa8b986e2a634dfabf0dafe659be7/td/generate/scheme/td_api.tl#L993
 @dataclass
 class TelegramContact:
-	id: int
+	"""Unique serial primary key for DB operations."""
+	id: int = field(init=False, default=None)
+	"""The user ID for this Telegram contact. Unique per zellic_user_id"""
+	contact_id: int
+	"""The source account phone number for this contact - one to many."""
+	zellic_phone_number: str
 
 	usernames: Optional[list[str]]
 	phone_number: Optional[str]
@@ -48,17 +54,103 @@ class TelegramContact:
 	"""If non-empty, it contains a human-readable description of the reason why access to this user must be restricted"""
 	restriction_reason: Optional[str]
 
+	hash: str = field(init=False)
+
+	def __post_init__(self):
+		self.hash = self.generate_hash()
+
+	def generate_hash(self) -> str:
+		data = (
+			str(self.contact_id) +
+			str(self.zellic_phone_number) +
+			(''.join(self.usernames) if self.usernames else '') +
+			(self.phone_number or '') +
+			(self.first_name or '') +
+			(self.last_name or '') +
+			str(self.is_close_friend) +
+			str(self.is_contact) +
+			str(self.is_fake) +
+			str(self.is_mutual_contact) +
+			str(self.is_premium) +
+			str(self.is_scam) +
+			str(self.is_support) +
+			str(self.is_verified) +
+			str(self.have_access) +
+			str(self.restricts_new_chats) +
+			(self.restriction_reason or '')
+		)
+		return hashlib.md5(data.encode()).hexdigest()
+
+
+	def to_db_tuple(self) -> tuple:
+		return (
+			self.contact_id,
+			self.zellic_phone_number,
+			self.hash,
+			self.usernames,
+			self.phone_number,
+			self.first_name,
+			self.last_name,
+			self.is_close_friend,
+			self.is_contact,
+			self.is_fake,
+			self.is_mutual_contact,
+			self.is_premium,
+			self.is_scam,
+			self.is_support,
+			self.is_verified,
+			self.have_access,
+			self.restricts_new_chats,
+			self.restriction_reason
+		)
+
+insert_sql = """
+INSERT INTO telegram_contacts (
+	contact_id, zellic_phone_number, hash, usernames, phone_number, first_name, last_name, 
+	is_close_friend, is_contact, is_fake, is_mutual_contact, 
+	is_premium, is_scam, is_support, is_verified, 
+	have_access, restricts_new_chats, restriction_reason
+) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+ON CONFLICT (hash) DO NOTHING;
+"""
+
+
+create_table_sql = """
+CREATE TABLE IF NOT EXISTS telegram_contacts (
+    id SERIAL PRIMARY KEY,
+    contact_id BIGINT,
+    zellic_phone_number TEXT,
+    hash TEXT UNIQUE,
+    usernames TEXT[],
+    phone_number TEXT,
+    first_name TEXT,
+    last_name TEXT,
+    is_close_friend BOOLEAN,
+    is_contact BOOLEAN,
+    is_fake BOOLEAN,
+    is_mutual_contact BOOLEAN,
+    is_premium BOOLEAN,
+    is_scam BOOLEAN,
+    is_support BOOLEAN,
+    is_verified BOOLEAN,
+    have_access BOOLEAN,
+    restricts_new_chats BOOLEAN,
+    restriction_reason TEXT
+);
+"""
+
 def truthyOrNull(thing):
 	if(thing):
 		return thing
 	else:
 		return None
 
-
 class SaveContacts(TelegramModule):
-	def __init__(self, db):
+	def __init__(self, db, our_phone_number):
 		self.db = db
-		self.user_records = {}
+		self.user_records: Dict[int, TelegramContact] = {}
+		self.db.execute(create_table_sql)
+		self.our_phone_number = our_phone_number
 
 	@OnEvent("updateConnectionState")
 	async def updateConnectionState(self, client, event):
@@ -88,6 +180,7 @@ class SaveContacts(TelegramModule):
 
 		ours = TelegramContact(
 			user['id'],
+			self.our_phone_number,
 			usernames,
 			truthyOrNull(user.get('phone_number', None)),
 			truthyOrNull(user.get('first_name', None)),
@@ -119,6 +212,5 @@ class SaveContacts(TelegramModule):
 		if(user is None):
 			return
 
-		# user = await client.sendAwaitingReply({'@type': 'getUser', 'user_id': chat['type']['user_id']})
-
 		print("DM with user: " + repr(user))
+		self.db.execute(insert_sql, user.to_db_tuple())
