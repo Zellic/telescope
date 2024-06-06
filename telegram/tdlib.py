@@ -25,8 +25,11 @@ class TDLib:
         if self._tdjson_path is None:
             self._tdjson_path = find_library('tdjson')
             if self._tdjson_path is None:
-                if os.name == 'nt':
-                    self._tdjson_path = os.path.join(os.path.dirname(__file__), "..", "natives", platform.system().lower(), "tdjson.dll")
+                osplatform = platform.system().lower()
+                if osplatform == 'windows':
+                    self._tdjson_path = os.path.join(os.path.dirname(__file__), "..", "natives", osplatform, "tdjson.dll")
+                elif osplatform == 'linux':
+                    self._tdjson_path = os.path.join(os.path.dirname(__file__), "..", "natives", osplatform, "lib", "libtdjson.so")
                 else:
                     sys.exit("Can't find 'tdjson' library")
             self._tdjson = CDLL(self._tdjson_path)
