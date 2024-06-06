@@ -55,15 +55,15 @@ class TDLib:
         self._td_set_log_message_callback.restype = None
         self._td_set_log_message_callback.argtypes = [c_int, _log_message_callback_type]
 
-    # noinspection PyArgumentList
-    @_log_message_callback_type
     @staticmethod
     def _on_log_message_callback(verbosity_level, message):
         if verbosity_level == 0:
             sys.exit('TDLib fatal error: %r' % message)
 
     def _set_log_message_callback(self):
-        self._td_set_log_message_callback(2, self._on_log_message_callback)
+        _log_message_callback = _log_message_callback_type(self._on_log_message_callback)
+        # level 2: warnings and debug messages
+        self._td_set_log_message_callback(2, _log_message_callback)
 
     def td_execute(self, query):
         query = json.dumps(query).encode('utf-8')
