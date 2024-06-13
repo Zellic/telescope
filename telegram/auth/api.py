@@ -34,6 +34,12 @@ class EmailRequired(APIAuthState):
 class EmailCodeRequired(APIAuthState):
 	requiresInput: bool = True
 
+class AuthorizationSuccess(APIAuthState):
+	requiresInput: bool = False
+
+class AuthorizationFailed(APIAuthState):
+	requiresInput: bool = False
+
 class APIAuth(AuthenticationScheme):
 	def __init__(self, phone, api_id, api_hash):
 		self.phone = phone
@@ -54,6 +60,12 @@ class APIAuth(AuthenticationScheme):
 			'application_version': '0.1'
 		})
 		self.status = WaitingOnServer()
+
+	def authorizationStateReady(self, client: TelegramClient):
+		self.status = AuthorizationSuccess()
+
+	def authorizationStateFailed(self, client: TelegramClient):
+		self.status = AuthorizationFailed()
 
 	def authorizationStateWaitPhoneNumber(self, client: TelegramClient):
 		client.send({'@type': 'setAuthenticationPhoneNumber', 'phone_number': self.phone})

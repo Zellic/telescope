@@ -31,7 +31,7 @@ def read_env_file(file_path):
 	return env_dict
 
 def clientFor(phonenumber, db, api_id, api_hash):
-	return TelegramClient(ProductionWithPrompt(phonenumber, api_id, api_hash), [SaveContacts(db, phonenumber)])
+	return TelegramClient(APIAuth(phonenumber, api_id, api_hash), [SaveContacts(db, phonenumber)])
 
 async def main():
 	config = read_env_file(".env")
@@ -42,16 +42,15 @@ async def main():
 
 	clients = [
 		# TelegramClient(TestAccount(), [SaveContacts(db)])
-		# clientFor("16466565645", db, *api),
-		# clientFor("19295495669", db, *api),
+		clientFor("16466565645", db, *api),
+		clientFor("19295495669", db, *api),
 		clientFor("14052173620", db, *api),
 	]
 
 	for x in clients:
 		manager.add_client(x)
 
-	# noinspection PyTypeChecker
-	app = create_webapp([x.auth for x in clients if x.auth is APIAuth])
+	app = create_webapp([x for x in clients])
 
 	# TODO: Python's async doesn't make this convenient. instead we probably need every client to be a
 	# task while the run_until_complete loop simply rechecks whether len(manager.clients) > 0 every N
