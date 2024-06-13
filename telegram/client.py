@@ -54,9 +54,11 @@ class TelegramClient:
 			if auth_state['@type'] == 'authorizationStateClosed':
 				# TODO: do something about this
 				print("Authorization failed.")
+				self.auth.authorizationStateFailed(self)
 				return
 			elif auth_state['@type'] == 'authorizationStateReady':
 				print("Authorization successful.")
+				self.auth.authorizationStateReady(self)
 			else:
 				method = getattr(self.auth, auth_state['@type'], None)
 

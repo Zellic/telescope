@@ -1,4 +1,10 @@
 class AuthenticationScheme:
+	def authorizationStateFailed(self, client: 'TelegramClient'):
+		pass
+
+	def authorizationStateReady(self, client: 'TelegramClient'):
+		pass
+
 	def authorizationStateWaitTdlibParameters(self, client: 'TelegramClient'):
 		raise NotImplementedError()
 

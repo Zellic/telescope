@@ -44,9 +44,8 @@ class TelegramClientManager:
 
     async def _receive_loop(self):
         while not self._stop_event.is_set():
-            if(not self._try_dispatch_event()):
-                # we didn't get an event, let's give our other coroutines time to do some stuff
-                await asyncio.sleep(1)
+            self._try_dispatch_event()
+            await asyncio.sleep(0.01)
 
     def is_started(self):
         return self._started
