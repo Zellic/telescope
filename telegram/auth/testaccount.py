@@ -3,7 +3,9 @@ from telegram.auth.base import AuthenticationScheme
 from telegram.client import TelegramClient
 
 class TestAccount(AuthenticationScheme):
-	def __init__(self):
+	def __init__(self, api_id, api_hash):
+		self.api_id = api_id
+		self.api_hash = api_hash
 		code = str(random.randint(0, 9))
 		end = random.randint(0, 9999)
 		self.end = f"{end:04d}"
@@ -17,8 +19,8 @@ class TestAccount(AuthenticationScheme):
 			'use_message_database': True,
 			'use_secret_chats': False,
 			'use_test_dc': True,
-			'api_id': 23567984,
-			'api_hash': '1ad8dee7d8c9bb1b2694b18c666db499',
+			'api_id': self.api_id,
+			'api_hash': self.api_hash,
 			'system_language_code': 'en',
 			'device_model': 'Desktop',
 			'application_version': '0.1'

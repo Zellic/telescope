@@ -3,8 +3,10 @@ from telegram.auth.base import AuthenticationScheme
 from telegram.client import TelegramClient
 
 class ProductionWithPrompt(AuthenticationScheme):
-	def __init__(self, phone):
+	def __init__(self, phone, api_id, api_hash):
 		self.phone = phone
+		self.api_id = api_id
+		self.api_hash = api_hash
 
 	def authorizationStateWaitTdlibParameters(self, client: TelegramClient):
 		client.send({
@@ -12,8 +14,8 @@ class ProductionWithPrompt(AuthenticationScheme):
 			'database_directory': 'accounts/' + self.phone,
 			'use_message_database': True,
 			'use_secret_chats': False,
-			'api_id': 23567984,
-			'api_hash': '1ad8dee7d8c9bb1b2694b18c666db499',
+			'api_id': self.api_id,
+			'api_hash': self.api_hash,
 			'system_language_code': 'en',
 			'device_model': 'Desktop',
 			'application_version': '0.1'
