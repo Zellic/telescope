@@ -1,10 +1,11 @@
 import asyncio
 
 from database.core import Database
-from telegram.auth.production import ProductionWithPrompt
+from telegram.auth.api import APIAuth
+from telegram.auth.prompt import ProductionWithPrompt
 from telegram.client import TelegramClient
-from telegram.auth.testaccount import TestAccount
 from telegram.manager import TelegramClientManager
+from telegram.webapp import create_webapp
 from tgmodules.savecontacts import SaveContacts
 
 # dotenv wouldn't install...
@@ -29,25 +30,34 @@ def read_env_file(file_path):
 
 	return env_dict
 
-def clientFor(phonenumber, db):
-	return TelegramClient(ProductionWithPrompt(phonenumber), [SaveContacts(db, phonenumber)])
+def clientFor(phonenumber, db, api_id, api_hash):
+	return TelegramClient(ProductionWithPrompt(phonenumber, api_id, api_hash), [SaveContacts(db, phonenumber)])
 
-# TODO: ignore group chats
 async def main():
 	config = read_env_file(".env")
 	db = Database(config['DB_DSN'])
+	api = (config['API_ID'], config['API_HASH'])
 
 	manager = TelegramClientManager()
-	# manager.add_client(TelegramClient(TestAccount(), [SaveContacts(db)]))
-	# manager.add_client(clientFor("16466565645", db))
-	# manager.add_client(clientFor("19295495669", db))
-	manager.add_client(clientFor("14052173620", db))
+
+	clients = [
+		# TelegramClient(TestAccount(), [SaveContacts(db)])
+		# clientFor("16466565645", db, *api),
+		# clientFor("19295495669", db, *api),
+		clientFor("14052173620", db, *api),
+	]
+
+	for x in clients:
+		manager.add_client(x)
+
+	# noinspection PyTypeChecker
+	app = create_webapp([x.auth for x in clients if x.auth is APIAuth])
 
 	# TODO: Python's async doesn't make this convenient. instead we probably need every client to be a
 	# task while the run_until_complete loop simply rechecks whether len(manager.clients) > 0 every N
 	# seconds with asyncio.sleep
 	# noinspection PyProtectedMember
-	await asyncio.gather(manager.start())
+	await asyncio.gather(manager.start(), app.run_task("localhost", 8888))
 
 if __name__ == "__main__":
 	loop = asyncio.new_event_loop()
