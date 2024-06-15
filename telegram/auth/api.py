@@ -2,6 +2,7 @@ from telegram.auth.base import AuthenticationScheme
 from telegram.client import TelegramClient
 
 class APIAuthState:
+	name: str
 	requiresInput: bool
 
 	def __init__(self):
@@ -20,25 +21,32 @@ class APIAuthState:
 This is the default state when the server hasn't asked us for anything yet.
 """
 class WaitingOnServer(APIAuthState):
-	requiresInput: bool = False
+	name = "WaitingOnServer"
+	requiresInput = False
 
 class PasswordRequired(APIAuthState):
-	requiresInput: bool = True
+	name = "PasswordRequired"
+	requiresInput = True
 
 class AuthCodeRequired(APIAuthState):
-	requiresInput: bool = True
+	name = "AuthCodeRequired"
+	requiresInput = True
 
 class EmailRequired(APIAuthState):
-	requiresInput: bool = True
+	name = "EmailRequired"
+	requiresInput = True
 
 class EmailCodeRequired(APIAuthState):
-	requiresInput: bool = True
+	name = "EmailCodeRequired"
+	requiresInput = True
 
 class AuthorizationSuccess(APIAuthState):
-	requiresInput: bool = False
+	name = "AuthorizationSuccess"
+	requiresInput = False
 
 class AuthorizationFailed(APIAuthState):
-	requiresInput: bool = False
+	name = "AuthorizationFailed"
+	requiresInput = False
 
 class APIAuth(AuthenticationScheme):
 	def __init__(self, phone, api_id, api_hash):
