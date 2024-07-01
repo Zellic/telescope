@@ -4,13 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Add web feature">
-      <change afterPath="$PROJECT_DIR$/webtest/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webtest/api.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webtest/webmain.py" afterDir="false" />
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Testing web API">
+      <change afterPath="$PROJECT_DIR$/webtest/mainweb.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/telegram/auth/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/auth/api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/telegram/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/webapp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/webapp.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webtest/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/webtest/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webtest/webmain.py" beforeDir="false" afterPath="$PROJECT_DIR$/webtest/quartapp.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,6 +23,17 @@
       <list>
         <option value="Python Script" />
       </list>
+    </option>
+  </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
     </option>
   </component>
   <component name="Git.Settings">
@@ -37,39 +49,42 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.client.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.webapp.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "E:/Zellic/telescope/natives",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.client.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.mainweb.executor&quot;: &quot;Run&quot;,
+    &quot;Python.webapp.executor&quot;: &quot;Run&quot;,
+    &quot;Python.webmain.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Zellic/telescope/natives&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Zellic\telescope\natives" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Zellic\telescope\webtest" />
       <recent name="E:\Zellic\telescope\telegram" />
       <recent name="E:\Zellic\telescope\natives\windows" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.webapp">
+  <component name="RunManager" selected="Python.mainweb">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="telescope" />
       <option name="ENV_FILES" value="" />
@@ -93,7 +108,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="webapp" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="mainweb" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="telescope" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -102,12 +117,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/telegram" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/webtest" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/telegram/webapp.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/webtest/mainweb.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -124,7 +139,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.webapp" />
+        <item itemvalue="Python.mainweb" />
         <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
@@ -151,7 +166,10 @@
       <workItem from="1716125480554" duration="34000" />
       <workItem from="1716125519771" duration="106466000" />
       <workItem from="1717434155439" duration="121463000" />
-      <workItem from="1718412929744" duration="9222000" />
+      <workItem from="1718412929744" duration="16484000" />
+      <workItem from="1718890319791" duration="24138000" />
+      <workItem from="1719366157690" duration="17789000" />
+      <workItem from="1719848381204" duration="1070000" />
     </task>
     <task id="LOCAL-00001" summary="* Initial commit, tdlib-json test">
       <option name="closed" value="true" />
@@ -289,7 +307,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718272205444</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="* Testing web API">
+      <option name="closed" value="true" />
+      <created>1718436074107</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1718436074107</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -335,11 +361,25 @@
     <MESSAGE value="* Reeeee" />
     <MESSAGE value="* web thingy loads, API supported auth" />
     <MESSAGE value="* Add web feature" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Add web feature" />
+    <MESSAGE value="* Testing web API" />
+    <option name="LAST_COMMIT_MESSAGE" value="* Testing web API" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/webtest/mainweb.py</url>
+          <line>18</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/telescope$webmain.coverage" NAME="webmain Coverage Results" MODIFIED="1719007097200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
     <SUITE FILE_PATH="coverage/telescope$main.coverage" NAME="main Coverage Results" MODIFIED="1718272003825" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/telescope$webapp.coverage" NAME="webapp Coverage Results" MODIFIED="1718435980813" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
+    <SUITE FILE_PATH="coverage/telescope$mainweb.coverage" NAME="mainweb Coverage Results" MODIFIED="1719374645548" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
+    <SUITE FILE_PATH="coverage/telescope$webapp.coverage" NAME="webapp Coverage Results" MODIFIED="1719006269600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
     <SUITE FILE_PATH="coverage/telescope$client.coverage" NAME="client Coverage Results" MODIFIED="1716215455947" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
   </component>
 </project>

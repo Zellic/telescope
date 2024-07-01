@@ -1,26 +1,6 @@
 import asyncio
-from typing import List
-from quart import Quart
-
 from webtest.api import TelegramClient, APIAuth, fungleTheThingy
-
-
-def create_webapp(clients: List[TelegramClient]):
-	app = Quart(__name__)
-
-	def status(x: TelegramClient):
-		status = "unknown"
-		if(isinstance(x.auth, APIAuth)):
-			status = type(x.auth.status).__name__ + " (waiting on input: " + str(x.auth.status.requiresInput) + ")"
-
-		return x.auth.phone + ": " + status
-
-	@app.route("/")
-	async def index():
-		# TODO: escape this text as HTML entities
-		return "<br />".join([status(x) for x in clients])
-
-	return app
+from webtest.quartapp import create_webapp
 
 def clientFor(phone):
 	return TelegramClient(APIAuth(phone=phone))

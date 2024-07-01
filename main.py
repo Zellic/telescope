@@ -2,10 +2,9 @@ import asyncio
 
 from database.core import Database
 from telegram.auth.api import APIAuth
-from telegram.auth.prompt import ProductionWithPrompt
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
-from telegram.webapp import create_webapp
+from webtest.webapp import create_webapp
 from tgmodules.savecontacts import SaveContacts
 
 # dotenv wouldn't install...
