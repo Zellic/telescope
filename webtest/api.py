@@ -1,5 +1,7 @@
 import asyncio
 import random
+import json
+from typing import Callable, Any, Dict, List
 
 class APIAuthState:
 	name: str
@@ -53,10 +55,42 @@ class AuthorizationFailed(APIAuthState):
 	name = "AuthorizationFailed"
 	requiresInput = False
 
+class APIEvent:
+	def to_json(self) -> str:
+		return json.dumps(self.__dict__)
+
+class NewAuthenticationStage(APIEvent):
+	def __init__(self, stage: str):
+		self.type = "NewAuthenticationState"
+		self.state = stage
+
+class InputReceived(APIEvent):
+	def __init__(self, stage: str, value: str):
+		self.type = "InputReceived"
+		self.input_type = stage
+		self.value = value
+
 class APIAuth:
 	def __init__(self, phone):
 		self.phone = phone
-		self.status: APIAuthState = WaitingOnServer()
+		self._status: APIAuthState = WaitingOnServer()
+		self._event_callbacks: List[Callable[[APIEvent], None]] = []
+
+	@property
+	def status(self):
+		return self._status
+
+	@status.setter
+	def status(self, value):
+		self._status = value
+		self._notify_event(NewAuthenticationStage(type(value).__name__))
+
+	def add_event_callback(self, callback: Callable[[APIEvent], None]):
+		self._event_callbacks.append(callback)
+
+	def _notify_event(self, event: APIEvent):
+		for callback in self._event_callbacks:
+			callback(event)
 
 	def authorizationStateWaitTdlibParameters(self):
 		self.status = WaitingOnServer()
@@ -71,7 +105,7 @@ class APIAuth:
 		self.status = EmailRequired()
 
 		def wait(value):
-			print(f"received email: {value}")
+			self._notify_event(InputReceived("email", value))
 
 		self.status.waitForValue(wait)
 
@@ -79,7 +113,7 @@ class APIAuth:
 		self.status = PasswordRequired()
 
 		def wait(value):
-			print(f"received password: {value}")
+			self._notify_event(InputReceived("password", value))
 
 		self.status.waitForValue(wait)
 
@@ -87,7 +121,7 @@ class APIAuth:
 		self.status = EmailCodeRequired()
 
 		def wait(value):
-			print(f"received email code: {value}")
+			self._notify_event(InputReceived("email_code", value))
 
 		self.status.waitForValue(wait)
 
@@ -95,7 +129,7 @@ class APIAuth:
 		self.status = AuthCodeRequired()
 
 		def wait(value):
-			print(f"received auth code: {value}")
+			self._notify_event(InputReceived("auth_code", value))
 
 		self.status.waitForValue(wait)
 
@@ -103,12 +137,12 @@ async def fungleTheThingy(auth: APIAuth):
 	auth.authorizationStateWaitPassword()
 	await auth.status
 
-	await asyncio.sleep(random.randint(1,3))
+	await asyncio.sleep(random.randint(15,20))
 
 	auth.authorizationStateWaitCode()
 	await auth.status
 
-	await asyncio.sleep(random.randint(1, 3))
+	await asyncio.sleep(random.randint(3, 5))
 
 	auth.authorizationStateReady()
 
