@@ -2,9 +2,11 @@ import asyncio
 
 from database.core import Database
 from telegram.auth.api import APIAuth
+from telegram.auth.schemes.live import TelegramProduction
+from telegram.auth.schemes.staging import TelegramStaging
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
-from webtest.webapp import create_webapp
+from telegram.webapp import create_webapp
 from tgmodules.savecontacts import SaveContacts
 
 # dotenv wouldn't install...
@@ -30,7 +32,12 @@ def read_env_file(file_path):
 	return env_dict
 
 def clientFor(phonenumber, db, api_id, api_hash):
-	return TelegramClient(APIAuth(phonenumber, api_id, api_hash), [SaveContacts(db, phonenumber)])
+	scheme = TelegramProduction(api_id, api_hash, "accounts/" + phonenumber, True)
+	return TelegramClient(APIAuth(phonenumber, scheme), [SaveContacts(db, phonenumber)])
+
+def testClientFor(phonenumber, db, api_id, api_hash):
+	scheme = TelegramStaging(phonenumber, api_id, api_hash)
+	return TelegramClient(APIAuth(phonenumber, scheme), []) #, [SaveContacts(db, phonenumber)])
 
 async def main():
 	config = read_env_file(".env")
@@ -40,10 +47,10 @@ async def main():
 	manager = TelegramClientManager()
 
 	clients = [
-		# TelegramClient(TestAccount(), [SaveContacts(db)])
-		clientFor("16466565645", db, *api),
-		clientFor("19295495669", db, *api),
-		clientFor("14052173620", db, *api),
+		testClientFor(TelegramStaging.generate_phone(), db, *api),
+		# clientFor("16466565645", db, *api),
+		# clientFor("19295495669", db, *api),
+		# clientFor("14052173620", db, *api),
 	]
 
 	for x in clients:

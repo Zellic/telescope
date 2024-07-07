@@ -1,21 +1,8 @@
-from telegram.auth.base import AuthenticationScheme
+import json
+from typing import Callable, List
+
+from telegram.auth.base import AuthenticationProvider, APIAuthState, AuthenticationScheme
 from telegram.client import TelegramClient
-
-class APIAuthState:
-	name: str
-	requiresInput: bool
-
-	def __init__(self):
-		self.listeners = []
-
-	def waitForValue(self, callback):
-		self.listeners.append(callback)
-
-	def provideValue(self, value):
-		for func in self.listeners:
-			func(value)
-		self.listeners = []
-		self.requiresInput = False
 
 """
 This is the default state when the server hasn't asked us for anything yet.
@@ -31,6 +18,10 @@ class PasswordRequired(APIAuthState):
 class AuthCodeRequired(APIAuthState):
 	name = "AuthCodeRequired"
 	requiresInput = True
+
+class PhoneNumberRequired(APIAuthState):
+	name = "PhoneNumberRequired"
+	requiresInput = False
 
 class EmailRequired(APIAuthState):
 	name = "EmailRequired"
@@ -48,41 +39,66 @@ class AuthorizationFailed(APIAuthState):
 	name = "AuthorizationFailed"
 	requiresInput = False
 
-class APIAuth(AuthenticationScheme):
-	def __init__(self, phone, api_id, api_hash):
+class APIEvent:
+	def to_json(self) -> str:
+		return json.dumps(self.__dict__)
+
+class NewAuthenticationStage(APIEvent):
+	def __init__(self, stage: str):
+		self.type = "NewAuthenticationState"
+		self.state = stage
+
+class InputReceived(APIEvent):
+	def __init__(self, stage: str, value: str):
+		self.type = "InputReceived"
+		self.input_type = stage
+		self.value = value
+
+class APIAuth(AuthenticationProvider):
+	def __init__(self, phone: str, scheme: AuthenticationScheme):
 		self.phone = phone
-		self.api_id = api_id
-		self.api_hash = api_hash
-		self.status = None
+		self.scheme = scheme
+		self._status: APIAuthState = WaitingOnServer()
+		self._event_callbacks: List[Callable[[APIEvent], None]] = []
+
+	@property
+	def status(self):
+		return self._status
+
+	@status.setter
+	def status(self, value):
+		self._status = value
+		self._notify_event(NewAuthenticationStage(type(value).__name__))
+
+	def add_event_callback(self, callback: Callable[[APIEvent], None]):
+		self._event_callbacks.append(callback)
+
+	def _notify_event(self, event: APIEvent):
+		for callback in self._event_callbacks:
+			callback(event)
 
 	def authorizationStateWaitTdlibParameters(self, client: TelegramClient):
-		client.send({
-			'@type': 'setTdlibParameters',
-			'database_directory': 'accounts/' + self.phone,
-			'use_message_database': True,
-			'use_secret_chats': False,
-			'api_id': self.api_id,
-			'api_hash': self.api_hash,
-			'system_language_code': 'en',
-			'device_model': 'Desktop',
-			'application_version': '0.1'
-		})
+		self.scheme.authorizationStateWaitTdlibParameters(client)
 		self.status = WaitingOnServer()
 
 	def authorizationStateReady(self, client: TelegramClient):
+		self.scheme.authorizationStateReady(client)
 		self.status = AuthorizationSuccess()
 
 	def authorizationStateFailed(self, client: TelegramClient):
+		self.authorizationStateFailed(client)
 		self.status = AuthorizationFailed()
 
 	def authorizationStateWaitPhoneNumber(self, client: TelegramClient):
-		client.send({'@type': 'setAuthenticationPhoneNumber', 'phone_number': self.phone})
+		self.scheme.authorizationStateWaitPhoneNumber(client, self.phone)
+		self.status = PhoneNumberRequired()
 
 	def authorizationStateWaitEmailAddress(self, client: TelegramClient):
 		self.status = EmailRequired()
 
 		def wait(value):
-			client.send({'@type': 'setAuthenticationEmailAddress', 'email_address': value})
+			self.scheme.authorizationStateWaitEmailAddress(client, value)
+			self._notify_event(InputReceived("email", value))
 
 		self.status.waitForValue(wait)
 
@@ -90,23 +106,25 @@ class APIAuth(AuthenticationScheme):
 		self.status = PasswordRequired()
 
 		def wait(value):
-			client.send({'@type': 'checkAuthenticationPassword', 'password': value})
+			self.scheme.authorizationStateWaitPassword(client, value)
+			self._notify_event(InputReceived("password", value))
 
 		self.status.waitForValue(wait)
 
-	def authorizationStateWaitEmailCode(self, client: 'TelegramClient'):
+	def authorizationStateWaitEmailCode(self, client: TelegramClient):
 		self.status = EmailCodeRequired()
 
 		def wait(value):
-			client.send({'@type': 'checkAuthenticationEmailCode',
-			             'code': {'@type': 'emailAddressAuthenticationCode', 'code': value}})
+			self.scheme.authorizationStateWaitEmailCode(client, value)
+			self._notify_event(InputReceived("email_code", value))
 
 		self.status.waitForValue(wait)
 
-	def authorizationStateWaitCode(self, client: 'TelegramClient'):
+	def authorizationStateWaitCode(self, client: TelegramClient):
 		self.status = AuthCodeRequired()
 
 		def wait(value):
-			client.send({'@type': 'checkAuthenticationCode', 'code': value})
+			self.scheme.authorizationStateWaitCode(client, value)
+			self._notify_event(InputReceived("auth_code", value))
 
 		self.status.waitForValue(wait)

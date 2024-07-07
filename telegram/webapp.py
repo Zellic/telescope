@@ -1,8 +1,8 @@
 import json
 from typing import List
-from quart import Quart, request
+from quart import request, Quart
 from quart_cors import cors
-from webtest.api import TelegramClient
+from telegram.client import TelegramClient
 
 def create_webapp(tgclients: List[TelegramClient]):
 	app = Quart(__name__)
