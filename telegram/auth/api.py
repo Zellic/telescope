@@ -19,6 +19,10 @@ class AuthCodeRequired(APIAuthState):
 	name = "AuthCodeRequired"
 	requiresInput = True
 
+class RegistrationRequired(APIAuthState):
+	name = "RegistrationRequired"
+	requiresInput = False
+
 class PhoneNumberRequired(APIAuthState):
 	name = "PhoneNumberRequired"
 	requiresInput = False
@@ -98,7 +102,7 @@ class APIAuth(AuthenticationProvider):
 
 		def wait(value):
 			self.scheme.authorizationStateWaitEmailAddress(client, value)
-			self._notify_event(InputReceived("email", value))
+			self._notify_event(InputReceived(self.status.name, value))
 
 		self.status.waitForValue(wait)
 
@@ -107,7 +111,7 @@ class APIAuth(AuthenticationProvider):
 
 		def wait(value):
 			self.scheme.authorizationStateWaitPassword(client, value)
-			self._notify_event(InputReceived("password", value))
+			self._notify_event(InputReceived(self.status.name, value))
 
 		self.status.waitForValue(wait)
 
@@ -116,7 +120,7 @@ class APIAuth(AuthenticationProvider):
 
 		def wait(value):
 			self.scheme.authorizationStateWaitEmailCode(client, value)
-			self._notify_event(InputReceived("email_code", value))
+			self._notify_event(InputReceived(self.status.name, value))
 
 		self.status.waitForValue(wait)
 
@@ -125,6 +129,16 @@ class APIAuth(AuthenticationProvider):
 
 		def wait(value):
 			self.scheme.authorizationStateWaitCode(client, value)
-			self._notify_event(InputReceived("auth_code", value))
+			self._notify_event(InputReceived(self.status.name, value))
+
+		self.status.waitForValue(wait)
+
+	# only implemented for staging, not used in production
+	def authorizationStateWaitPasswordCode(self, client: TelegramClient):
+		self.status = RegistrationRequired()
+
+		def wait(value):
+			self.scheme.authorizationStateWaitRegistration(client, None)
+			self._notify_event(InputReceived(self.status.name, value))
 
 		self.status.waitForValue(wait)

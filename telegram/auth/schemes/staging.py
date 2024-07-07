@@ -5,9 +5,10 @@ from telegram.client import TelegramClient
 class TelegramStaging(AuthenticationScheme):
 	@staticmethod
 	def generate_phone():
-		code = str(random.randint(0, 9))
-		end = random.randint(0, 9999)
-		return f"99966{code}{end}"
+		code = str(random.randint(1, 3))
+		end = random.randint(1111, 9999)
+		ends = f"{end:04d}"
+		return f"99966{code}{ends}"
 
 	def __init__(self, phone, api_id, api_hash):
 		self.api_id = api_id
