@@ -1,11 +1,11 @@
 import asyncio
 from typing import List
 
-from telegram.auth.base import AuthenticationScheme
+from telegram.auth.base import AuthenticationProvider
 from telegram.tdlib import TDLib
 
 class TelegramClient:
-	def __init__(self, auth: AuthenticationScheme, modules: List[any]):
+	def __init__(self, auth: AuthenticationProvider, modules: List[any]):
 		# noinspection PyTypeChecker
 		self._tdlib: TDLib = None
 		self.auth = auth
