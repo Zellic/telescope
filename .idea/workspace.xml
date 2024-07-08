@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Weeee it works">
-      <change afterPath="$PROJECT_DIR$/tgmodules/userinfo.py" afterDir="false" />
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Retrieve local user's username and push to webui">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/telegram/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/webapp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tgmodules/userinfo.py" beforeDir="false" afterPath="$PROJECT_DIR$/tgmodules/userinfo.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,7 +170,7 @@
       <workItem from="1719366157690" duration="17789000" />
       <workItem from="1719848381204" duration="3168000" />
       <workItem from="1720239780269" duration="13999000" />
-      <workItem from="1720452305194" duration="4729000" />
+      <workItem from="1720452305194" duration="5801000" />
     </task>
     <task id="LOCAL-00001" summary="* Initial commit, tdlib-json test">
       <option name="closed" value="true" />
@@ -340,7 +340,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720356103447</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="* Retrieve local user's username and push to webui">
+      <option name="closed" value="true" />
+      <created>1720459910798</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1720459910798</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -390,7 +398,8 @@
     <MESSAGE value="* Add API for modal" />
     <MESSAGE value="* Port web test code and integrate with Telegram" />
     <MESSAGE value="* Weeee it works" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Weeee it works" />
+    <MESSAGE value="* Retrieve local user's username and push to webui" />
+    <option name="LAST_COMMIT_MESSAGE" value="* Retrieve local user's username and push to webui" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -406,7 +415,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/telescope$webmain.coverage" NAME="webmain Coverage Results" MODIFIED="1719007097200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
     <SUITE FILE_PATH="coverage/telescope$mainweb.coverage" NAME="mainweb Coverage Results" MODIFIED="1720240333378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
-    <SUITE FILE_PATH="coverage/telescope$main.coverage" NAME="main Coverage Results" MODIFIED="1720458990479" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/telescope$main.coverage" NAME="main Coverage Results" MODIFIED="1720460653467" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/telescope$webapp.coverage" NAME="webapp Coverage Results" MODIFIED="1719006269600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
     <SUITE FILE_PATH="coverage/telescope$client.coverage" NAME="client Coverage Results" MODIFIED="1716215455947" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
   </component>

@@ -24,5 +24,5 @@ class UserInfo(TelegramModule):
 			info['id'],
 			info['first_name'],
 			info['last_name'],
-			info['usernames']['editable_username'] if info['usernames'] is not None else None
+			info['usernames']['editable_username'] if 'usernames' in info and info['usernames'] is not None else None
 		)
