@@ -134,11 +134,6 @@ class APIAuth(AuthenticationProvider):
 		self.status.waitForValue(wait)
 
 	# only implemented for staging, not used in production
-	def authorizationStateWaitPasswordCode(self, client: TelegramClient):
+	def authorizationStateWaitRegistration(self, client: 'TelegramClient'):
 		self.status = RegistrationRequired()
-
-		def wait(value):
-			self.scheme.authorizationStateWaitRegistration(client, None)
-			self._notify_event(InputReceived(self.status.name, value))
-
-		self.status.waitForValue(wait)
+		self.scheme.authorizationStateWaitRegistration(client, None)

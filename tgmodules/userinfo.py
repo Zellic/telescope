@@ -14,9 +14,9 @@ class UserInfo(TelegramModule):
 	def __init__(self):
 		self.info: Optional[UserInfoContainer] = None
 
-	@OnEvent("updateConnectionState")
-	async def updateConnectionState(self, client, event):
-		if event['state']['@type'] != 'connectionStateReady':
+	@OnEvent("updateAuthorizationState")
+	async def updateAuthorizationState(self, client, event):
+		if event['authorization_state']['@type'] != 'authorizationStateReady':
 			return
 
 		info = await client.sendAwaitingReply({'@type': 'getMe'})
