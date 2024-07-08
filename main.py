@@ -8,6 +8,8 @@ from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
 from telegram.webapp import create_webapp
 from tgmodules.savecontacts import SaveContacts
+from tgmodules.userinfo import UserInfo
+
 
 # dotenv wouldn't install...
 def read_env_file(file_path):
@@ -33,11 +35,11 @@ def read_env_file(file_path):
 
 def clientFor(phonenumber, db, api_id, api_hash):
 	scheme = TelegramProduction(api_id, api_hash, "accounts/" + phonenumber, True)
-	return TelegramClient(APIAuth(phonenumber, scheme), [SaveContacts(db, phonenumber)])
+	return TelegramClient(APIAuth(phonenumber, scheme), [UserInfo(), SaveContacts(db, phonenumber)])
 
 def testClientFor(phonenumber, db, api_id, api_hash):
 	scheme = TelegramStaging(phonenumber, api_id, api_hash)
-	return TelegramClient(APIAuth(phonenumber, scheme), []) #, [SaveContacts(db, phonenumber)])
+	return TelegramClient(APIAuth(phonenumber, scheme), [UserInfo()]) #, [SaveContacts(db, phonenumber)])
 
 async def main():
 	config = read_env_file(".env")
@@ -47,8 +49,8 @@ async def main():
 	manager = TelegramClientManager()
 
 	clients = [
-		testClientFor(TelegramStaging.generate_phone(), db, *api),
-		# clientFor("16466565645", db, *api),
+		# testClientFor(TelegramStaging.generate_phone(), db, *api),
+		clientFor("16466565645", db, *api),
 		# clientFor("19295495669", db, *api),
 		# clientFor("14052173620", db, *api),
 	]

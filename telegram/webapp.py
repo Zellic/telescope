@@ -3,23 +3,32 @@ from typing import List
 from quart import request, Quart
 from quart_cors import cors
 from telegram.client import TelegramClient
+from tgmodules.userinfo import UserInfo
+
 
 def create_webapp(tgclients: List[TelegramClient]):
 	app = Quart(__name__)
 	# allow requests from the nextjs frontend dev server
 	app = cors(app, allow_origin="http://localhost:3000")
 
+	# TODO: hash this result and return null if nothing has changed
 	@app.route("/clients")
 	async def clients():
-		return [
-			{
-				"phone": x.auth.phone,
+		def makeblob(user: TelegramClient):
+			info_module = next((x for x in user._modules if isinstance(x, UserInfo)), None)
+			info = info_module.info
+
+			return {
+				"name": None if info is None else info.first_name + " " + info.last_name,
+				"username": None if info is None else info.username,
+				"phone": user.auth.phone,
 				"status": {
-					"stage": x.auth.status.name,
-					"inputRequired": x.auth.status.requiresInput,
+					"stage": user.auth.status.name,
+					"inputRequired": user.auth.status.requiresInput,
 				}
-			} for x in tgclients
-		]
+			}
+
+		return [makeblob(x) for x in tgclients]
 
 	@app.route("/submitvalue", methods=["POST"])
 	async def submit():
