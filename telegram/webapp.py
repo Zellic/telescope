@@ -1,12 +1,15 @@
 import json
+import re
 from typing import List
 from quart import request, Quart
 from quart_cors import cors
+
+from database.accounts import AccountManager
 from telegram.client import TelegramClient
+from telegram.manager import TelegramClientManager
 from tgmodules.userinfo import UserInfo
 
-
-def create_webapp(tgclients: List[TelegramClient]):
+def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clientFor: any):
 	app = Quart(__name__)
 	# allow requests from the nextjs frontend dev server
 	app = cors(app, allow_origin="http://localhost:3000")
@@ -28,7 +31,7 @@ def create_webapp(tgclients: List[TelegramClient]):
 				}
 			}
 
-		items = [makeblob(x) for x in tgclients]
+		items = [makeblob(x) for x in manager.clients]
 		ret = {
 			'hash': str(hash(json.dumps(items))),
 			'items': items,
@@ -51,7 +54,7 @@ def create_webapp(tgclients: List[TelegramClient]):
 			stage = payload['stage']
 			value = payload['value']
 
-			matching_client = next((client for client in tgclients if client.auth.phone == phone), None)
+			matching_client = next((client for client in manager.clients if client.auth.phone == phone), None)
 
 			if not matching_client:
 				return json.dumps({"error": f"No client found with phone number {phone}"}), 404
@@ -65,6 +68,37 @@ def create_webapp(tgclients: List[TelegramClient]):
 				return json.dumps({"message": "Value provided successfully"}), 200
 			except Exception as e:
 				return json.dumps({"error": f"Error providing value: {str(e)}"}), 500
+		except Exception as e:
+			return json.dumps({"error": f"Unexpected error: {str(e)}"}), 500
+
+	@app.route("/addtgaccount", methods=["POST"])
+	async def addtgaccount():
+		try:
+			payload = json.loads(await request.get_data())
+
+			if not all(key in payload for key in ['phone_number']):
+				return json.dumps({"error": "Invalid payload structure. 'phone_number' is required."}), 400
+
+			phone_number = payload['phone_number']
+			email = payload.get('email', None)
+			comment = payload.get('comment', None)
+
+			if not re.match(r'^\d{11}$', phone_number):
+				return json.dumps({"error": "Phone number must be exactly 11 digits"}), 400
+
+			if email and not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+				return json.dumps({"error": "Invalid email format"}), 400
+
+			if comment and (len(comment) < 1 or len(comment) > 300):
+				return json.dumps({"error": "Comment must be between 1 and 300 characters"}), 400
+
+			result = accounts.add_account(phone_number, email, comment)
+
+			if result.success:
+				manager.add_client(clientFor(phone_number))
+				return json.dumps({"message": "Account added successfully"}), 201
+			else:
+				return json.dumps({"error": result.error_message}), 400
 		except Exception as e:
 			return json.dumps({"error": f"Unexpected error: {str(e)}"}), 500
 
