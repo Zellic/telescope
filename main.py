@@ -1,5 +1,6 @@
 import asyncio
 
+from database.accounts import AccountManager
 from database.core import Database
 from telegram.auth.api import APIAuth
 from telegram.auth.schemes.live import TelegramProduction
@@ -44,21 +45,28 @@ def testClientFor(phonenumber, db, api_id, api_hash):
 async def main():
 	config = read_env_file(".env")
 	db = Database(config['DB_DSN'])
+	accounts = AccountManager(db)
 	api = (config['API_ID'], config['API_HASH'])
 
 	manager = TelegramClientManager()
 
 	clients = [
-		testClientFor(TelegramStaging.generate_phone(), db, *api),
+		# testClientFor(TelegramStaging.generate_phone(), db, *api),
 		# clientFor("16466565645", db, *api),
 		# clientFor("19295495669", db, *api),
 		# clientFor("14052173620", db, *api),
 	]
 
+	for account in accounts.getAccounts():
+		clients.append(clientFor(account.phone_number, db, *api))
+
 	for x in clients:
 		manager.add_client(x)
 
-	app = create_webapp([x for x in clients])
+	def clientForClosure(phonenumber):
+		return clientFor(phonenumber, db, *api)
+
+	app = create_webapp(manager, accounts, clientForClosure)
 
 	# TODO: Python's async doesn't make this convenient. instead we probably need every client to be a
 	# task while the run_until_complete loop simply rechecks whether len(manager.clients) > 0 every N

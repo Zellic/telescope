@@ -3,7 +3,6 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from psycopg2.pool import SimpleConnectionPool
 from psycopg2.sql import SQL, Identifier
 
-
 def _parse_dbname_from_dsn(dsn):
 	try:
 		params = psycopg2.extensions.parse_dsn(dsn)

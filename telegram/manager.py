@@ -25,6 +25,9 @@ class TelegramClientManager:
         # let's just not!
         client._tdlib = self.tdlib
 
+        if(self._started):
+            client.start()
+
     def _try_dispatch_event(self):
         event = self.tdlib.receive()
 

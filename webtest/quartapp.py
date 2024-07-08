@@ -11,15 +11,28 @@ def create_webapp(tgclients: List[TelegramClient]):
 
 	@app.route("/clients")
 	async def clients():
-		return [
-			{
-				"phone": x.auth.phone,
+		oldhash = request.args.get("hash")
+		def makeblob(user: TelegramClient):
+			return {
+				"name": None,
+				"username": None,
+				"phone": user.auth.phone,
 				"status": {
-					"stage": x.auth.status.name,
-					"inputRequired": x.auth.status.requiresInput,
+					"stage": user.auth.status.name,
+					"inputRequired": user.auth.status.requiresInput,
 				}
-			} for x in tgclients
-		]
+			}
+
+		items = [makeblob(x) for x in tgclients]
+		ret = {
+			'hash': str(hash(json.dumps(items))),
+			'items': items,
+		}
+
+		if(oldhash is not None and ret['hash'] == oldhash):
+			return {'hash': ret['hash']}
+
+		return ret
 
 	@app.route("/submitvalue", methods=["POST"])
 	async def submit():
