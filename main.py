@@ -49,8 +49,8 @@ async def main():
 	manager = TelegramClientManager()
 
 	clients = [
-		# testClientFor(TelegramStaging.generate_phone(), db, *api),
-		clientFor("16466565645", db, *api),
+		testClientFor(TelegramStaging.generate_phone(), db, *api),
+		# clientFor("16466565645", db, *api),
 		# clientFor("19295495669", db, *api),
 		# clientFor("14052173620", db, *api),
 	]

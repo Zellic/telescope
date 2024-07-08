@@ -11,9 +11,9 @@ def create_webapp(tgclients: List[TelegramClient]):
 	# allow requests from the nextjs frontend dev server
 	app = cors(app, allow_origin="http://localhost:3000")
 
-	# TODO: hash this result and return null if nothing has changed
 	@app.route("/clients")
 	async def clients():
+		oldhash = request.args.get("hash")
 		def makeblob(user: TelegramClient):
 			info_module = next((x for x in user._modules if isinstance(x, UserInfo)), None)
 			info = info_module.info
@@ -28,7 +28,16 @@ def create_webapp(tgclients: List[TelegramClient]):
 				}
 			}
 
-		return [makeblob(x) for x in tgclients]
+		items = [makeblob(x) for x in tgclients]
+		ret = {
+			'hash': str(hash(json.dumps(items))),
+			'items': items,
+		}
+
+		if(oldhash is not None and ret['hash'] == oldhash):
+			return {'hash': ret['hash']}
+
+		return ret
 
 	@app.route("/submitvalue", methods=["POST"])
 	async def submit():
