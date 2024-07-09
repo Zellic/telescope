@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 from database.accounts import AccountManager
 from database.core import Database
@@ -10,7 +11,6 @@ from telegram.manager import TelegramClientManager
 from telegram.webapp import create_webapp
 from tgmodules.savecontacts import SaveContacts
 from tgmodules.userinfo import UserInfo
-
 
 # dotenv wouldn't install...
 def read_env_file(file_path):
@@ -43,7 +43,12 @@ def testClientFor(phonenumber, db, api_id, api_hash):
 	return TelegramClient(APIAuth(phonenumber, scheme), [UserInfo()]) #, [SaveContacts(db, phonenumber)])
 
 async def main():
-	config = read_env_file(".env")
+	config = dict(os.environ)
+	try:
+		extra = read_env_file(".env")
+		config.update(extra)
+	except:
+		pass
 	db = Database(config['DB_DSN'])
 	accounts = AccountManager(db)
 	api = (config['API_ID'], config['API_HASH'])
