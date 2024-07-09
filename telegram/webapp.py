@@ -1,18 +1,25 @@
 import json
+import os
 import re
 from typing import List
-from quart import request, Quart
+from quart import request, Quart, send_from_directory, abort
 from quart_cors import cors
+from werkzeug.security import safe_join
 
 from database.accounts import AccountManager
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
 from tgmodules.userinfo import UserInfo
 
+ALLOWED_EXTENSIONS = {'html', 'js', 'css', 'png', 'jpg', 'gif', 'ico', 'svg'}
+def allowed_file(filename):
+	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clientFor: any):
 	app = Quart(__name__)
 	# allow requests from the nextjs frontend dev server
 	app = cors(app, allow_origin="http://localhost:3000")
+	frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'telescope-webui-dist')
 
 	@app.route("/clients")
 	async def clients():
@@ -101,5 +108,22 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 				return json.dumps({"error": result.error_message}), 400
 		except Exception as e:
 			return json.dumps({"error": f"Unexpected error: {str(e)}"}), 500
+
+	@app.route('/<path:filename>')
+	async def serve_static(filename):
+		if not allowed_file(filename):
+			abort(404)
+		safe_path = safe_join(frontend_path, filename)
+		# path traversal
+		if safe_path is None:
+			abort(404)
+		if os.path.isfile(safe_path):
+			return await send_from_directory(frontend_path, filename)
+		abort(404)
+
+	@app.route('/', defaults={'path': ''})
+	@app.route('/<path:path>')
+	async def serve_index(path):
+		return await send_from_directory(frontend_path, 'index.html')
 
 	return app
