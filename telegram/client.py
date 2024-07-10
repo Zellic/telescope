@@ -53,17 +53,17 @@ class TelegramClient:
 
 			if auth_state['@type'] == 'authorizationStateClosed':
 				# TODO: do something about this
-				print("Authorization failed.")
+				print("Authorization failed for: " + self.auth.phone)
 				self.auth.authorizationStateFailed(self)
 				return
 			elif auth_state['@type'] == 'authorizationStateReady':
-				print("Authorization successful.")
+				print("Authorization successful for: " + self.auth.phone)
 				self.auth.authorizationStateReady(self)
 			else:
 				method = getattr(self.auth, auth_state['@type'], None)
 
 				if method is None:
-					print(f"Unimplemented authorization state: {auth_state['@type']}")
+					print(f"Unimplemented authorization state: {self.auth.phone} {auth_state['@type']}")
 					raise NotImplementedError()
 
 				method(self)

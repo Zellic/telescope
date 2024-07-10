@@ -76,8 +76,11 @@ async def main():
 	# TODO: Python's async doesn't make this convenient. instead we probably need every client to be a
 	# task while the run_until_complete loop simply rechecks whether len(manager.clients) > 0 every N
 	# seconds with asyncio.sleep
+
+	host = "localhost" if config.get("DEBUG", "false").lower() == "true" else "0.0.0.0"
+
 	# noinspection PyProtectedMember
-	await asyncio.gather(manager.start(), app.run_task("localhost", 8888))
+	await asyncio.gather(manager.start(), app.run_task(host, 8888))
 
 if __name__ == "__main__":
 	loop = asyncio.new_event_loop()
