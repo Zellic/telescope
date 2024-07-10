@@ -84,6 +84,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			payload = json.loads(await request.get_data())
 
 			if not all(key in payload for key in ['phone_number']):
+				print("failed to add account: phone number is required")
 				return json.dumps({"error": "Invalid payload structure. 'phone_number' is required."}), 400
 
 			phone_number = payload['phone_number']
@@ -91,22 +92,28 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			comment = payload.get('comment', None)
 
 			if not re.match(r'^\d{11}$', phone_number):
+				print("failed to add account: phone number must be 11 digits")
 				return json.dumps({"error": "Phone number must be exactly 11 digits"}), 400
 
 			if email and not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+				print("failed to add account: invalid email format")
 				return json.dumps({"error": "Invalid email format"}), 400
 
 			if comment and (len(comment) < 1 or len(comment) > 300):
+				print("failed to add account: comment must be between 1 and 300 characters")
 				return json.dumps({"error": "Comment must be between 1 and 300 characters"}), 400
 
 			result = accounts.add_account(phone_number, email, comment)
 
 			if result.success:
 				manager.add_client(clientFor(phone_number))
+				print(f"failed to add account: added account successfully ({phone_number})")
 				return json.dumps({"message": "Account added successfully"}), 201
 			else:
+				print(f"failed to add account: {result.error_message}")
 				return json.dumps({"error": result.error_message}), 400
 		except Exception as e:
+			print(f"failed to add account: unexpected error - {str(e)}")
 			return json.dumps({"error": f"Unexpected error: {str(e)}"}), 500
 
 	@app.route('/<path:filename>')
