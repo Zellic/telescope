@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Edit requirements">
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Load environment variables from environment too xD">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/client.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +171,7 @@
       <workItem from="1719848381204" duration="3168000" />
       <workItem from="1720239780269" duration="13999000" />
       <workItem from="1720452305194" duration="15464000" />
-      <workItem from="1720554409817" duration="4454000" />
+      <workItem from="1720554409817" duration="6903000" />
     </task>
     <task id="LOCAL-00001" summary="* Initial commit, tdlib-json test">
       <option name="closed" value="true" />
@@ -395,7 +397,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720559932407</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="* Load environment variables from environment too xD">
+      <option name="closed" value="true" />
+      <created>1720560367630</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1720560367630</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -424,7 +434,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* production auth implementation" />
     <MESSAGE value="* Fix async request" />
     <MESSAGE value="* Module support" />
     <MESSAGE value="* Database support" />
@@ -449,12 +458,13 @@
     <MESSAGE value="* Add docker compose" />
     <MESSAGE value="* Add nextjs production built frontend" />
     <MESSAGE value="* Edit requirements" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Edit requirements" />
+    <MESSAGE value="* Load environment variables from environment too xD" />
+    <option name="LAST_COMMIT_MESSAGE" value="* Load environment variables from environment too xD" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/telescope$webmain.coverage" NAME="webmain Coverage Results" MODIFIED="1719007097200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
     <SUITE FILE_PATH="coverage/telescope$mainweb.coverage" NAME="mainweb Coverage Results" MODIFIED="1720464479499" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
-    <SUITE FILE_PATH="coverage/telescope$main.coverage" NAME="main Coverage Results" MODIFIED="1720556871592" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/telescope$main.coverage" NAME="main Coverage Results" MODIFIED="1720588977233" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/telescope$webapp.coverage" NAME="webapp Coverage Results" MODIFIED="1719006269600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
     <SUITE FILE_PATH="coverage/telescope$client.coverage" NAME="client Coverage Results" MODIFIED="1716215455947" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
   </component>
