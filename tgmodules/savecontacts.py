@@ -152,9 +152,9 @@ class SaveContacts(TelegramModule):
 		self.db.execute(create_table_sql)
 		self.our_phone_number = our_phone_number
 
-	@OnEvent("updateConnectionState")
-	async def updateConnectionState(self, client, event):
-		if event['state']['@type'] != 'connectionStateReady':
+	@OnEvent("updateAuthorizationState")
+	async def updateAuthorizationState(self, client, event):
+		if event['authorization_state']['@type'] != 'authorizationStateReady':
 			return
 
 		# ideally we'd iterate and make sure we get everyone, but I'm worried about the telegram API getting
