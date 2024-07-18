@@ -1,11 +1,12 @@
 import json
 import os
 import re
-from quart import request, Quart, send_from_directory, abort
+from quart import request, Quart, send_from_directory, abort, Response
 from quart_cors import cors
 from werkzeug.security import safe_join
 
 from database.accounts import AccountManager
+from telegram.auth.api import AuthorizationSuccess, AuthorizationFailed
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
 from telegram.tgmodules.getcode import GetAuthCode
@@ -121,6 +122,28 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		except Exception as e:
 			print(f"failed to add account: unexpected error - {str(e)}")
 			return json.dumps({"error": f"Unexpected error: {str(e)}"}), 500
+
+	@app.route("/clients")
+	async def clients():
+		out = [
+			'# HELP telescope_auth_status Authentication status for clients',
+			'# TYPE telescope_auth_status gauge'
+		]
+
+		for user in manager.clients:
+			if isinstance(user.auth.status, AuthorizationFailed):
+				out.append(
+					f'telescope_auth_status{{phone="{user.auth.phone}",stage="{user.auth.status.name}",status="failed"}} 1')
+			elif not isinstance(user.auth.status, AuthorizationSuccess):
+				if user.auth.status.requiresInput:
+					out.append(
+						f'telescope_auth_status{{phone="{user.auth.phone}",stage="{user.auth.status.name}",status="input_required"}} 1')
+				else:
+					out.append(
+						f'telescope_auth_status{{phone="{user.auth.phone}",stage="{user.auth.status.name}",status="waiting_on_server"}} 1')
+
+		metrics_text = '\n'.join(out)
+		return Response(metrics_text, mimetype="text/plain")
 
 	@app.route('/<path:filename>')
 	async def serve_static(filename):
