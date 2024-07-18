@@ -36,7 +36,7 @@ def read_env_file(file_path):
 
 def clientFor(phonenumber, db, api_id, api_hash):
 	scheme = TelegramProduction(api_id, api_hash, "accounts/" + phonenumber, True)
-	return TelegramClient(APIAuth(phonenumber, scheme), [UserInfo(), GetAuthCode()])
+	return TelegramClient(APIAuth(phonenumber, scheme), [UserInfo(), SaveContacts(db, phonenumber), GetAuthCode()])
 
 def testClientFor(phonenumber, db, api_id, api_hash):
 	scheme = TelegramStaging(phonenumber, api_id, api_hash)
