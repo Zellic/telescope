@@ -8,6 +8,7 @@ from telegram.auth.schemes.live import TelegramProduction
 from telegram.auth.schemes.staging import TelegramStaging
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
+from telegram.tgmodules.savecontacts import SaveContacts
 from telegram.webapp import create_webapp
 from telegram.tgmodules.getcode import GetAuthCode
 from telegram.tgmodules.userinfo import UserInfo
