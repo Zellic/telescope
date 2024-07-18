@@ -1,7 +1,6 @@
 import json
 import os
 import re
-from typing import List
 from quart import request, Quart, send_from_directory, abort
 from quart_cors import cors
 from werkzeug.security import safe_join
@@ -9,7 +8,8 @@ from werkzeug.security import safe_join
 from database.accounts import AccountManager
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
-from tgmodules.userinfo import UserInfo
+from telegram.tgmodules.getcode import GetAuthCode
+from telegram.tgmodules.userinfo import UserInfo
 
 ALLOWED_EXTENSIONS = {'html', 'js', 'css', 'png', 'jpg', 'gif', 'ico', 'svg'}
 def allowed_file(filename):
@@ -26,12 +26,18 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		oldhash = request.args.get("hash")
 		def makeblob(user: TelegramClient):
 			info_module = next((x for x in user._modules if isinstance(x, UserInfo)), None)
-			info = info_module.info
+			info = None if info_module is None else info_module.info
+
+			code_module = next((x for x in user._modules if isinstance(x, GetAuthCode)), None)
 
 			return {
 				"name": None if info is None else info.first_name + " " + info.last_name,
 				"username": None if info is None else info.username,
 				"phone": user.auth.phone,
+				"lastCode": None if code_module is None or code_module.code is None else {
+					"value": int(code_module.code),
+					"date": code_module.timestamp,
+				},
 				"status": {
 					"stage": user.auth.status.name,
 					"inputRequired": user.auth.status.requiresInput,
