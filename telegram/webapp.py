@@ -123,8 +123,8 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			print(f"failed to add account: unexpected error - {str(e)}")
 			return json.dumps({"error": f"Unexpected error: {str(e)}"}), 500
 
-	@app.route("/clients")
-	async def clients():
+	@app.route("/prometheus")
+	async def prometheus():
 		out = [
 			'# HELP telescope_auth_status Authentication status for clients',
 			'# TYPE telescope_auth_status gauge'
