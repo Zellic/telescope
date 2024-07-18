@@ -9,8 +9,8 @@ from telegram.auth.schemes.staging import TelegramStaging
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
 from telegram.webapp import create_webapp
-from tgmodules.savecontacts import SaveContacts
-from tgmodules.userinfo import UserInfo
+from telegram.tgmodules.getcode import GetAuthCode
+from telegram.tgmodules.userinfo import UserInfo
 
 # dotenv wouldn't install...
 def read_env_file(file_path):
@@ -36,7 +36,7 @@ def read_env_file(file_path):
 
 def clientFor(phonenumber, db, api_id, api_hash):
 	scheme = TelegramProduction(api_id, api_hash, "accounts/" + phonenumber, True)
-	return TelegramClient(APIAuth(phonenumber, scheme), [UserInfo(), SaveContacts(db, phonenumber)])
+	return TelegramClient(APIAuth(phonenumber, scheme), [UserInfo(), GetAuthCode()])
 
 def testClientFor(phonenumber, db, api_id, api_hash):
 	scheme = TelegramStaging(phonenumber, api_id, api_hash)
@@ -59,11 +59,11 @@ async def main():
 		# testClientFor(TelegramStaging.generate_phone(), db, *api),
 		# clientFor("16466565645", db, *api),
 		# clientFor("19295495669", db, *api),
-		# clientFor("14052173620", db, *api),
+		clientFor("14052173620", db, *api),
 	]
 
-	for account in accounts.getAccounts():
-		clients.append(clientFor(account.phone_number, db, *api))
+	# for account in accounts.getAccounts():
+	# 	clients.append(clientFor(account.phone_number, db, *api))
 
 	for x in clients:
 		manager.add_client(x)
@@ -78,6 +78,10 @@ async def main():
 	# seconds with asyncio.sleep
 
 	host = "localhost" if config.get("DEBUG", "false").lower() == "true" else "0.0.0.0"
+
+	# async def lol():
+	# 	await asyncio.sleep(5)
+	# 	await next(x for x in clients[0]._modules if isinstance(x, GetAuthCode)).getAuthCode(clients[0])
 
 	# noinspection PyProtectedMember
 	await asyncio.gather(manager.start(), app.run_task(host, 8888))
