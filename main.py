@@ -60,11 +60,11 @@ async def main():
 		# testClientFor(TelegramStaging.generate_phone(), db, *api),
 		# clientFor("16466565645", db, *api),
 		# clientFor("19295495669", db, *api),
-		clientFor("14052173620", db, *api),
+		# clientFor("14052173620", db, *api),
 	]
 
-	# for account in accounts.getAccounts():
-	# 	clients.append(clientFor(account.phone_number, db, *api))
+	for account in accounts.getAccounts():
+		clients.append(clientFor(account.phone_number, db, *api))
 
 	for x in clients:
 		manager.add_client(x)
