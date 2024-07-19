@@ -13,8 +13,18 @@ from telegram.tgmodules.getcode import GetAuthCode
 from telegram.tgmodules.userinfo import UserInfo
 
 ALLOWED_EXTENSIONS = {'html', 'js', 'css', 'png', 'jpg', 'gif', 'ico', 'svg'}
-def allowed_file(filename):
-	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+def is_allowed_file(path, root):
+	try:
+		real_path = os.path.realpath(path)
+		real_root = os.path.realpath(root)
+
+		common_prefix = os.path.commonpath([real_path, real_root])
+
+		return common_prefix == real_root
+	except ValueError:
+		return False
+	except OSError:
+		return False
 
 def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clientFor: any):
 	app = Quart(__name__)
@@ -148,7 +158,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 	@app.route('/<path:filename>')
 	async def serve_static(filename):
 		print(f'a: {filename}')
-		if not allowed_file(filename):
+		if not is_allowed_file(filename, frontend_path):
 			print("b")
 			abort(404)
 		safe_path = safe_join(frontend_path, filename)
