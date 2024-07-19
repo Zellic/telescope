@@ -18,6 +18,9 @@ def is_allowed_file(path, root):
 		real_path = os.path.realpath(path)
 		real_root = os.path.realpath(root)
 
+		print("real_path: ", real_path)
+		print("real_root: ", real_root)
+
 		common_prefix = os.path.commonpath([real_path, real_root])
 
 		return common_prefix == real_root
@@ -31,6 +34,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 	# allow requests from the nextjs frontend dev server
 	app = cors(app, allow_origin="http://localhost:3000")
 	frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'telescope-webui-dist')
+	print(repr(frontend_path))
 
 	@app.route("/clients")
 	async def clients():
