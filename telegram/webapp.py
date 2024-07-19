@@ -147,14 +147,20 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 
 	@app.route('/<path:filename>')
 	async def serve_static(filename):
+		print(f'a: {filename}')
 		if not allowed_file(filename):
+			print("b")
 			abort(404)
 		safe_path = safe_join(frontend_path, filename)
+		print(f"c: {safe_path}")
 		# path traversal
 		if safe_path is None:
+			print("d")
 			abort(404)
 		if os.path.isfile(safe_path):
+			print("e")
 			return await send_from_directory(frontend_path, filename)
+		print("f")
 		abort(404)
 
 	@app.route('/', defaults={'path': ''})
