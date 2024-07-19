@@ -159,7 +159,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		metrics_text = '\n'.join(out)
 		return Response(metrics_text, mimetype="text/plain")
 
-	@app.route('/<path:filename>')
+	@app.route('/<path:asset_path>')
 	async def serve_static(asset_path):
 		path = os.path.join(frontend_path, asset_path)
 		if not is_allowed_file(path, frontend_path):
