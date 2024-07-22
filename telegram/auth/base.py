@@ -25,7 +25,7 @@ class AuthenticationProvider:
 	phone: str
 	status: APIAuthState
 
-	def authorizationStateFailed(self, client: 'TelegramClient'):
+	def authorizationStateClosed(self, client: 'TelegramClient'):
 		pass
 
 	def authorizationStateReady(self, client: 'TelegramClient'):
@@ -53,7 +53,7 @@ class AuthenticationProvider:
 		raise NotImplementedError()
 
 class AuthenticationScheme:
-	def authorizationStateFailed(self, client: 'TelegramClient'):
+	def authorizationStateClosed(self, client: 'TelegramClient'):
 		pass
 
 	def authorizationStateReady(self, client: 'TelegramClient'):

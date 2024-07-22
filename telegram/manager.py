@@ -1,5 +1,5 @@
 import asyncio
-from typing import Dict, List
+from typing import Dict, List, AsyncIterator
 
 from telegram.client import TelegramClient
 from telegram.tdlib import TDLib
@@ -69,15 +69,24 @@ class TelegramClientManager:
         self._task = asyncio.get_event_loop().create_task(self._receive_loop())
         return self._task
 
-    async def stop(self):
-        if (not self.is_started()):
+    # TODO: there is no method to stop a single client and stop listening to it
+    async def stop_and_yield(self) -> AsyncIterator[TelegramClient]:
+        if not self.is_started():
             raise Exception("Hasn't been started yet")
 
-        for client in self.clients:
-            client.stop()
+        async def inner(client):
+            await client.stop()
+            return client
+
+        for client in asyncio.as_completed([inner(client) for client in self.clients]):
+            yield await client
 
         self._stop_event.set()
         await self._task
 
-    # TODO: some way to call .stop() on the client have it bubble up and remove it from this list
-    # or alternatively you call stop on the manager with some client id?
+    async def stop(self):
+        if (not self.is_started()):
+            raise Exception("Hasn't been started yet")
+
+        async for _ in self.stop_and_yield():
+            pass

@@ -1,17 +1,9 @@
-import asyncio
-import os
-
-from database.accounts import AccountManager
-from database.core import Database
 from mainloop import MainLoop
 from telegram.auth.api import APIAuth
 from telegram.auth.schemes.live import TelegramProduction
-from telegram.auth.schemes.staging import TelegramStaging
 from telegram.client import TelegramClient
-from telegram.manager import TelegramClientManager
-from telegram.tgmodules.savecontacts import SaveContacts
-from telegram.webapp import create_webapp
 from telegram.tgmodules.getcode import GetAuthCode
+from telegram.tgmodules.savecontacts import SaveContacts
 from telegram.tgmodules.userinfo import UserInfo
 
 def main():
@@ -24,8 +16,7 @@ def main():
 	for account in core.accounts.getAccounts():
 		core.addClient(clientForClosure(account.phone_number))
 
-	# noinspection PyProtectedMember
-	core.mainLoop()
+	core.mainLoop(clientForClosure)
 
 if __name__ == "__main__":
 	main()
