@@ -17,6 +17,8 @@ class TelegramClient:
 		self._pending_responses = {}
 		self._started = False
 
+		self._stop_future = None
+
 	def send(self, query):
 		self._tdlib.send(self.client_id, query)
 
@@ -52,9 +54,21 @@ class TelegramClient:
 			auth_state = event['authorization_state']
 
 			if auth_state['@type'] == 'authorizationStateClosed':
-				# TODO: do something about this
-				print("Authorization failed for: " + self.auth.phone)
-				self.auth.authorizationStateFailed(self)
+				# TODO: this can be three different things and we can't distinguish via this message alone
+				# - connection lost (could be our end, could be remote end)
+				# - authorization failed (server closed connection on us, an explanation would've been sent in response to an earlier message)
+				# - we disconnected (self._stop_future would be set)
+				self.auth.authorizationStateClosed(self)
+
+				if self._stop_future and not self._stop_future.done():
+					self._stop_future.set_result(None)
+
+				for module in self._modules:
+					func = getattr(module, "onClientExit", None)
+
+					if (func is not None):
+						func()
+
 				return
 			elif auth_state['@type'] == 'authorizationStateReady':
 				print("Authorization successful for: " + self.auth.phone)
@@ -86,12 +100,19 @@ class TelegramClient:
 		self.client_id = self._tdlib.create_client_id()
 		self.send({'@type': 'getOption', 'name': 'version', '@extra': 1.01234})
 
-	def stop(self):
+	async def stop(self):
 		if (not self.is_started()):
 			raise Exception("Hasn't been started yet")
 
-		for module in self._modules:
-			func = getattr(module, "onClientExit", None)
+		if(self._stop_future):
+			if(self._stop_future.done()):
+				print("Already stopped client, but received stop again???")
+				return
+			else:
+				print("Client is already stopping, but received stop again")
+				return
 
-			if (func is not None):
-				func()
+		self._stop_future = asyncio.Future()
+		self.send({'@type': 'close'})
+
+		await self._stop_future

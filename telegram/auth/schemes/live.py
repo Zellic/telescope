@@ -24,7 +24,7 @@ class TelegramProduction(AuthenticationScheme):
 	def authorizationStateReady(self, client: TelegramClient):
 		pass
 
-	def authorizationStateFailed(self, client: TelegramClient):
+	def authorizationStateClosed(self, client: TelegramClient):
 		pass
 
 	def authorizationStateWaitPhoneNumber(self, client: TelegramClient, value: any):
