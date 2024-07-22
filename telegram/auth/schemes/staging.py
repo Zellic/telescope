@@ -10,9 +10,10 @@ class TelegramStaging(AuthenticationScheme):
 		ends = f"{end:04d}"
 		return f"99966{code}{ends}"
 
-	def __init__(self, phone, api_id, api_hash):
+	def __init__(self, phone, api_id, api_hash, db_directory: str):
 		self.api_id = api_id
 		self.api_hash = api_hash
+		self.db_directory = db_directory
 		assert(phone[0:5] == '99966')
 		assert(len(phone) == 10)
 		self.phone = phone
