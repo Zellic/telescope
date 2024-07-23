@@ -1,6 +1,7 @@
 import asyncio
 import os
 import signal
+import sys
 from typing import Callable, Optional
 
 from quart import Quart
@@ -76,13 +77,16 @@ class MainLoop:
 		print("Shutting down...")
 
 		if(self._app is not None):
-			self._idiot_quart_task.close()
 			await self._app.shutdown()
 			print("Webapp stopped")
 
 		if(self.manager.is_started()):
 			async for client in self.manager.stop_and_yield():
 				print(f"Stopped client: {client.auth.phone}")
+
+		# apparently quart is just never going to shutdown properly
+		# this library sucks
+		sys.exit(0)
 
 	def mainLoop(self, clientGenerator: Callable[[str], TelegramClient]):
 		loop = asyncio.new_event_loop()
