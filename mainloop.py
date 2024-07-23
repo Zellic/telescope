@@ -61,7 +61,10 @@ class MainLoop:
 		self._app = create_webapp(self.manager, self.accounts, clientGenerator)
 		host = "localhost" if self.config.get("DEBUG", "false").lower() == "true" else "0.0.0.0"
 
-		await asyncio.gather(self.manager.start(), self._app.run_task(host, 8888))
+		# we can't pass this to gather or it will eat control+c events for some reason...
+		# it's okay because the manager runs forever, and we shut the manager down AFTER we shut the webapp down
+		self._app.run_task(host, 8888)
+		await asyncio.gather(self.manager.start())
 
 	async def shutdown(self):
 		print("Shutting down...")
