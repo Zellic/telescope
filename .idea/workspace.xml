@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* authorizationStateClosing">
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* debug message">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/telegram/auth/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/auth/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mainloop.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainloop.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/telegram/manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -205,23 +205,7 @@
       <workItem from="1721422741382" duration="18000" />
       <workItem from="1721423164172" duration="8363000" />
       <workItem from="1721668146222" duration="5638000" />
-      <workItem from="1721688892989" duration="4327000" />
-    </task>
-    <task id="LOCAL-00008" summary="* To support multiple clients at once manager needs to do event dispatch instead of trying to use threadpool async">
-      <option name="closed" value="true" />
-      <created>1717019046050</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1717019046050</updated>
-    </task>
-    <task id="LOCAL-00009" summary="* Reformat contact data">
-      <option name="closed" value="true" />
-      <created>1717200542509</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1717200542509</updated>
+      <workItem from="1721688892989" duration="4625000" />
     </task>
     <task id="LOCAL-00010" summary="* More database code">
       <option name="closed" value="true" />
@@ -599,7 +583,23 @@
       <option name="project" value="LOCAL" />
       <updated>1721702361092</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="* rip">
+      <option name="closed" value="true" />
+      <created>1721702495865</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1721702495865</updated>
+    </task>
+    <task id="LOCAL-00058" summary="* debug message">
+      <option name="closed" value="true" />
+      <created>1721702603063</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1721702603063</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -628,8 +628,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* ports" />
-    <MESSAGE value="* Update nextui" />
     <MESSAGE value="* Switch savecontact event" />
     <MESSAGE value="* Retrieve auth code" />
     <MESSAGE value="* testing in production, forgot savecontacts..." />
@@ -653,7 +651,9 @@
     <MESSAGE value="* Comment" />
     <MESSAGE value="* fgdsfgsdfg" />
     <MESSAGE value="* authorizationStateClosing" />
-    <option name="LAST_COMMIT_MESSAGE" value="* authorizationStateClosing" />
+    <MESSAGE value="* rip" />
+    <MESSAGE value="* debug message" />
+    <option name="LAST_COMMIT_MESSAGE" value="* debug message" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/telescope$webmain.coverage" NAME="webmain Coverage Results" MODIFIED="1719007097200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
