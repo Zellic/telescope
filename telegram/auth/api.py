@@ -89,8 +89,11 @@ class APIAuth(AuthenticationProvider):
 		self.scheme.authorizationStateReady(client)
 		self.status = AuthorizationSuccess()
 
+	# TODO: implement authorizationStateClosing as well
+
 	def authorizationStateClosed(self, client: TelegramClient):
 		self.authorizationStateClosed(client)
+		# TODO: this should be connection closed, not auth failed
 		self.status = AuthorizationFailed()
 
 	def authorizationStateWaitPhoneNumber(self, client: TelegramClient):
