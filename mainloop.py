@@ -5,6 +5,8 @@ import sys
 from asyncio import Task
 from typing import Callable, List, Optional
 
+from quart import Quart
+
 from database.accounts import AccountManager
 from database.core import Database
 from telegram.client import TelegramClient
@@ -50,30 +52,22 @@ class MainLoop:
 		self.API_HASH = self.config['API_HASH']
 
 		self.manager = TelegramClientManager()
-
-		self._tasks: Optional[List[Task]] = None
+		self._app: Optional[Quart] = None
 
 	def addClient(self, client: TelegramClient):
 		self.manager.add_client(client)
 
 	async def run(self, clientGenerator: Callable[[str], TelegramClient]):
-		app = create_webapp(self.manager, self.accounts, clientGenerator)
+		self._app = create_webapp(self.manager, self.accounts, clientGenerator)
 		host = "localhost" if self.config.get("DEBUG", "false").lower() == "true" else "0.0.0.0"
 
-		self._tasks = [
-			app.run_task(host, 8888),
-		]
-
-		await asyncio.gather(self.manager.start(), *self._tasks)
+		await asyncio.gather(self.manager.start(), self._app.run_task(host, 8888))
 
 	async def shutdown(self):
 		print("Shutting down...")
 
-		for task in self._tasks:
-			try:
-				task.cancel()
-			except asyncio.CancelledError:
-				pass
+		if(self._app is not None):
+			await self._app.shutdown()
 
 		async for client in self.manager.stop_and_yield():
 			print(f"Stopped client: {client.auth.phone}")
