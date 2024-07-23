@@ -54,7 +54,7 @@ class TelegramClientManager:
                 await asyncio.sleep(1.0)
             else:
                 await asyncio.sleep(0.01)
-        print('exit receive loop')
+        return None
 
     def is_started(self):
         return self._started
