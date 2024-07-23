@@ -78,6 +78,7 @@ class TelegramClientManager:
             await client.stop()
             return client
 
+        print(f"Halting {len(self.clients)} clients...")
         for client in asyncio.as_completed([inner(client) for client in self.clients]):
             yield await client
 
