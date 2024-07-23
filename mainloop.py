@@ -75,6 +75,10 @@ class MainLoop:
 
 		if(self._app is not None):
 			await self._app.shutdown()
+			await self._app.shutdown()
+			await self._app.shutdown()
+			await self._app.shutdown()
+			await self._app.shutdown()
 			print("Webapp stopped")
 
 		if(self.manager.is_started()):
