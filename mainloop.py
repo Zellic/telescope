@@ -82,18 +82,16 @@ class MainLoop:
 			async for client in self.manager.stop_and_yield():
 				print(f"Stopped client: {client.auth.phone}")
 
-		# let the manager's task exit to prevent `RuntimeError: Event loop stopped before Future completed.`
-		await asyncio.sleep(0.1)
-
 	def mainLoop(self, clientGenerator: Callable[[str], TelegramClient]):
 		loop = asyncio.new_event_loop()
 		asyncio.set_event_loop(loop)
+		shut_us_down = None
 
 		def graceful_shutdown(*args):
 			if(self._shutting_down):
 				return
 
-			asyncio.create_task(self.shutdown())
+			shut_us_down = asyncio.create_task(self.shutdown())
 
 		# we do this because the Quart app sets its own close signal handlers that block ours (???)
 		# so we take them back after the app's initialization is done
@@ -111,4 +109,6 @@ class MainLoop:
 				pass
 
 		loop.run_until_complete(asyncio.gather(self.run(clientGenerator), hijack_close_signal()))
+		if(shut_us_down is not None):
+			loop.run_until_complete(shut_us_down)
 		loop.close()

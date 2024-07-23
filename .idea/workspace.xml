@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* are we doing it">
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* maybe now we're doing it">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mainloop.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainloop.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -203,15 +204,7 @@
       <workItem from="1721422741382" duration="18000" />
       <workItem from="1721423164172" duration="8363000" />
       <workItem from="1721668146222" duration="5638000" />
-      <workItem from="1721688892989" duration="4718000" />
-    </task>
-    <task id="LOCAL-00011" summary="* tdlib">
-      <option name="closed" value="true" />
-      <created>1717663566297</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1717663566297</updated>
+      <workItem from="1721688892989" duration="6013000" />
     </task>
     <task id="LOCAL-00012" summary="* Docker docker docker docker">
       <option name="closed" value="true" />
@@ -597,7 +590,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721702760470</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="* maybe now we're doing it">
+      <option name="closed" value="true" />
+      <created>1721702856606</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1721702856606</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -626,7 +627,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* Retrieve auth code" />
     <MESSAGE value="* testing in production, forgot savecontacts..." />
     <MESSAGE value="* Add Prometheus endpoint" />
     <MESSAGE value="* THANKS PYCHARM" />
@@ -651,7 +651,8 @@
     <MESSAGE value="* rip" />
     <MESSAGE value="* debug message" />
     <MESSAGE value="* are we doing it" />
-    <option name="LAST_COMMIT_MESSAGE" value="* are we doing it" />
+    <MESSAGE value="* maybe now we're doing it" />
+    <option name="LAST_COMMIT_MESSAGE" value="* maybe now we're doing it" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/telescope$webmain.coverage" NAME="webmain Coverage Results" MODIFIED="1719007097200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
