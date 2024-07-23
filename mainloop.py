@@ -86,12 +86,17 @@ class MainLoop:
 			def _stop():
 				# we assume the running loop couldn't have changed (?)
 				loop.stop()
-				sys.exit(0)
 
 			asyncio.create_task(self.shutdown()).add_done_callback(lambda x: _stop())
 
-		signal.signal(signal.SIGINT, graceful_shutdown)
-		signal.signal(signal.SIGTERM, graceful_shutdown)
+		try:
+			for sig in (signal.SIGINT, signal.SIGTERM):
+				loop.add_signal_handler(sig, graceful_shutdown)
+		# doesn't work on windows
+		# can't use signal.signal because the handlers will be permanently blocked by the asyncio event loop
+		# and we are allergic to threads
+		except NotImplementedError:
+			pass
 
 		loop.run_until_complete(self.run(clientGenerator))
 		loop.close()
