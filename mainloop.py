@@ -1,9 +1,7 @@
 import asyncio
 import os
 import signal
-import sys
-from asyncio import Task
-from typing import Callable, List, Optional
+from typing import Callable, Optional
 
 from quart import Quart
 
@@ -12,6 +10,7 @@ from database.core import Database
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
 from telegram.webapp import create_webapp
+
 
 # dotenv wouldn't install...
 def read_env_file(file_path):
@@ -88,6 +87,7 @@ class MainLoop:
 		shut_us_down = None
 
 		def graceful_shutdown(*args):
+			nonlocal shut_us_down
 			if(self._shutting_down):
 				return
 
