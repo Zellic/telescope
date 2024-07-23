@@ -53,6 +53,7 @@ class MainLoop:
 
 		self.manager = TelegramClientManager()
 		self._app: Optional[Quart] = None
+		self._shutting_down = False
 
 	def addClient(self, client: TelegramClient):
 		self.manager.add_client(client)
@@ -63,37 +64,48 @@ class MainLoop:
 
 		# we can't pass this to gather or it will eat control+c events for some reason...
 		# it's okay because the manager runs forever, and we shut the manager down AFTER we shut the webapp down
-		self._app.run_task(host, 8888)
-		await asyncio.gather(self.manager.start())
+		await asyncio.gather(self.manager.start(), self._app.run_task(host, 8888))
 
 	async def shutdown(self):
+		if(self._shutting_down):
+			return
+
+		self._shutting_down = True
+
 		print("Shutting down...")
 
 		if(self._app is not None):
 			await self._app.shutdown()
+			print("Webapp stopped")
 
-		async for client in self.manager.stop_and_yield():
-			print(f"Stopped client: {client.auth.phone}")
+		if(self.manager.is_started()):
+			async for client in self.manager.stop_and_yield():
+				print(f"Stopped client: {client.auth.phone}")
 
 	def mainLoop(self, clientGenerator: Callable[[str], TelegramClient]):
 		loop = asyncio.new_event_loop()
 		asyncio.set_event_loop(loop)
 
 		def graceful_shutdown(*args):
+			if(self._shutting_down):
+				return
+
 			def _stop():
 				# we assume the running loop couldn't have changed (?)
 				loop.stop()
 
 			asyncio.create_task(self.shutdown()).add_done_callback(lambda x: _stop())
 
-		try:
-			for sig in (signal.SIGINT, signal.SIGTERM):
-				loop.add_signal_handler(sig, graceful_shutdown)
-		# doesn't work on windows
-		# can't use signal.signal because the handlers will be permanently blocked by the asyncio event loop
-		# and we are allergic to threads
-		except NotImplementedError:
-			pass
+		async def hijack_close_signal():
+			await asyncio.sleep(0.1)
+			try:
+				for sig in (signal.SIGINT, signal.SIGTERM):
+					loop.add_signal_handler(sig, graceful_shutdown)
+			# doesn't work on windows
+			# can't use signal.signal because the handlers will be permanently blocked by the asyncio event loop
+			# and we are allergic to threads
+			except NotImplementedError:
+				pass
 
-		loop.run_until_complete(self.run(clientGenerator))
+		loop.run_until_complete(asyncio.gather(self.run(clientGenerator), hijack_close_signal()))
 		loop.close()
