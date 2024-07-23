@@ -93,11 +93,7 @@ class MainLoop:
 			if(self._shutting_down):
 				return
 
-			def _stop():
-				# we assume the running loop couldn't have changed (?)
-				loop.stop()
-
-			asyncio.create_task(self.shutdown()).add_done_callback(lambda x: _stop())
+			asyncio.create_task(self.shutdown())
 
 		# we do this because the Quart app sets its own close signal handlers that block ours (???)
 		# so we take them back after the app's initialization is done
