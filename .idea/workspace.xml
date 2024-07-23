@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* why are you like this quart">
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* okay, nuclear option">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainloop.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainloop.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,23 +204,7 @@
       <workItem from="1721422741382" duration="18000" />
       <workItem from="1721423164172" duration="8363000" />
       <workItem from="1721668146222" duration="5638000" />
-      <workItem from="1721688892989" duration="6619000" />
-    </task>
-    <task id="LOCAL-00015" summary="* Reeeee">
-      <option name="closed" value="true" />
-      <created>1717694386130</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1717694386130</updated>
-    </task>
-    <task id="LOCAL-00016" summary="* web thingy loads, API supported auth">
-      <option name="closed" value="true" />
-      <created>1718271017205</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1718271017205</updated>
+      <workItem from="1721688892989" duration="11562000" />
     </task>
     <task id="LOCAL-00017" summary="* Add web feature">
       <option name="closed" value="true" />
@@ -598,7 +582,23 @@
       <option name="project" value="LOCAL" />
       <updated>1721704953448</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="* I'm screaming">
+      <option name="closed" value="true" />
+      <created>1721705108114</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1721705108114</updated>
+    </task>
+    <task id="LOCAL-00065" summary="* okay, nuclear option">
+      <option name="closed" value="true" />
+      <created>1721705221531</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1721705221531</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -627,8 +627,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* THANKS PYCHARM" />
-    <MESSAGE value="* sleepy code.........." />
     <MESSAGE value="* For best results, remember to commit the files" />
     <MESSAGE value="* ????????????" />
     <MESSAGE value="* add debugging" />
@@ -652,7 +650,9 @@
     <MESSAGE value="* we finally did it" />
     <MESSAGE value="* derp" />
     <MESSAGE value="* why are you like this quart" />
-    <option name="LAST_COMMIT_MESSAGE" value="* why are you like this quart" />
+    <MESSAGE value="* I'm screaming" />
+    <MESSAGE value="* okay, nuclear option" />
+    <option name="LAST_COMMIT_MESSAGE" value="* okay, nuclear option" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/telescope$webmain.coverage" NAME="webmain Coverage Results" MODIFIED="1719007097200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
