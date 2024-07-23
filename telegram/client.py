@@ -97,12 +97,15 @@ class TelegramClient:
 		if(self.is_started()):
 			raise Exception("Already started")
 
+		self._started = True
+
 		self.client_id = self._tdlib.create_client_id()
 		self.send({'@type': 'getOption', 'name': 'version', '@extra': 1.01234})
 
 	async def stop(self):
 		if (not self.is_started()):
-			raise Exception("Hasn't been started yet")
+			print("Client wasn't started yet.")
+			return
 
 		if(self._stop_future):
 			if(self._stop_future.done()):
