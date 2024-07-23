@@ -19,4 +19,8 @@ COPY . /app
 
 RUN pip install -r /app/requirements.txt
 
+RUN rm -rf /build
+
+WORKDIR /app
+
 CMD ["python3", "/app/main.py"]
