@@ -8,6 +8,7 @@ create_table_sql = """
 CREATE TABLE IF NOT EXISTS telegram_accounts (
     id SERIAL PRIMARY KEY,
     phone_number TEXT NOT NULL,
+    username TEXT,
     email TEXT,
     comment TEXT
 );
@@ -17,6 +18,7 @@ CREATE TABLE IF NOT EXISTS telegram_accounts (
 class Account:
 	id: int
 	phone_number: str
+	username: Optional[str]
 	email: Optional[str]
 	comment: Optional[str]
 
@@ -28,12 +30,18 @@ class AddAccountResult(NamedTuple):
 class AccountManager:
 	def __init__(self, db: Database):
 		self.db = db
-		self.db.execute(create_table_sql)
+		result = self.db.execute(create_table_sql)
+		if(not result.success):
+			raise Exception(f"Failed to create accounts table: {result.error_message}")
 
 	def getAccounts(self) -> List[Account]:
-		query = "SELECT id, phone_number, email, comment FROM telegram_accounts"
+		query = "SELECT id, phone_number, username, email, comment FROM telegram_accounts"
 		results = self.db.execute(query)
-		return [Account(*row) for row in results]
+
+		if(results.success == False):
+			raise Exception("Failed to fetch accounts.")
+
+		return [Account(*row) for row in results.data]
 
 	def add_account(self, phone_number: str, email: Optional[str] = None, comment: Optional[str] = None) -> AddAccountResult:
 		if not re.match(r'^\d{11}$', phone_number):
@@ -57,9 +65,21 @@ class AccountManager:
 
 		try:
 			result = self.db.execute(insert_query, (phone_number, email, comment, phone_number))
-			if result:
+			if result.success:
 				return AddAccountResult(True, None)
 			else:
-				return AddAccountResult(False, "Account with this phone number already exists")
+				return AddAccountResult(False, f"Failed to insert account: {result.error_message}")
 		except Exception as e:
 			return AddAccountResult(False, f"Database error: {str(e)}")
+
+	def set_username(self, phone_number: str, username: str) -> None:
+		insert_query = """
+		UPDATE telegram_accounts
+		SET username = %s
+		WHERE phone_number = %s;
+        """
+
+		try:
+			self.db.execute(insert_query, (username, phone_number))
+		except Exception as e:
+			print(f"Failed to set username: {e}")

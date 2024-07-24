@@ -42,7 +42,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			code_module = next((x for x in user._modules if isinstance(x, GetAuthCode)), None)
 
 			return {
-				"name": None if info is None else info.first_name + " " + info.last_name,
+				"name": None if info is None or info.first_name is None or info.last_name is None else info.first_name + " " + info.last_name,
 				"username": None if info is None else info.username,
 				"phone": user.auth.phone,
 				"lastCode": None if code_module is None or code_module.code is None else {
