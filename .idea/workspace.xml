@@ -4,9 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Let's go">
-      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Docker ignore">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/auth/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/auth/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/auth/schemes/staging.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/auth/schemes/staging.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/tdlib.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/tdlib.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/webapp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/404.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/Xig2X6rjnUfQ9cNvgAI54/_buildManifest.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/Xig2X6rjnUfQ9cNvgAI54/_ssgManifest.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/app/page-6f03af6a148659c3.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/index.txt" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/index.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webtest/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webtest/api.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webtest/mainweb.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webtest/quartapp.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,15 +218,7 @@
       <workItem from="1721422741382" duration="18000" />
       <workItem from="1721423164172" duration="8363000" />
       <workItem from="1721668146222" duration="5638000" />
-      <workItem from="1721688892989" duration="11833000" />
-    </task>
-    <task id="LOCAL-00018" summary="* Testing web API">
-      <option name="closed" value="true" />
-      <created>1718436074107</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1718436074107</updated>
+      <workItem from="1721688892989" duration="20517000" />
     </task>
     <task id="LOCAL-00019" summary="* Add API for modal">
       <option name="closed" value="true" />
@@ -598,7 +604,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721762664374</updated>
     </task>
-    <option name="localTasksCounter" value="67" />
+    <task id="LOCAL-00067" summary="* Docker ignore">
+      <option name="closed" value="true" />
+      <created>1721762952076</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1721762952076</updated>
+    </task>
+    <option name="localTasksCounter" value="68" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -627,7 +641,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* ????????????" />
     <MESSAGE value="* add debugging" />
     <MESSAGE value="* whoops" />
     <MESSAGE value="* reeeeeeeee" />
@@ -652,13 +665,14 @@
     <MESSAGE value="* I'm screaming" />
     <MESSAGE value="* okay, nuclear option" />
     <MESSAGE value="* Let's go" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Let's go" />
+    <MESSAGE value="* Docker ignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="* Docker ignore" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/telescope$webmain.coverage" NAME="webmain Coverage Results" MODIFIED="1719007097200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
     <SUITE FILE_PATH="coverage/telescope$mainweb.coverage" NAME="mainweb Coverage Results" MODIFIED="1720464479499" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
     <SUITE FILE_PATH="coverage/telescope$main.coverage" NAME="main Coverage Results" MODIFIED="1721305230381" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/telescope$test.coverage" NAME="test Coverage Results" MODIFIED="1721688895559" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/telescope$test.coverage" NAME="test Coverage Results" MODIFIED="1721847180172" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/telescope$webapp.coverage" NAME="webapp Coverage Results" MODIFIED="1719006269600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
     <SUITE FILE_PATH="coverage/telescope$client.coverage" NAME="client Coverage Results" MODIFIED="1716215455947" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
   </component>

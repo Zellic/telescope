@@ -23,7 +23,7 @@ class TelegramStaging(AuthenticationScheme):
 	def authorizationStateWaitTdlibParameters(self, client: TelegramClient):
 		client.send({
 			'@type': 'setTdlibParameters',
-			'database_directory': 'tdlib',
+			'database_directory': self.db_directory,
 			'use_message_database': False,
 			'use_secret_chats': False,
 			'use_test_dc': True,
