@@ -6,7 +6,7 @@ from quart_cors import cors
 from werkzeug.security import safe_join
 
 from database.accounts import AccountManager
-from telegram.auth.api import AuthorizationSuccess, AuthorizationFailed
+from telegram.auth.api import AuthorizationSuccess, ConnectionClosed
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
 from telegram.tgmodules.getcode import GetAuthCode
@@ -52,6 +52,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 				"status": {
 					"stage": user.auth.status.name,
 					"inputRequired": user.auth.status.requiresInput,
+					"error": user.auth.status.error if hasattr(user.auth.status, "error") else None,
 				}
 			}
 
@@ -141,7 +142,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		]
 
 		for user in manager.clients:
-			if isinstance(user.auth.status, AuthorizationFailed):
+			if isinstance(user.auth.status, ConnectionClosed):
 				out.append(
 					f'telescope_auth_status{{phone="{user.auth.phone}",stage="{user.auth.status.name}",status="failed"}} 1')
 			elif not isinstance(user.auth.status, AuthorizationSuccess):

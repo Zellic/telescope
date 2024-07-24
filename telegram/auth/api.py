@@ -39,9 +39,17 @@ class AuthorizationSuccess(APIAuthState):
 	name = "AuthorizationSuccess"
 	requiresInput = False
 
-class AuthorizationFailed(APIAuthState):
-	name = "AuthorizationFailed"
+class ConnectionClosed(APIAuthState):
+	name = "ConnectionClosed"
 	requiresInput = False
+
+class ErrorOccurred(APIAuthState):
+	name = "ErrorOccurred"
+	requiresInput = False
+
+	def __init__(self, error):
+		super().__init__()
+		self.error = error
 
 class APIEvent:
 	def to_json(self) -> str:
@@ -94,7 +102,7 @@ class APIAuth(AuthenticationProvider):
 	def authorizationStateClosed(self, client: TelegramClient):
 		self.scheme.authorizationStateClosed(client)
 		# TODO: this should be connection closed, not auth failed
-		self.status = AuthorizationFailed()
+		self.status = ConnectionClosed()
 
 	def authorizationStateWaitPhoneNumber(self, client: TelegramClient):
 		self.scheme.authorizationStateWaitPhoneNumber(client, self.phone)

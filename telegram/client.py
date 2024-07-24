@@ -1,8 +1,12 @@
 import asyncio
+import sys
 from typing import List
 
 from telegram.auth.base import AuthenticationProvider
 from telegram.tdlib import TDLib
+
+def eprint(*args, **kwargs):
+	print(*args, file=sys.stderr, **kwargs)
 
 class TelegramClient:
 	def __init__(self, auth: AuthenticationProvider, modules: List[any]):
@@ -50,7 +54,18 @@ class TelegramClient:
 				# a future handled this
 				return
 
-		if event['@type'] == 'updateAuthorizationState':
+		if event['@type'] == 'error':
+			eprint(f"[!!! - {self.auth.phone}] an error occurred: {repr(event)}")
+
+			# circular import lol
+			from telegram.auth.api import ErrorOccurred
+			if('code' in event):
+				self.auth.status = ErrorOccurred(f"[{event['code']}] {event['message']}")
+			else:
+				self.auth.status = ErrorOccurred(f"{event['message']}")
+
+			return
+		elif event['@type'] == 'updateAuthorizationState':
 			auth_state = event['authorization_state']
 
 			if auth_state['@type'] == 'authorizationStateClosed':
