@@ -2,6 +2,7 @@ import hashlib
 from dataclasses import dataclass, field
 from typing import Optional, Dict
 
+from database.core import Database
 from telegram.module import TelegramModule, OnEvent
 
 # https://github.com/tdlib/td/blob/f35dea776cdaa8b986e2a634dfabf0dafe659be7/td/generate/scheme/td_api.tl#L993
@@ -146,10 +147,12 @@ def truthyOrNull(thing):
 		return None
 
 class SaveContacts(TelegramModule):
-	def __init__(self, db, our_phone_number):
+	def __init__(self, db: Database, our_phone_number):
 		self.db = db
 		self.user_records: Dict[int, TelegramContact] = {}
-		self.db.execute(create_table_sql)
+		result = self.db.execute(create_table_sql)
+		if(not result.success):
+			raise Exception(f"Failed to create contacts table: {result.error_message}")
 		self.our_phone_number = our_phone_number
 
 	@OnEvent("updateAuthorizationState")
@@ -213,4 +216,6 @@ class SaveContacts(TelegramModule):
 			return
 
 		print("DM with user: " + repr(user))
-		self.db.execute(insert_sql, user.to_db_tuple())
+		result = self.db.execute(insert_sql, user.to_db_tuple())
+		if(not result.success):
+			raise Exception(f"Failed to update contact table: {result.error_message}")

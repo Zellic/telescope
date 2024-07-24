@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+from typing import Optional, List, Any
+
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from psycopg2.pool import SimpleConnectionPool
@@ -9,6 +12,14 @@ def _parse_dbname_from_dsn(dsn):
 		return params.get('dbname')
 	except Exception as e:
 		raise ValueError(f"Error parsing DSN: {str(e)}")
+
+@dataclass
+class QueryResult:
+	success: bool
+	data: Optional[List[Any]] = None
+	error_message: Optional[str] = None
+	error_code: Optional[str] = None
+	query: Optional[str] = None
 
 class Database:
 	def __init__(self, dsn, minconn=1, maxconn=10):
@@ -55,12 +66,30 @@ class Database:
 		conn = self.pool.getconn()
 		try:
 			with conn.cursor() as cur:
-				cur.execute(query, params)
-				conn.commit()
 				try:
-					return cur.fetchall()
-				except psycopg2.ProgrammingError:
-					return None
+					cur.execute(query, params)
+					conn.commit()
+					try:
+						data = cur.fetchall()
+						return QueryResult(success=True, data=data)
+					except psycopg2.ProgrammingError as e:
+						if e.pgcode is None:
+							return QueryResult(success=True, data=None)
+						else:
+							return QueryResult(
+								success=False,
+								error_message=str(e),
+								error_code=e.pgcode,
+								query=query
+							)
+				except psycopg2.Error as e:
+					conn.rollback()
+					return QueryResult(
+						success=False,
+						error_message=e.pgerror,
+						error_code=e.pgcode,
+						query=query
+					)
 		finally:
 			self.pool.putconn(conn)
 
