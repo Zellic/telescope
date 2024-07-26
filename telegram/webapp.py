@@ -1,3 +1,4 @@
+import asyncio
 import json
 import os
 import re
@@ -155,6 +156,46 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 
 		metrics_text = '\n'.join(out)
 		return Response(metrics_text, mimetype="text/plain")
+
+	@app.route("/tgdisconnect")
+	async def tgdisconnect():
+		phone = request.args.get("phone")
+		client = next((x for x in manager.clients if x.auth.phone == phone), None)
+
+		if(client is None):
+			return json.dumps({"error": f"Couldn't find client with phone number: {phone}"}), 500
+
+		if(not client.is_started()):
+			return json.dumps({"error": f"Client was not started"}), 500
+
+		if(client.is_stopped()):
+			return json.dumps({"error": f"Client is already stopped"}), 500
+
+		if(client.is_stopping()):
+			return json.dumps({"error": f"Client is already stopping"}), 500
+
+		async def shutdown_client():
+			await client.stop()
+			manager.clients.remove(client)
+			manager.add_client(clientFor(phone), False)
+
+		await asyncio.create_task(shutdown_client())
+		return json.dumps({"message": "Client is now disconnecting"}), 200
+
+	# noinspection PyProtectedMember
+	@app.route("/tgconnect")
+	async def tgconnect():
+		phone = request.args.get("phone")
+		client = next((x for x in manager.clients if x.auth.phone == phone), None)
+
+		if(client is None):
+			return json.dumps({"error": f"Couldn't find client with phone number: {phone}"}), 500
+
+		if(client.is_started()):
+			return json.dumps({"error": f"Client is already started"}), 500
+
+		client.start()
+		return json.dumps({"message": "Client is now starting"}), 200
 
 	@app.route('/<path:asset_path>')
 	async def serve_static(asset_path):

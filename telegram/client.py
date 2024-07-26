@@ -108,6 +108,12 @@ class TelegramClient:
 	def is_started(self):
 		return self._started
 
+	def is_stopped(self):
+		return self._stop_future is not None and self._stop_future.done()
+
+	def is_stopping(self):
+		return self._stop_future is not None
+
 	def start(self):
 		if(self.is_started()):
 			raise Exception("Already started")
