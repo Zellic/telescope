@@ -23,6 +23,5 @@ def main():
 	core.addClient(testClientForClosure(TelegramStaging.generate_phone(), None, False))
 	core.mainLoop(lambda x: testClientForClosure(x, None, False))
 
-
 if __name__ == "__main__":
 	main()

@@ -5,7 +5,14 @@ from telegram.auth.base import AuthenticationProvider, APIAuthState, Authenticat
 from telegram.client import TelegramClient
 
 """
-This is the default state when the server hasn't asked us for anything yet.
+This is the default state when we haven't started a connection to the server yet
+"""
+class ClientNotStarted(APIAuthState):
+	name = "ClientNotStarted"
+	requiresInput = False
+
+"""
+This is the default post-connect state when the server hasn't asked us for anything yet.
 """
 class WaitingOnServer(APIAuthState):
 	name = "WaitingOnServer"
@@ -70,7 +77,7 @@ class APIAuth(AuthenticationProvider):
 	def __init__(self, phone: str, scheme: AuthenticationScheme):
 		self.phone = phone
 		self.scheme = scheme
-		self._status: APIAuthState = WaitingOnServer()
+		self._status: APIAuthState = ClientNotStarted()
 		self._event_callbacks: List[Callable[[APIEvent], None]] = []
 
 	@property

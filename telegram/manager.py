@@ -19,13 +19,13 @@ class TelegramClientManager:
         self._task = None
         self._started = False
 
-    def add_client(self, client: TelegramClient):
+    def add_client(self, client: TelegramClient, start = True):
         self.clients.append(client)
         # gross hack, difficult to conveniently fix without splitting this into two classes
         # let's just not!
         client._tdlib = self.tdlib
 
-        if(self._started):
+        if(self._started and start):
             client.start()
 
     def _try_dispatch_event(self):

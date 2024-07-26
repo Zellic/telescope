@@ -4,18 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* update web ui&#10;* add error support">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" afterDir="false" />
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Handle SQL errors correctly.&#10;* Persist username into DB for reconnects">
+      <change afterPath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/688-0d57bfe23d67a8ad.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/app/page-28f3c857d68bd1f1.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/core.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/core.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/telegram/tgmodules/savecontacts.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/tgmodules/savecontacts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/telegram/tgmodules/userinfo.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/tgmodules/userinfo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/auth/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/auth/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/telegram/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/webapp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/404.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/624-11030a26f90dc38c.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/app/page-3a0289c44065d157.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/trptKW-VdtyKpLbDhvvyA/_buildManifest.js" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/_next/static/QcFnmQRurylj4vd8TkU5e/_buildManifest.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/trptKW-VdtyKpLbDhvvyA/_ssgManifest.js" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/_next/static/QcFnmQRurylj4vd8TkU5e/_ssgManifest.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/index.txt" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/index.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -65,7 +68,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "E:/Zellic/telescope/natives",
+    "last_opened_file_path": "E:/Zellic/telescope/telescope-webui-dist",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -82,6 +85,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Zellic\telescope\telescope-webui-dist" />
       <recent name="E:\Zellic\telescope\natives" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -214,15 +218,7 @@
       <workItem from="1721422741382" duration="18000" />
       <workItem from="1721423164172" duration="8363000" />
       <workItem from="1721668146222" duration="5638000" />
-      <workItem from="1721688892989" duration="25569000" />
-    </task>
-    <task id="LOCAL-00020" summary="* Port web test code and integrate with Telegram">
-      <option name="closed" value="true" />
-      <created>1720355088818</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1720355088818</updated>
+      <workItem from="1721688892989" duration="36168000" />
     </task>
     <task id="LOCAL-00021" summary="* Weeee it works">
       <option name="closed" value="true" />
@@ -608,7 +604,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721847240626</updated>
     </task>
-    <option name="localTasksCounter" value="69" />
+    <task id="LOCAL-00069" summary="* Handle SQL errors correctly.&#10;* Persist username into DB for reconnects">
+      <option name="closed" value="true" />
+      <created>1721852411151</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1721852411151</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -637,7 +641,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* whoops" />
     <MESSAGE value="* reeeeeeeee" />
     <MESSAGE value="* reeee" />
     <MESSAGE value="* reeeeeeeeeeeeee" />
@@ -662,13 +665,14 @@
     <MESSAGE value="* Let's go" />
     <MESSAGE value="* Docker ignore" />
     <MESSAGE value="* update web ui&#10;* add error support" />
-    <option name="LAST_COMMIT_MESSAGE" value="* update web ui&#10;* add error support" />
+    <MESSAGE value="* Handle SQL errors correctly.&#10;* Persist username into DB for reconnects" />
+    <option name="LAST_COMMIT_MESSAGE" value="* Handle SQL errors correctly.&#10;* Persist username into DB for reconnects" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/telescope$webmain.coverage" NAME="webmain Coverage Results" MODIFIED="1719007097200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
     <SUITE FILE_PATH="coverage/telescope$mainweb.coverage" NAME="mainweb Coverage Results" MODIFIED="1720464479499" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
     <SUITE FILE_PATH="coverage/telescope$main.coverage" NAME="main Coverage Results" MODIFIED="1721305230381" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/telescope$test.coverage" NAME="test Coverage Results" MODIFIED="1721852324785" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/telescope$test.coverage" NAME="test Coverage Results" MODIFIED="1721986188196" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/telescope$webapp.coverage" NAME="webapp Coverage Results" MODIFIED="1719006269600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
     <SUITE FILE_PATH="coverage/telescope$client.coverage" NAME="client Coverage Results" MODIFIED="1716215455947" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
   </component>
