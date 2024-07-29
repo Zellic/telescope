@@ -4,9 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Missed files...">
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Fix regex">
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/information_schema.FNRwLQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/information_schema.FNRwLQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/pg_catalog.0S1ZNQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/public.abK9xQ.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/accounts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/webapp.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,32 +49,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.client.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.mainweb.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.webapp.executor&quot;: &quot;Run&quot;,
-    &quot;Python.webmain.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/Zellic/telescope/telescope-webui-dist&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.client.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.mainweb.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.webapp.executor": "Run",
+    "Python.webmain.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "E:/Zellic/telescope/telescope-webui-dist",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Zellic\telescope\telescope-webui-dist" />
@@ -206,15 +211,8 @@
       <workItem from="1721423164172" duration="8363000" />
       <workItem from="1721668146222" duration="5638000" />
       <workItem from="1721688892989" duration="36347000" />
-      <workItem from="1721986434933" duration="1515000" />
-    </task>
-    <task id="LOCAL-00023" summary="* Add hash support">
-      <option name="closed" value="true" />
-      <created>1720460783359</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1720460783359</updated>
+      <workItem from="1721986434933" duration="5194000" />
+      <workItem from="1722252098331" duration="2247000" />
     </task>
     <task id="LOCAL-00024" summary="* bugs">
       <option name="closed" value="true" />
@@ -600,7 +598,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721986319036</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="* Fix regex">
+      <option name="closed" value="true" />
+      <created>1722016300704</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1722016300704</updated>
+    </task>
+    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -629,7 +635,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* reeeeeeeeeeeeee" />
     <MESSAGE value="* remove logging" />
     <MESSAGE value="* whoopsie, mount ./accounts into the container" />
     <MESSAGE value="* Refactor main loop" />
@@ -654,13 +659,14 @@
     <MESSAGE value="* Handle SQL errors correctly.&#10;* Persist username into DB for reconnects" />
     <MESSAGE value="* Add connect/disconnect support, update UI" />
     <MESSAGE value="* Missed files..." />
-    <option name="LAST_COMMIT_MESSAGE" value="* Missed files..." />
+    <MESSAGE value="* Fix regex" />
+    <option name="LAST_COMMIT_MESSAGE" value="* Fix regex" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/telescope$webmain.coverage" NAME="webmain Coverage Results" MODIFIED="1719007097200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
     <SUITE FILE_PATH="coverage/telescope$mainweb.coverage" NAME="mainweb Coverage Results" MODIFIED="1720464479499" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
     <SUITE FILE_PATH="coverage/telescope$main.coverage" NAME="main Coverage Results" MODIFIED="1721305230381" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/telescope$test.coverage" NAME="test Coverage Results" MODIFIED="1721986240964" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/telescope$test.coverage" NAME="test Coverage Results" MODIFIED="1722254636583" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/telescope$webapp.coverage" NAME="webapp Coverage Results" MODIFIED="1719006269600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
     <SUITE FILE_PATH="coverage/telescope$client.coverage" NAME="client Coverage Results" MODIFIED="1716215455947" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
   </component>
