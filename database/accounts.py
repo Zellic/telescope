@@ -7,7 +7,7 @@ from dataclasses import dataclass
 create_table_sql = """
 CREATE TABLE IF NOT EXISTS telegram_accounts (
     id SERIAL PRIMARY KEY,
-    phone_number TEXT NOT NULL,
+    phone_number TEXT NOT NULL UNIQUE,
     username TEXT,
     email TEXT,
     comment TEXT
@@ -56,15 +56,11 @@ class AccountManager:
 
 		insert_query = """
         INSERT INTO telegram_accounts (phone_number, email, comment)
-        SELECT %s, %s, %s
-        WHERE NOT EXISTS (
-            SELECT 1 FROM telegram_accounts WHERE phone_number = %s
-        )
-        RETURNING id
+        VALUES (%s, %s, %s)
         """
 
 		try:
-			result = self.db.execute(insert_query, (phone_number, email, comment, phone_number))
+			result = self.db.execute(insert_query, (phone_number, email, comment))
 			if result.success:
 				return AddAccountResult(True, None)
 			else:
