@@ -22,7 +22,6 @@ class Account:
 	email: Optional[str]
 	comment: Optional[str]
 
-
 class AddAccountResult(NamedTuple):
 	success: bool
 	error_message: Optional[str]
@@ -79,3 +78,12 @@ class AccountManager:
 			self.db.execute(insert_query, (username, phone_number))
 		except Exception as e:
 			print(f"Failed to set username: {e}")
+
+	def get_account(self, phone_number: str) -> Optional[Account]:
+		query = "SELECT id, phone_number, username, email, comment FROM telegram_accounts WHERE phone_number = %s"
+		result = self.db.execute(query, (phone_number,))
+
+		if(result.success == False):
+			return None
+
+		return Account(*result.data[0])

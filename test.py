@@ -17,11 +17,11 @@ def main():
 			GetAuthCode()
 		])
 
-	# for account in core.accounts.getAccounts():
-	# 	core.addClient(testClientForClosure(account.phone_number, account.username, True))
+	for account in core.accounts.getAccounts():
+		core.addClient(testClientForClosure(account.phone_number, account.username, True))
 
-	core.addClient(testClientForClosure(TelegramStaging.generate_phone(), None, False))
-	core.mainLoop(lambda x: testClientForClosure(x, None, False))
+	# core.addClient(testClientForClosure(TelegramStaging.generate_phone(), None, False))
+	core.mainLoop(lambda phone, username: testClientForClosure(phone, username, False))
 
 if __name__ == "__main__":
 	main()

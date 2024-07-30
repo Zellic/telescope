@@ -32,20 +32,31 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 	# allow requests from the nextjs frontend dev server
 	app = cors(app, allow_origin="http://localhost:3000")
 	frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'telescope-webui-dist')
+	lookup = {}
 
 	@app.route("/clients")
 	async def clients():
 		oldhash = request.args.get("hash")
-		def makeblob(user: TelegramClient):
+		async def makeblob(user: TelegramClient):
 			info_module = next((x for x in user._modules if isinstance(x, UserInfo)), None)
 			info = None if info_module is None else info_module.info
 
 			code_module = next((x for x in user._modules if isinstance(x, GetAuthCode)), None)
 
+			# TODO: should probably batch this...
+			if(user.auth.phone in lookup):
+				account = lookup[user.auth.phone]
+			else:
+				account = accounts.get_account(user.auth.phone)
+
+			lookup[user.auth.phone] = account
+
 			return {
 				"name": None if info is None or info.first_name is None or info.last_name is None else info.first_name + " " + info.last_name,
 				"username": None if info is None else info.username,
 				"phone": user.auth.phone,
+				"email": None if account is None else account.email,
+				"comment": None if account is None else account.comment,
 				"lastCode": None if code_module is None or code_module.code is None else {
 					"value": int(code_module.code),
 					"date": code_module.timestamp,
@@ -57,7 +68,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 				}
 			}
 
-		items = [makeblob(x) for x in manager.clients]
+		items = [await makeblob(x) for x in manager.clients]
 		ret = {
 			'hash': str(hash(json.dumps(items))),
 			'items': items,
@@ -175,9 +186,13 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			return json.dumps({"error": f"Client is already stopping"}), 500
 
 		async def shutdown_client():
+			info_module = next((x for x in client._modules if isinstance(x, UserInfo)), None)
+			info = None if info_module is None else info_module.info
+
 			await client.stop()
+
 			manager.clients.remove(client)
-			manager.add_client(clientFor(phone), False)
+			manager.add_client(clientFor(phone, None if info is None else info.db_username()), False)
 
 		await asyncio.create_task(shutdown_client())
 		return json.dumps({"message": "Client is now disconnecting"}), 200
