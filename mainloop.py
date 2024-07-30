@@ -88,7 +88,7 @@ class MainLoop:
 		# this library sucks
 		sys.exit(0)
 
-	def mainLoop(self, clientGenerator: Callable[[str], TelegramClient]):
+	def mainLoop(self, clientGenerator: Callable[[str, Optional[str]], TelegramClient]):
 		loop = asyncio.new_event_loop()
 		asyncio.set_event_loop(loop)
 		shut_us_down = None
