@@ -20,8 +20,7 @@ instead of `main.py`, which will use the
 `TelegramProduction`.
 
 This allows for using `TelegramStaging.generate_phone()` 
-- per [Telegram's API documentation](https://core.
-  telegram.org/api/auth#test-accounts), we may make as 
+- per [Telegram's API documentation](https://core.telegram.org/api/auth#test-accounts), we may make as 
   many accounts as we need to (only on the test DC), and 
   authenticating repeatedly, as well as authentication 
   failures, will not penalize our app ID.
