@@ -18,7 +18,7 @@ When testing during development you should use `test.py`
 instead of `main.py`, which will use the 
 `TelegramStaging` authentication scheme rather than 
 `TelegramProduction`. You will not be able to use real
-Telegramaccounts under this configuration, and you should
+Telegram accounts under this configuration, and you should
 use a separate testing or staging database via environment
 variables.
 
