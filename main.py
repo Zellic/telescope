@@ -26,7 +26,7 @@ def main():
 	for account in core.accounts.getAccounts():
 		core.addClient(clientForClosure(account.phone_number, account.username))
 
-	core.mainLoop(clientForClosure)
+	core.mainLoop(lambda x: clientForClosure(x, None))
 
 if __name__ == "__main__":
 	main()
