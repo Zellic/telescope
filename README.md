@@ -17,7 +17,10 @@ docker and a submodule.
 When testing during development you should use `test.py` 
 instead of `main.py`, which will use the 
 `TelegramStaging` authentication scheme rather than 
-`TelegramProduction`.
+`TelegramProduction`. You will not be able to use real
+Telegramaccounts under this configuration, and you should
+use a separate testing or staging database via environment
+variables.
 
 This allows for using `TelegramStaging.generate_phone()` 
 - per [Telegram's API documentation](https://core.telegram.org/api/auth#test-accounts), we may make as 
