@@ -83,7 +83,7 @@ class AccountManager:
 		query = "SELECT id, phone_number, username, email, comment FROM telegram_accounts WHERE phone_number = %s"
 		result = self.db.execute(query, (phone_number,))
 
-		if(result.success == False):
+		if(result.success == False or len(result.data) == 0):
 			return None
 
 		return Account(*result.data[0])
