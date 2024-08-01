@@ -11,7 +11,7 @@ from telegram.tgmodules.userinfo import UserInfo
 def main():
 	core = MainLoop()
 
-	def clientForClosure(phonenumber, username: Optional[str]):
+	def clientForClosure(phonenumber, username: Optional[str]=None):
 		scheme = TelegramProduction(core.API_ID, core.API_HASH, "accounts/" + phonenumber, True)
 		return TelegramClient(APIAuth(phonenumber, scheme), [
 			UserInfo(
@@ -26,7 +26,7 @@ def main():
 	for account in core.accounts.getAccounts():
 		core.addClient(clientForClosure(account.phone_number, account.username))
 
-	core.mainLoop(lambda x: clientForClosure(x, None))
+	core.mainLoop(clientForClosure)
 
 if __name__ == "__main__":
 	main()
