@@ -1,4 +1,4 @@
-from database.core import Database
+from database.core import Database, QueryResult
 import re
 from typing import List, Optional, NamedTuple
 
@@ -87,3 +87,9 @@ class AccountManager:
 			return None
 
 		return Account(*result.data[0])
+
+	def delete_account(self, phone_number: str) -> QueryResult:
+		query = "DELETE FROM telegram_accounts WHERE phone_number = %s"
+		result = self.db.execute(query, (phone_number,))
+
+		return result
