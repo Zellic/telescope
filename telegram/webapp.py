@@ -2,6 +2,8 @@ import asyncio
 import json
 import os
 import re
+import sys
+
 from quart import request, Quart, send_from_directory, abort, Response
 from quart_cors import cors
 from werkzeug.security import safe_join
@@ -211,6 +213,28 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 
 		client.start()
 		return json.dumps({"message": "Client is now starting"}), 200
+
+	@app.route("/deleteaccount")
+	async def deleteaccount():
+		phone = request.args.get("phone")
+		client = next((x for x in manager.clients if x.auth.phone == phone), None)
+
+		async def shutdown_and_remove():
+			if (client is not None and not client.is_stopped()):
+				if (not client.is_stopping()):
+					await client.stop()
+				else:
+					# noinspection PyProtectedMember
+					await client._stop_future
+
+			manager.clients.remove(client)
+			result = accounts.delete_account(phone)
+
+			if(not result.success):
+				sys.stderr.write(f"[!] Could not delete account {phone}: {result.error_code} / {result.error_message}")
+
+		await asyncio.create_task(shutdown_and_remove())
+		return json.dumps({"message": "Client is now disconnecting and will be removed"}), 200
 
 	@app.route('/<path:asset_path>')
 	async def serve_static(asset_path):
