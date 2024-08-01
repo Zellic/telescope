@@ -18,7 +18,7 @@ class TelegramStaging(AuthenticationScheme):
 		assert(len(phone) == 10)
 		self.phone = phone
 		self.code = phone[5] * 5
-		print("Code: " + repr(self.code))
+		print("Phone: " + repr(self.phone) +  ", code: " + repr(self.code))
 
 	def authorizationStateWaitTdlibParameters(self, client: TelegramClient):
 		client.send({
