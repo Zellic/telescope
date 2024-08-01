@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* thanks for wrapping my link pycharm I really appreciate it">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-    </list>
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* more doc" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -210,15 +208,7 @@
       <workItem from="1721986434933" duration="5194000" />
       <workItem from="1722252098331" duration="6828000" />
       <workItem from="1722339405794" duration="3673000" />
-      <workItem from="1722540850146" duration="6653000" />
-    </task>
-    <task id="LOCAL-00031" summary="* whoops">
-      <option name="closed" value="true" />
-      <created>1720636476534</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1720636476534</updated>
+      <workItem from="1722540850146" duration="6673000" />
     </task>
     <task id="LOCAL-00032" summary="* ports">
       <option name="closed" value="true" />
@@ -604,7 +594,15 @@
       <option name="project" value="LOCAL" />
       <updated>1722552119717</updated>
     </task>
-    <option name="localTasksCounter" value="80" />
+    <task id="LOCAL-00080" summary="* more doc">
+      <option name="closed" value="true" />
+      <created>1722552200481</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1722552200481</updated>
+    </task>
+    <option name="localTasksCounter" value="81" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -633,7 +631,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* Comment" />
     <MESSAGE value="* fgdsfgsdfg" />
     <MESSAGE value="* authorizationStateClosing" />
     <MESSAGE value="* rip" />
@@ -658,7 +655,8 @@
     <MESSAGE value="* Document testing" />
     <MESSAGE value="* derp" />
     <MESSAGE value="* thanks for wrapping my link pycharm I really appreciate it" />
-    <option name="LAST_COMMIT_MESSAGE" value="* thanks for wrapping my link pycharm I really appreciate it" />
+    <MESSAGE value="* more doc" />
+    <option name="LAST_COMMIT_MESSAGE" value="* more doc" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/telescope$webmain.coverage" NAME="webmain Coverage Results" MODIFIED="1719007097200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
