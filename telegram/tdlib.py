@@ -5,8 +5,14 @@ import os
 import sys
 import platform
 
-_log_message_callback_type = CFUNCTYPE(None, c_int, c_char_p)
+log_message_callback_type = CFUNCTYPE(None, c_int, c_char_p)
 LOG_ALL = False # TODO: read this from .env
+
+# noinspection PyArgumentList
+@log_message_callback_type
+def on_log_message_callback(verbosity_level, message):
+    if verbosity_level == 0:
+        sys.exit('TDLib fatal error: %r' % message)
 
 class TDLib:
     _instance = None
@@ -53,17 +59,11 @@ class TDLib:
 
         self._td_set_log_message_callback = self._tdjson.td_set_log_message_callback
         self._td_set_log_message_callback.restype = None
-        self._td_set_log_message_callback.argtypes = [c_int, _log_message_callback_type]
-
-    @staticmethod
-    def _on_log_message_callback(verbosity_level, message):
-        if verbosity_level == 0:
-            sys.exit('TDLib fatal error: %r' % message)
+        self._td_set_log_message_callback.argtypes = [c_int, log_message_callback_type]
 
     def _set_log_message_callback(self):
-        _log_message_callback = _log_message_callback_type(self._on_log_message_callback)
         # level 2: warnings and debug messages
-        self._td_set_log_message_callback(2, _log_message_callback)
+        self._td_set_log_message_callback(2, on_log_message_callback)
 
     def td_execute(self, query):
         query = json.dumps(query).encode('utf-8')
