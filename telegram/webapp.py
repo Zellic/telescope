@@ -8,8 +8,9 @@ from quart import request, Quart, send_from_directory, abort, Response
 from quart_cors import cors
 from werkzeug.security import safe_join
 
-from database.accounts import AccountManager
+from database.accounts import AccountManager, Account
 from telegram.auth.api import AuthorizationSuccess, ConnectionClosed
+from telegram.auth.base import StaticSecrets
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
 from telegram.tgmodules.getcode import GetAuthCode
@@ -36,6 +37,15 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 	frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'telescope-webui-dist')
 	lookup = {}
 
+	def _get_account(phone: str) -> Account:
+		if (phone in lookup):
+			account = lookup[phone]
+		else:
+			account = accounts.get_account(phone)
+
+		lookup[phone] = account
+		return account
+
 	@app.route("/clients")
 	async def clients():
 		oldhash = request.args.get("hash")
@@ -46,12 +56,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			code_module = next((x for x in user._modules if isinstance(x, GetAuthCode)), None)
 
 			# TODO: should probably batch this...
-			if(user.auth.phone in lookup):
-				account = lookup[user.auth.phone]
-			else:
-				account = accounts.get_account(user.auth.phone)
-
-			lookup[user.auth.phone] = account
+			account = _get_account(user.auth.phone)
 
 			return {
 				"name": None if info is None or info.first_name is None or info.last_name is None else info.first_name + " " + info.last_name,
@@ -63,6 +68,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 					"value": int(code_module.code),
 					"date": code_module.timestamp,
 				},
+				"two_factor_pass_is_set": False if account is None else account.two_factor_password is not None,
 				"status": {
 					"stage": user.auth.status.name,
 					"inputRequired": user.auth.status.requiresInput,
@@ -219,6 +225,9 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		phone = request.args.get("phone")
 		client = next((x for x in manager.clients if x.auth.phone == phone), None)
 
+		if(client is None):
+			return json.dumps({"error": f"Couldn't find client with phone number: {phone}"}), 500
+
 		async def shutdown_and_remove():
 			if (client is not None and not client.is_stopped()):
 				if (not client.is_stopping()):
@@ -231,10 +240,41 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			result = accounts.delete_account(phone)
 
 			if(not result.success):
-				sys.stderr.write(f"[!] Could not delete account {phone}: {result.error_code} / {result.error_message}")
+				sys.stderr.write(f"[!] Could not delete account {phone}: {result.error_code} / {result.error_message}\n")
 
 		await asyncio.create_task(shutdown_and_remove())
 		return json.dumps({"message": "Client is now disconnecting and will be removed"}), 200
+
+	@app.route("/setpassword", methods=['POST'])
+	async def setpassword():
+		try:
+			payload = json.loads(await request.get_data())
+		except:
+			return json.dumps({"error": f"Bad JSON payload"}), 500
+
+		if not all(key in payload for key in ['password']):
+			print("failed to set password: password is required")
+			return json.dumps({"error": "Invalid payload structure. 'password' is required."}), 400
+
+		phone = request.args.get("phone")
+		client = next((x for x in manager.clients if x.auth.phone == phone), None)
+
+		if(client is None):
+			return json.dumps({"error": f"Couldn't find client with phone number: {phone}"}), 500
+
+		res = accounts.set_two_factor_password(phone, payload['password'])
+		if(res.success):
+			_get_account(phone).two_factor_password = payload['password']
+
+			if(client.auth.scheme.secrets is not None):
+				client.auth.scheme.secrets.two_factor_password = payload['password']
+			else:
+				client.auth.scheme.secrets = StaticSecrets(two_factor_password=payload['password'])
+
+			return json.dumps({"message": "Password set successfully."}), 200
+		else:
+			sys.stderr.write("[!] failed to set password on account due to DB error: " + res.error_message + "\n")
+			return json.dumps({"error": "Failed to set password due to DB error, see stderr."}), 400
 
 	@app.route('/<path:asset_path>')
 	async def serve_static(asset_path):

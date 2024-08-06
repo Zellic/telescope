@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS telegram_accounts (
     phone_number TEXT NOT NULL UNIQUE,
     username TEXT,
     email TEXT,
-    comment TEXT
+    comment TEXT,
+    two_factor_password TEXT
 );
 """
 
@@ -21,6 +22,7 @@ class Account:
 	username: Optional[str]
 	email: Optional[str]
 	comment: Optional[str]
+	two_factor_password: Optional[str]
 
 class AddAccountResult(NamedTuple):
 	success: bool
@@ -78,6 +80,18 @@ class AccountManager:
 			self.db.execute(insert_query, (username, phone_number))
 		except Exception as e:
 			print(f"Failed to set username: {e}")
+
+	def set_two_factor_password(self, phone_number: str, password: str) -> QueryResult:
+		insert_query = """
+		UPDATE telegram_accounts
+		SET two_factor_password = %s
+		WHERE phone_number = %s;
+        """
+
+		try:
+			return self.db.execute(insert_query, (password, phone_number))
+		except Exception as e:
+			print(f"Failed to set two factor password: {e}")
 
 	def get_account(self, phone_number: str) -> Optional[Account]:
 		query = "SELECT id, phone_number, username, email, comment FROM telegram_accounts WHERE phone_number = %s"

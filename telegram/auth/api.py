@@ -76,7 +76,7 @@ class InputReceived(APIEvent):
 class APIAuth(AuthenticationProvider):
 	def __init__(self, phone: str, scheme: AuthenticationScheme):
 		self.phone = phone
-		self.scheme = scheme
+		self.scheme: AuthenticationScheme = scheme
 		self._status: APIAuthState = ClientNotStarted()
 		self._event_callbacks: List[Callable[[APIEvent], None]] = []
 
@@ -125,6 +125,13 @@ class APIAuth(AuthenticationProvider):
 		self.status.waitForValue(wait)
 
 	def authorizationStateWaitPassword(self, client: TelegramClient):
+		if(self.scheme.secrets is not None and self.scheme.secrets.two_factor_password is not None):
+			staticpass = self.scheme.secrets.two_factor_password
+			self.status = PasswordRequired()
+			self.scheme.authorizationStateWaitPassword(client, staticpass)
+			self._notify_event(InputReceived(self.status.name, staticpass))
+			return
+
 		self.status = PasswordRequired()
 
 		def wait(value):

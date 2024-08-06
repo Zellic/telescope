@@ -1,5 +1,7 @@
 import random
-from telegram.auth.base import AuthenticationProvider, AuthenticationScheme
+from typing import Optional
+
+from telegram.auth.base import AuthenticationProvider, AuthenticationScheme, StaticSecrets
 from telegram.client import TelegramClient
 
 class TelegramStaging(AuthenticationScheme):
@@ -10,7 +12,7 @@ class TelegramStaging(AuthenticationScheme):
 		ends = f"{end:04d}"
 		return f"99966{code}{ends}"
 
-	def __init__(self, phone, api_id, api_hash, db_directory: str):
+	def __init__(self, phone, api_id, api_hash, db_directory: str, secrets: Optional[StaticSecrets]):
 		self.api_id = api_id
 		self.api_hash = api_hash
 		self.db_directory = db_directory
@@ -18,6 +20,7 @@ class TelegramStaging(AuthenticationScheme):
 		assert(len(phone) == 10)
 		self.phone = phone
 		self.code = phone[5] * 5
+		self.secrets = secrets
 		print("Phone: " + repr(self.phone) +  ", code: " + repr(self.code))
 
 	def authorizationStateWaitTdlibParameters(self, client: TelegramClient):
