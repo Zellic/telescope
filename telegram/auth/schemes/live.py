@@ -2,11 +2,12 @@ from telegram.auth.base import AuthenticationScheme
 from telegram.client import TelegramClient
 
 class TelegramProduction(AuthenticationScheme):
-	def __init__(self, api_id: str, api_hash: str, db_directory: str, use_message_database=False):
+	def __init__(self, api_id: str, api_hash: str, db_directory: str, secrets: Optional[StaticSecrets], use_message_database=False):
 		self.api_id = api_id
 		self.api_hash = api_hash
 		self.db_directory = db_directory
 		self.use_message_database = use_message_database
+		self.secrets = secrets
 
 	def authorizationStateWaitTdlibParameters(self, client: TelegramClient):
 		client.send({
