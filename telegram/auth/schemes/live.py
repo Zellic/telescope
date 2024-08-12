@@ -1,4 +1,6 @@
-from telegram.auth.base import AuthenticationScheme
+from typing import Optional
+
+from telegram.auth.base import AuthenticationScheme, StaticSecrets
 from telegram.client import TelegramClient
 
 class TelegramProduction(AuthenticationScheme):

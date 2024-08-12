@@ -8,6 +8,7 @@ from quart import Quart
 
 from database.accounts import AccountManager
 from database.core import Database
+from telegram.auth.base import StaticSecrets
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
 from telegram.webapp import create_webapp
@@ -88,7 +89,7 @@ class MainLoop:
 		# this library sucks
 		sys.exit(0)
 
-	def mainLoop(self, clientGenerator: Callable[[str, Optional[str]], TelegramClient]):
+	def mainLoop(self, clientGenerator: Callable[[str, Optional[str], Optional[StaticSecrets]], TelegramClient]):
 		loop = asyncio.new_event_loop()
 		asyncio.set_event_loop(loop)
 		shut_us_down = None

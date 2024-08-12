@@ -36,7 +36,7 @@ class AccountManager:
 			raise Exception(f"Failed to create accounts table: {result.error_message}")
 
 	def getAccounts(self) -> List[Account]:
-		query = "SELECT id, phone_number, username, email, comment FROM telegram_accounts"
+		query = "SELECT id, phone_number, username, email, comment, two_factor_password FROM telegram_accounts"
 		results = self.db.execute(query)
 
 		if(results.success == False):
@@ -94,7 +94,7 @@ class AccountManager:
 			print(f"Failed to set two factor password: {e}")
 
 	def get_account(self, phone_number: str) -> Optional[Account]:
-		query = "SELECT id, phone_number, username, email, comment FROM telegram_accounts WHERE phone_number = %s"
+		query = "SELECT id, phone_number, username, email, comment, two_factor_password FROM telegram_accounts WHERE phone_number = %s"
 		result = self.db.execute(query, (phone_number,))
 
 		if(result.success == False or len(result.data) == 0):
