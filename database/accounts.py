@@ -43,10 +43,11 @@ class AccountManager:
 	def _make_account_decrypted(self, *data):
 		ret = Account(*data)
 		# noinspection PyBroadException
-		try:
-			ret.two_factor_password = decrypt_string(ret.two_factor_password, self.encryption_key)
-		except:
-			sys.stderr.write(f"[!] Failed to decrypt two factor password for account id: {ret.id}, phone: {ret.phone_number}\n")
+		if(ret.two_factor_password is not None):
+			try:
+				ret.two_factor_password = decrypt_string(ret.two_factor_password, self.encryption_key)
+			except:
+				sys.stderr.write(f"[!] Failed to decrypt two factor password for account id: {ret.id}, phone: {ret.phone_number}\n")
 		return ret
 
 	def getAccounts(self) -> List[Account]:
