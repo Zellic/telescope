@@ -32,6 +32,4 @@ Werkzeug==3.0.3
 wsproto==1.2.0
 zope.event==5.0
 zope.interface==6.4.post2
-
-psycopg2~=2.9.9
 cryptography~=43.0.0
