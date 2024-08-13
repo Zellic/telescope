@@ -8,7 +8,7 @@ from quart import request, Quart, send_from_directory, abort, Response
 from quart_cors import cors
 
 from database.accounts import AccountManager, Account
-from telegram.auth.api import AuthorizationSuccess, ConnectionClosed
+from telegram.auth.api import AuthorizationSuccess, ConnectionClosed, ClientNotStarted
 from telegram.auth.base import StaticSecrets
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
@@ -199,7 +199,8 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			await client.stop()
 
 			manager.clients.remove(client)
-			manager.add_client(clientFor(phone, None if info is None else info.db_username(), _get_account(phone)), False)
+			client.auth.status = ClientNotStarted()
+			manager.add_client(client, start=False) #clientFor(phone, None if info is None else info.db_username(), _get_account(phone)), False)
 
 		await asyncio.create_task(shutdown_client())
 		return json.dumps({"message": "Client is now disconnecting"}), 200

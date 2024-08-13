@@ -140,3 +140,5 @@ class TelegramClient:
 		self.send({'@type': 'close'})
 
 		await self._stop_future
+		self._stop_future = None
+		self._started = False
