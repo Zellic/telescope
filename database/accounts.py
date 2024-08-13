@@ -1,8 +1,12 @@
+import sys
+
 from database.core import Database, QueryResult
 import re
 from typing import List, Optional, NamedTuple
 
 from dataclasses import dataclass
+
+from database.pgcrypt import encrypt_string, decrypt_string
 
 create_table_sql = """
 CREATE TABLE IF NOT EXISTS telegram_accounts (
@@ -29,11 +33,21 @@ class AddAccountResult(NamedTuple):
 	error_message: Optional[str]
 
 class AccountManager:
-	def __init__(self, db: Database):
+	def __init__(self, db: Database, encryption_key: str):
 		self.db = db
+		self.encryption_key = encryption_key
 		result = self.db.execute(create_table_sql)
 		if(not result.success):
 			raise Exception(f"Failed to create accounts table: {result.error_message}")
+
+	def _make_account_decrypted(self, *data):
+		ret = Account(*data)
+		# noinspection PyBroadException
+		try:
+			ret.two_factor_password = decrypt_string(ret.two_factor_password, self.encryption_key)
+		except:
+			sys.stderr.write(f"[!] Failed to decrypt two factor password for account id: {ret.id}, phone: {ret.phone_number}\n")
+		return ret
 
 	def getAccounts(self) -> List[Account]:
 		query = "SELECT id, phone_number, username, email, comment, two_factor_password FROM telegram_accounts"
@@ -42,7 +56,7 @@ class AccountManager:
 		if(results.success == False):
 			raise Exception("Failed to fetch accounts.")
 
-		return [Account(*row) for row in results.data]
+		return [self._make_account_decrypted(*row) for row in results.data]
 
 	def add_account(self, phone_number: str, email: Optional[str] = None, comment: Optional[str] = None) -> AddAccountResult:
 		if not re.match(r'^\d{11}$', phone_number):
@@ -89,7 +103,12 @@ class AccountManager:
         """
 
 		try:
-			return self.db.execute(insert_query, (password, phone_number))
+			encrypted_password = encrypt_string(password, self.encryption_key)
+		except:
+			raise Exception(f"Failed to encrypt two factor password for account with phone number: {phone_number}")
+
+		try:
+			return self.db.execute(insert_query, (encrypted_password, phone_number))
 		except Exception as e:
 			print(f"Failed to set two factor password: {e}")
 
@@ -100,7 +119,7 @@ class AccountManager:
 		if(result.success == False or len(result.data) == 0):
 			return None
 
-		return Account(*result.data[0])
+		return self._make_account_decrypted(*result.data[0])
 
 	def delete_account(self, phone_number: str) -> QueryResult:
 		query = "DELETE FROM telegram_accounts WHERE phone_number = %s"

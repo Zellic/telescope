@@ -263,6 +263,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			return json.dumps({"error": f"Couldn't find client with phone number: {phone}"}), 500
 
 		res = accounts.set_two_factor_password(phone, payload['password'])
+
 		if(res.success):
 			_get_account(phone).two_factor_password = payload['password']
 
