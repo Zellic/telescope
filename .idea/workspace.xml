@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Encrypt two factor passwords">
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* reee pycharm stop being helpful">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/information_schema.FNRwLQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/information_schema.FNRwLQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/pg_catalog.0S1ZNQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/public.abK9xQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/accounts.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -238,15 +242,7 @@
       <workItem from="1722540850146" duration="7317000" />
       <workItem from="1722881804718" duration="15338000" />
       <workItem from="1723111527327" duration="19869000" />
-      <workItem from="1723525381490" duration="8498000" />
-    </task>
-    <task id="LOCAL-00038" summary="* THANKS PYCHARM">
-      <option name="closed" value="true" />
-      <created>1721304552111</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1721304552111</updated>
+      <workItem from="1723525381490" duration="8702000" />
     </task>
     <task id="LOCAL-00039" summary="* sleepy code..........">
       <option name="closed" value="true" />
@@ -632,7 +628,15 @@
       <option name="project" value="LOCAL" />
       <updated>1723543744131</updated>
     </task>
-    <option name="localTasksCounter" value="87" />
+    <task id="LOCAL-00087" summary="* reee pycharm stop being helpful">
+      <option name="closed" value="true" />
+      <created>1723543969256</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1723543969256</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -661,7 +665,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* we finally did it" />
     <MESSAGE value="* why are you like this quart" />
     <MESSAGE value="* I'm screaming" />
     <MESSAGE value="* okay, nuclear option" />
@@ -686,7 +689,8 @@
     <MESSAGE value="* Two factor!" />
     <MESSAGE value="* Fix client disconnect bug" />
     <MESSAGE value="* Encrypt two factor passwords" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Encrypt two factor passwords" />
+    <MESSAGE value="* reee pycharm stop being helpful" />
+    <option name="LAST_COMMIT_MESSAGE" value="* reee pycharm stop being helpful" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/telescope$webmain.coverage" NAME="webmain Coverage Results" MODIFIED="1719007097200" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/webtest" />
