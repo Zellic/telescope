@@ -47,8 +47,11 @@ class MainLoop:
 		except:
 			pass
 
+		if(len(self.config.get('TWO_FACTOR_ENCRYPTION_KEY', '')) != 32):
+			raise Exception("Must set TWO_FACTOR_ENCRYPTION_KEY within environment file or environment variables.")
+
 		self.db = Database(self.config['DB_DSN'])
-		self.accounts = AccountManager(self.db)
+		self.accounts = AccountManager(self.db, self.config['TWO_FACTOR_ENCRYPTION_KEY'])
 		self.API_ID = self.config['API_ID']
 		self.API_HASH = self.config['API_HASH']
 

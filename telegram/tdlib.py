@@ -6,7 +6,7 @@ import sys
 import platform
 
 log_message_callback_type = CFUNCTYPE(None, c_int, c_char_p)
-LOG_ALL = True # TODO: read this from .env
+LOG_ALL = False # TODO: read this from .env
 
 # noinspection PyArgumentList
 @log_message_callback_type
