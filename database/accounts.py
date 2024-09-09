@@ -59,8 +59,9 @@ class AccountManager:
 
 		return [self._make_account_decrypted(*row) for row in results.data]
 
-	def add_account(self, phone_number: str, email: Optional[str] = None, comment: Optional[str] = None) -> AddAccountResult:
-		if not re.match(r'^\d{11}$', phone_number):
+	def add_account(self, phone_number: str, email: Optional[str] = None, comment: Optional[str] = None, staging: bool = False) -> AddAccountResult:
+		phone_length = 10 if staging else 11
+		if not re.match(f'^\\d{{{phone_length}}}$', phone_number):
 			return AddAccountResult(False, "Phone number must be exactly 11 digits")
 
 		# todo: use a proper library

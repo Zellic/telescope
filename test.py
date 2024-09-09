@@ -11,10 +11,10 @@ from telegram.tgmodules.userinfo import UserInfo
 def main():
 	core = MainLoop()
 
-	def testClientForClosure(phonenumber, username: Optional[str], secrets: Optional[StaticSecrets]=None, isInDB: bool = False):
+	def testClientForClosure(phonenumber, username: Optional[str]=None, secrets: Optional[StaticSecrets]=None):
 		scheme = TelegramStaging(phonenumber, core.API_ID, core.API_HASH, "accounts/" + phonenumber, secrets)
 		return TelegramClient(APIAuth(phonenumber, scheme), [
-			UserInfo(phonenumber, None if not isInDB else core.accounts, username),
+			UserInfo(phonenumber, core.accounts, username),
 			GetAuthCode()
 		])
 
@@ -26,7 +26,7 @@ def main():
 		))
 
 	# core.addClient(testClientForClosure(TelegramStaging.generate_phone(), None, False))
-	core.mainLoop(lambda phone, username, secrets: testClientForClosure(phone, username, secrets, False))
+	core.mainLoop(testClientForClosure)
 
 if __name__ == "__main__":
 	main()

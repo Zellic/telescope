@@ -10,6 +10,7 @@ from quart_cors import cors
 from database.accounts import AccountManager, Account
 from telegram.auth.api import AuthorizationSuccess, ConnectionClosed, ClientNotStarted
 from telegram.auth.base import StaticSecrets
+from telegram.auth.schemes.staging import TelegramStaging
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
 from telegram.tgmodules.getcode import GetAuthCode
@@ -276,6 +277,30 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		else:
 			sys.stderr.write("[!] failed to set password on account due to DB error: " + res.error_message + "\n")
 			return json.dumps({"error": "Failed to set password due to DB error, see stderr."}), 400
+
+	@app.route('/environment')
+	async def environment():
+		# collect all clients using a staging environment
+		has_staging_client = [client for client in manager.clients if isinstance(client.auth.scheme, TelegramStaging)]
+
+		# only when debugging/testing should ANY of our clients be using the TelegramStaging schema
+		return json.dumps({"staging": f"{"true" if any(has_staging_client) else "false"}"})
+
+	@app.route('/addtestaccount')
+	async def addtestaccount():
+		phone = TelegramStaging.generate_phone()
+		email = ''
+		comment = ''
+
+		result = accounts.add_account(phone, email, comment, True)
+
+		if result.success:
+			manager.add_client(clientFor(phone))
+			print(f"failed to add account: added account successfully ({phone})")
+			return json.dumps({"message": "Account added successfully"}), 201
+		else:
+			print(f"failed to add account: {result.error_message}")
+			return json.dumps({"error": result.error_message}), 400
 
 	@app.route('/<path:asset_path>')
 	async def serve_static(asset_path):
