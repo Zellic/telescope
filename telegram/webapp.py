@@ -284,7 +284,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		has_staging_client = [client for client in manager.clients if isinstance(client.auth.scheme, TelegramStaging)]
 
 		# only when debugging/testing should ANY of our clients be using the TelegramStaging schema
-		return json.dumps({"staging": f"{"true" if any(has_staging_client) else "false"}"})
+		return json.dumps({"staging": True if any(has_staging_client) else False})
 
 	@app.route('/addtestaccount')
 	async def addtestaccount():
