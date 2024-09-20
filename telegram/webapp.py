@@ -46,35 +46,52 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		lookup[phone] = account
 		return account
 
+	async def makeblob(user: TelegramClient):
+		info_module = next((x for x in user._modules if isinstance(x, UserInfo)), None)
+		info = None if info_module is None else info_module.info
+
+		code_module = next((x for x in user._modules if isinstance(x, GetAuthCode)), None)
+
+		# TODO: should probably batch this...
+		account = _get_account(user.auth.phone)
+
+		return {
+			"name": None if info is None or info.first_name is None or info.last_name is None else info.first_name + " " + info.last_name,
+			"username": None if info is None else info.username,
+			"phone": user.auth.phone,
+			"email": None if account is None else account.email,
+			"comment": None if account is None else account.comment,
+			"lastCode": None if code_module is None or code_module.code is None else {
+				"value": int(code_module.code),
+				"date": code_module.timestamp,
+			},
+			"two_factor_pass_is_set": False if account is None else account.two_factor_password is not None,
+			"status": {
+				"stage": user.auth.status.name,
+				"inputRequired": user.auth.status.requiresInput,
+				"error": user.auth.status.error if hasattr(user.auth.status, "error") else None,
+			}
+		}
+
+	@app.route("/getclient")
+	async def getclient():
+		# TODO: do we have access to this client?!
+		# TODO: temp can check if cf email === client.email,,
+		phone = request.args.get("phone")
+		item = next((x for x in manager.clients if x.auth.phone == phone), None)
+
+		if item is None:
+			json.dumps({"error": "Client not found"}), 404
+
+		ret = {
+			'client': await makeblob(item)
+		}
+
+		return ret
+
 	@app.route("/clients")
 	async def clients():
 		oldhash = request.args.get("hash")
-		async def makeblob(user: TelegramClient):
-			info_module = next((x for x in user._modules if isinstance(x, UserInfo)), None)
-			info = None if info_module is None else info_module.info
-
-			code_module = next((x for x in user._modules if isinstance(x, GetAuthCode)), None)
-
-			# TODO: should probably batch this...
-			account = _get_account(user.auth.phone)
-
-			return {
-				"name": None if info is None or info.first_name is None or info.last_name is None else info.first_name + " " + info.last_name,
-				"username": None if info is None else info.username,
-				"phone": user.auth.phone,
-				"email": None if account is None else account.email,
-				"comment": None if account is None else account.comment,
-				"lastCode": None if code_module is None or code_module.code is None else {
-					"value": int(code_module.code),
-					"date": code_module.timestamp,
-				},
-				"two_factor_pass_is_set": False if account is None else account.two_factor_password is not None,
-				"status": {
-					"stage": user.auth.status.name,
-					"inputRequired": user.auth.status.requiresInput,
-					"error": user.auth.status.error if hasattr(user.auth.status, "error") else None,
-				}
-			}
 
 		items = [await makeblob(x) for x in manager.clients]
 		ret = {
@@ -297,7 +314,10 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		if result.success:
 			manager.add_client(clientFor(phone))
 			print(f"failed to add account: added account successfully ({phone})")
-			return json.dumps({"message": "Account added successfully"}), 201
+			return json.dumps({
+				"message": "Account added successfully",
+				"phone": f"{phone}"
+			}), 201
 		else:
 			print(f"failed to add account: {result.error_message}")
 			return json.dumps({"error": result.error_message}), 400
