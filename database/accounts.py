@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS telegram_accounts (
     username TEXT,
     email TEXT,
     comment TEXT,
-    two_factor_password TEXT
+    two_factor_password TEXT,
+    groups TEXT[]
 );
 """
 
@@ -36,7 +37,9 @@ class AccountManager:
 	def __init__(self, db: Database, encryption_key: str):
 		self.db = db
 		self.encryption_key = encryption_key
-		result = self.db.execute(create_table_sql)
+
+	async def init(self):
+		result = await self.db.execute(create_table_sql)
 		if(not result.success):
 			raise Exception(f"Failed to create accounts table: {result.error_message}")
 
@@ -50,16 +53,16 @@ class AccountManager:
 				sys.stderr.write(f"[!] Failed to decrypt two factor password for account id: {ret.id}, phone: {ret.phone_number}\n")
 		return ret
 
-	def getAccounts(self) -> List[Account]:
+	async def getAccounts(self) -> List[Account]:
 		query = "SELECT id, phone_number, username, email, comment, two_factor_password FROM telegram_accounts"
-		results = self.db.execute(query)
+		results = await self.db.execute(query)
 
 		if(results.success == False):
 			raise Exception("Failed to fetch accounts.")
 
 		return [self._make_account_decrypted(*row) for row in results.data]
 
-	def add_account(self, phone_number: str, email: Optional[str] = None, comment: Optional[str] = None, staging: bool = False) -> AddAccountResult:
+	async def add_account(self, phone_number: str, email: Optional[str] = None, comment: Optional[str] = None, staging: bool = False) -> AddAccountResult:
 		phone_length = 10 if staging else 11
 		if not re.match(f'^\\d{{{phone_length}}}$', phone_number):
 			return AddAccountResult(False, "Phone number must be exactly 11 digits")
@@ -77,7 +80,7 @@ class AccountManager:
         """
 
 		try:
-			result = self.db.execute(insert_query, (phone_number, email, comment))
+			result = await self.db.execute(insert_query, (phone_number, email, comment))
 			if result.success:
 				return AddAccountResult(True, None)
 			else:
@@ -85,7 +88,7 @@ class AccountManager:
 		except Exception as e:
 			return AddAccountResult(False, f"Database error: {str(e)}")
 
-	def set_username(self, phone_number: str, username: str) -> None:
+	async def set_username(self, phone_number: str, username: str) -> None:
 		insert_query = """
 		UPDATE telegram_accounts
 		SET username = %s
@@ -93,11 +96,11 @@ class AccountManager:
         """
 
 		try:
-			self.db.execute(insert_query, (username, phone_number))
+			await self.db.execute(insert_query, (username, phone_number))
 		except Exception as e:
 			print(f"Failed to set username: {e}")
 
-	def set_two_factor_password(self, phone_number: str, password: str) -> QueryResult:
+	async def set_two_factor_password(self, phone_number: str, password: str) -> QueryResult:
 		insert_query = """
 		UPDATE telegram_accounts
 		SET two_factor_password = %s
@@ -110,21 +113,21 @@ class AccountManager:
 			raise Exception(f"Failed to encrypt two factor password for account with phone number: {phone_number}")
 
 		try:
-			return self.db.execute(insert_query, (encrypted_password, phone_number))
+			return await self.db.execute(insert_query, (encrypted_password, phone_number))
 		except Exception as e:
 			print(f"Failed to set two factor password: {e}")
 
-	def get_account(self, phone_number: str) -> Optional[Account]:
+	async def get_account(self, phone_number: str) -> Optional[Account]:
 		query = "SELECT id, phone_number, username, email, comment, two_factor_password FROM telegram_accounts WHERE phone_number = %s"
-		result = self.db.execute(query, (phone_number,))
+		result = await self.db.execute(query, (phone_number,))
 
 		if(result.success == False or len(result.data) == 0):
 			return None
 
 		return self._make_account_decrypted(*result.data[0])
 
-	def delete_account(self, phone_number: str) -> QueryResult:
+	async def delete_account(self, phone_number: str) -> QueryResult:
 		query = "DELETE FROM telegram_accounts WHERE phone_number = %s"
-		result = self.db.execute(query, (phone_number,))
+		result = await self.db.execute(query, (phone_number,))
 
 		return result

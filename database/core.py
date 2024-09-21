@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from typing import Optional, List, Any
 
+import aiopg
 import psycopg2
+from aiopg import Pool
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from psycopg2.pool import SimpleConnectionPool
 from psycopg2.sql import SQL, Identifier
@@ -32,9 +34,11 @@ class Database:
 			raise Exception("Must specify dbname in database DSN")
 
 		self._ensure_database_exists()
-		self.pool = SimpleConnectionPool(self.minconn, self.maxconn, dsn)
+		self.pool: Pool = None
 
+	# this already used psycopg2 and aiopg uses psycopg2 under the hood so I'm just leaving it
 	def _ensure_database_exists(self):
+		# to create a database you must connect to the postgres database, so we adjust the DSN
 		default_dsn = self.dsn.replace(f"dbname={self.dbname}", "dbname=postgres")
 
 		if(default_dsn == self.dsn):
@@ -62,15 +66,16 @@ class Database:
 		finally:
 			conn.close()
 
-	def execute(self, query, params=None):
-		conn = self.pool.getconn()
-		try:
-			with conn.cursor() as cur:
+	async def execute(self, query, params=None):
+		if(self.pool is None):
+			self.pool = await aiopg.create_pool(self.dsn, minsize=self.minconn, maxsize=self.maxconn)
+
+		async with self.pool.acquire() as conn:
+			async with conn.cursor() as cursor:
 				try:
-					cur.execute(query, params)
-					conn.commit()
+					await cursor.execute(query, params)
 					try:
-						data = cur.fetchall()
+						data = await cursor.fetchall()
 						return QueryResult(success=True, data=data)
 					except psycopg2.ProgrammingError as e:
 						if e.pgcode is None:
@@ -83,16 +88,14 @@ class Database:
 								query=query
 							)
 				except psycopg2.Error as e:
-					conn.rollback()
+					await conn.rollback()
 					return QueryResult(
 						success=False,
 						error_message=e.pgerror,
 						error_code=e.pgcode,
 						query=query
 					)
-		finally:
-			self.pool.putconn(conn)
 
 	def close_all(self):
 		if self.pool is not None:
-			self.pool.closeall()
+			self.pool.close()

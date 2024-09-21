@@ -15,6 +15,7 @@ from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
 from telegram.tgmodules.getcode import GetAuthCode
 from telegram.tgmodules.userinfo import UserInfo
+from telegram.util import Environment
 
 ALLOWED_EXTENSIONS = {'html', 'js', 'css', 'png', 'jpg', 'gif', 'ico', 'svg'}
 def is_allowed_file(path, root):
@@ -30,18 +31,19 @@ def is_allowed_file(path, root):
 	except OSError:
 		return False
 
-def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clientFor: any):
+def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clientFor: any, environment: Environment):
+	execution_environment = environment
 	app = Quart(__name__)
 	# allow requests from the nextjs frontend dev server
 	app = cors(app, allow_origin="http://localhost:3000")
 	frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'telescope-webui-dist')
 	lookup = {}
 
-	def _get_account(phone: str) -> Account:
+	async def _get_account(phone: str) -> Account:
 		if (phone in lookup):
 			account = lookup[phone]
 		else:
-			account = accounts.get_account(phone)
+			account = await accounts.get_account(phone)
 
 		lookup[phone] = account
 		return account
@@ -56,7 +58,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			code_module = next((x for x in user._modules if isinstance(x, GetAuthCode)), None)
 
 			# TODO: should probably batch this...
-			account = _get_account(user.auth.phone)
+			account = await _get_account(user.auth.phone)
 
 			return {
 				"name": None if info is None or info.first_name is None or info.last_name is None else info.first_name + " " + info.last_name,
@@ -79,6 +81,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		items = [await makeblob(x) for x in manager.clients]
 		ret = {
 			'hash': str(hash(json.dumps(items))),
+			'environment': execution_environment.name,
 			'items': items,
 		}
 
@@ -141,10 +144,10 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 				print("failed to add account: comment must be between 1 and 300 characters")
 				return json.dumps({"error": "Comment must be between 1 and 300 characters"}), 400
 
-			result = accounts.add_account(phone_number, email, comment)
+			result = await accounts.add_account(phone_number, email, comment)
 
 			if result.success:
-				manager.add_client(clientFor(phone_number))
+				await manager.add_client(clientFor(phone_number))
 				print(f"failed to add account: added account successfully ({phone_number})")
 				return json.dumps({"message": "Account added successfully"}), 201
 			else:
@@ -201,7 +204,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 
 			manager.clients.remove(client)
 			client.auth.status = ClientNotStarted()
-			manager.add_client(client, start=False) #clientFor(phone, None if info is None else info.db_username(), _get_account(phone)), False)
+			await manager.add_client(client, start=False) #clientFor(phone, None if info is None else info.db_username(), _get_account(phone)), False)
 
 		await asyncio.create_task(shutdown_client())
 		return json.dumps({"message": "Client is now disconnecting"}), 200
@@ -218,7 +221,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		if(client.is_started()):
 			return json.dumps({"error": f"Client is already started"}), 500
 
-		client.start()
+		await client.start()
 		return json.dumps({"message": "Client is now starting"}), 200
 
 	@app.route("/deleteaccount")
@@ -238,7 +241,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 					await client._stop_future
 
 			manager.clients.remove(client)
-			result = accounts.delete_account(phone)
+			result = await accounts.delete_account(phone)
 
 			if(not result.success):
 				sys.stderr.write(f"[!] Could not delete account {phone}: {result.error_code} / {result.error_message}\n")
@@ -263,10 +266,10 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		if(client is None):
 			return json.dumps({"error": f"Couldn't find client with phone number: {phone}"}), 500
 
-		res = accounts.set_two_factor_password(phone, payload['password'])
+		res = await accounts.set_two_factor_password(phone, payload['password'])
 
 		if(res.success):
-			_get_account(phone).two_factor_password = payload['password']
+			(await _get_account(phone)).two_factor_password = payload['password']
 
 			if(client.auth.scheme.secrets is not None):
 				client.auth.scheme.secrets.two_factor_password = payload['password']
@@ -280,11 +283,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 
 	@app.route('/environment')
 	async def environment():
-		# collect all clients using a staging environment
-		has_staging_client = [client for client in manager.clients if isinstance(client.auth.scheme, TelegramStaging)]
-
-		# only when debugging/testing should ANY of our clients be using the TelegramStaging schema
-		return json.dumps({"staging": True if any(has_staging_client) else False})
+		return json.dumps({"environment": execution_environment.name})
 
 	@app.route('/addtestaccount')
 	async def addtestaccount():
@@ -292,10 +291,10 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		email = ''
 		comment = ''
 
-		result = accounts.add_account(phone, email, comment, True)
+		result = await accounts.add_account(phone, email, comment, True)
 
 		if result.success:
-			manager.add_client(clientFor(phone))
+			await manager.add_client(clientFor(phone))
 			print(f"failed to add account: added account successfully ({phone})")
 			return json.dumps({"message": "Account added successfully"}), 201
 		else:
