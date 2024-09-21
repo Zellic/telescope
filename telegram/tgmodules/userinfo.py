@@ -48,4 +48,4 @@ class UserInfo(TelegramModule):
 		old_username = None if old is None else old.db_username()
 		new_username = None if self.info is None or self.info.db_username() is None else self.info.db_username()
 		if(self.accounts is not None and new_username is not None and old_username != new_username):
-			self.accounts.set_username(self.phonenumber, new_username)
+			await self.accounts.set_username(self.phonenumber, new_username)

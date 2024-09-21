@@ -3,25 +3,27 @@ import sys
 from typing import List
 
 from telegram.auth.base import AuthenticationProvider
+from telegram.module import TelegramModule
 from telegram.tdlib import TDLib
 
 def eprint(*args, **kwargs):
 	print(*args, file=sys.stderr, **kwargs)
 
 class TelegramClient:
-	def __init__(self, auth: AuthenticationProvider, modules: List[any]):
+	def __init__(self, auth: AuthenticationProvider, modules: List[TelegramModule]):
 		# noinspection PyTypeChecker
 		self._tdlib: TDLib = None
 		self.auth = auth
 		self.client_id = None
 
-		self._modules = modules or []
+		self._modules: List[TelegramModule] = modules or []
 
 		self._extra_counter = 0
 		self._pending_responses = {}
 		self._started = False
 
 		self._stop_future = None
+		self._initialized_modules = False
 
 	def send(self, query):
 		self._tdlib.send(self.client_id, query)
@@ -114,9 +116,14 @@ class TelegramClient:
 	def is_stopping(self):
 		return self._stop_future is not None
 
-	def start(self):
+	async def start(self):
 		if(self.is_started()):
 			raise Exception("Already started")
+
+		if(not self._initialized_modules):
+			self._initialized_modules = True
+			for module in self._modules:
+				await module.init()
 
 		self._started = True
 

@@ -19,14 +19,14 @@ class TelegramClientManager:
         self._task = None
         self._started = False
 
-    def add_client(self, client: TelegramClient, start = True):
+    async def add_client(self, client: TelegramClient, start = True):
         self.clients.append(client)
         # gross hack, difficult to conveniently fix without splitting this into two classes
         # let's just not!
         client._tdlib = self.tdlib
 
         if(self._started and start):
-            client.start()
+            await client.start()
 
     def _try_dispatch_event(self):
         event = self.tdlib.receive()
@@ -59,12 +59,12 @@ class TelegramClientManager:
     def is_started(self):
         return self._started
 
-    def start(self):
+    async def start(self):
         if (self.is_started()):
             raise Exception("Already started")
 
         for client in self.clients:
-            client.start()
+            await client.start()
 
         self._started = True
         self._task = asyncio.get_event_loop().create_task(self._receive_loop())

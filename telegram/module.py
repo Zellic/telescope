@@ -15,5 +15,8 @@ def OnEvent(type: str):
 	return decorator
 
 class TelegramModule:
+	async def init(self):
+		pass
+
 	def onClientExit(self):
 		pass

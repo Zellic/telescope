@@ -2,7 +2,8 @@ import asyncio
 import os
 import signal
 import sys
-from typing import Callable, Optional
+from enum import Enum
+from typing import Callable, Optional, Coroutine, Any
 
 from quart import Quart
 
@@ -11,6 +12,7 @@ from database.core import Database
 from telegram.auth.base import StaticSecrets
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
+from telegram.util import Environment
 from telegram.webapp import create_webapp
 
 
@@ -37,7 +39,8 @@ def read_env_file(file_path):
 	return env_dict
 
 class MainLoop:
-	def __init__(self):
+	def __init__(self, environment: Environment):
+		self.environment = environment
 		self.config = dict(os.environ)
 
 		# noinspection PyBroadException
@@ -60,19 +63,42 @@ class MainLoop:
 		self._shutting_down = False
 		self._idiot_quart_task = None
 
-	def addClient(self, client: TelegramClient):
-		self.manager.add_client(client)
+		self._did_init = False
+
+	async def init(self):
+		if(self._did_init):
+			raise Exception("Cannot initialize twice.")
+
+		self._did_init = True
+
+		await self.accounts.init()
+
+	def _check_init(self):
+		if(not self._did_init):
+			raise Exception("Not initialized...")
+
+	async def addClient(self, client: TelegramClient):
+		self._check_init()
+
+		await self.manager.add_client(client)
 
 	async def run(self, clientGenerator: Callable[[str], TelegramClient]):
-		self._app = create_webapp(self.manager, self.accounts, clientGenerator)
+		self._check_init()
+
+		self._app = create_webapp(self.manager, self.accounts, clientGenerator, self.environment)
 		host = "localhost" if self.config.get("DEBUG", "false").lower() == "true" else "0.0.0.0"
 
 		self._idiot_quart_task = self._app.run_task(host, 8888)
 		# we can't pass this to gather or it will eat control+c events for some reason...
 		# it's okay because the manager runs forever, and we shut the manager down AFTER we shut the webapp down
-		await asyncio.gather(self.manager.start(), self._idiot_quart_task)
+		#
+		# we awake .start() because we need the resulting task returned from it, not the async coroutine from the
+		# async method...
+		await asyncio.gather(await self.manager.start(), self._idiot_quart_task)
 
 	async def shutdown(self):
+		self._check_init()
+
 		if(self._shutting_down):
 			return
 
@@ -92,7 +118,11 @@ class MainLoop:
 		# this library sucks
 		sys.exit(0)
 
-	def mainLoop(self, clientGenerator: Callable[[str, Optional[str], Optional[StaticSecrets]], TelegramClient]):
+	def mainLoop(self, runOnStart: Callable[[], Coroutine[Any, Any, None]], clientGenerator: Callable[[str, Optional[str], Optional[StaticSecrets]], TelegramClient]):
+		# make aiopg work on windows
+		if sys.version_info >= (3, 8) and sys.platform.lower().startswith("win"):
+			asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 		loop = asyncio.new_event_loop()
 		asyncio.set_event_loop(loop)
 		shut_us_down = None
@@ -119,7 +149,12 @@ class MainLoop:
 			except NotImplementedError:
 				pass
 
-		loop.run_until_complete(asyncio.gather(self.run(clientGenerator), hijack_close_signal()))
+		async def startup():
+			await self.init()
+			await runOnStart()
+			await asyncio.gather(self.run(clientGenerator), hijack_close_signal())
+
+		loop.run_until_complete(startup())
 		if(shut_us_down is not None):
 			loop.run_until_complete(shut_us_down)
 		loop.close()

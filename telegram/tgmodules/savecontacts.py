@@ -150,10 +150,12 @@ class SaveContacts(TelegramModule):
 	def __init__(self, db: Database, our_phone_number):
 		self.db = db
 		self.user_records: Dict[int, TelegramContact] = {}
-		result = self.db.execute(create_table_sql)
+		self.our_phone_number = our_phone_number
+
+	async def init(self):
+		result = await self.db.execute(create_table_sql)
 		if(not result.success):
 			raise Exception(f"Failed to create contacts table: {result.error_message}")
-		self.our_phone_number = our_phone_number
 
 	@OnEvent("updateAuthorizationState")
 	async def updateAuthorizationState(self, client, event):
