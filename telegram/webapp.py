@@ -7,7 +7,7 @@ import sys
 from quart import request, Quart, send_from_directory, abort, Response
 from quart_cors import cors
 
-from database.accounts import AccountManager, Account
+from database.accounts import AccountManager, TelegramAccount
 from telegram.auth.api import AuthorizationSuccess, ConnectionClosed, ClientNotStarted
 from telegram.auth.base import StaticSecrets
 from telegram.auth.schemes.staging import TelegramStaging
@@ -39,7 +39,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 	frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'telescope-webui-dist')
 	lookup = {}
 
-	async def _get_account(phone: str) -> Account:
+	async def _get_account(phone: str) -> TelegramAccount:
 		if (phone in lookup):
 			account = lookup[phone]
 		else:

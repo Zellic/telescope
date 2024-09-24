@@ -1,11 +1,10 @@
 import sys
 
 from database.accesscontrol import UserPrivilegeManager
+from database.accounttype import TelegramAccount
 from database.core import Database, QueryResult
 import re
 from typing import List, Optional, NamedTuple
-
-from dataclasses import dataclass
 
 from database.pgcrypt import encrypt_string, decrypt_string
 
@@ -20,16 +19,6 @@ CREATE TABLE IF NOT EXISTS telegram_accounts (
     groups INTEGER[]
 );
 """
-
-@dataclass
-class Account:
-	id: int
-	phone_number: str
-	username: Optional[str]
-	email: Optional[str]
-	comment: Optional[str]
-	two_factor_password: Optional[str]
-	groups: Optional[List[int]]
 
 class AddAccountResult(NamedTuple):
 	success: bool
@@ -47,7 +36,7 @@ class AccountManager:
 			raise Exception(f"Failed to create accounts table: {result.error_message}")
 
 	def _make_account_decrypted(self, *data):
-		ret = Account(*data)
+		ret = TelegramAccount(*data)
 		# noinspection PyBroadException
 		if(ret.two_factor_password is not None):
 			try:
@@ -56,7 +45,7 @@ class AccountManager:
 				sys.stderr.write(f"[!] Failed to decrypt two factor password for account id: {ret.id}, phone: {ret.phone_number}\n")
 		return ret
 
-	async def getAccounts(self) -> List[Account]:
+	async def getAccounts(self) -> List[TelegramAccount]:
 		query = "SELECT id, phone_number, username, email, comment, two_factor_password FROM telegram_accounts"
 		results = await self.db.execute(query)
 
@@ -120,7 +109,7 @@ class AccountManager:
 		except Exception as e:
 			print(f"Failed to set two factor password: {e}")
 
-	async def get_account(self, phone_number: str) -> Optional[Account]:
+	async def get_account(self, phone_number: str) -> Optional[TelegramAccount]:
 		query = "SELECT id, phone_number, username, email, comment, two_factor_password FROM telegram_accounts WHERE phone_number = %s"
 		result = await self.db.execute(query, (phone_number,))
 
