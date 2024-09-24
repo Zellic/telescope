@@ -1,5 +1,6 @@
 import sys
 
+from database.accesscontrol import UserPrivilegeManager
 from database.core import Database, QueryResult
 import re
 from typing import List, Optional, NamedTuple
@@ -16,7 +17,7 @@ CREATE TABLE IF NOT EXISTS telegram_accounts (
     email TEXT,
     comment TEXT,
     two_factor_password TEXT,
-    groups TEXT[]
+    groups INTEGER[]
 );
 """
 
@@ -28,6 +29,7 @@ class Account:
 	email: Optional[str]
 	comment: Optional[str]
 	two_factor_password: Optional[str]
+	groups: Optional[List[int]]
 
 class AddAccountResult(NamedTuple):
 	success: bool
@@ -37,6 +39,7 @@ class AccountManager:
 	def __init__(self, db: Database, encryption_key: str):
 		self.db = db
 		self.encryption_key = encryption_key
+		self.rbac = UserPrivilegeManager(db)
 
 	async def init(self):
 		result = await self.db.execute(create_table_sql)

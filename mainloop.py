@@ -114,6 +114,8 @@ class MainLoop:
 			async for client in self.manager.stop_and_yield():
 				print(f"Stopped client: {client.auth.phone}")
 
+		await self.db.close_all()
+
 		# apparently quart is just never going to shutdown properly
 		# this library sucks
 		sys.exit(0)
