@@ -96,6 +96,7 @@ class Database:
 						query=query
 					)
 
-	def close_all(self):
+	async def close_all(self):
 		if self.pool is not None:
 			self.pool.close()
+			await self.pool.wait_closed()
