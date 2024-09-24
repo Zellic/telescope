@@ -12,11 +12,12 @@ async def main():
 	# await db.execute(User.CREATE_TABLE)
 	# await db.execute("INSERT INTO users (email, roles) VALUES ('asdf@whatever.com', '{1, 2}')")
 	# print(await db.execute("SELECT roles FROM users WHERE email = %s", ("asdf@whatever.com",)))
-	acl = UserPrivilegeManager(db)
-	print(await acl.get_privileges_for_pair([1,2], [1,2]))
+	rbac = UserPrivilegeManager(db)
+	await rbac.init()
+	print(rbac.get_privileges_for_pair([1,2], [1,2]))
 
 	await db.close_all()
-
+#
 if __name__ == "__main__":
 	# make aiopg work on windows
 	if sys.version_info >= (3, 8) and sys.platform.lower().startswith("win"):
