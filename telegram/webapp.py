@@ -52,19 +52,27 @@ def create_webapp(
 	lookup = {}
 
 	sso = None
-	if(execution_environment == Environment.Staging):
-		mode = config.get("SSO_MODE", "cloudflare")
 
-		if(mode == "mock"):
-			# hardcode user to email test@test.com
-			sso = MockSSO()
-		elif(mode == "admin"):
-			sso = None
-		elif(mode == "cloudflare"):
-			try:
-				sso = CloudflareAccessSSO(config["CLOUDFLARE_ACCESS_CERTS"], config["CLOUDFLARE_POLICY_AUD"])
-			except KeyError:
-				raise Exception("Missing SSO config options... (CLOUDFLARE_ACCESS_CERTS, CLOUDFLARE_POLICY_AUD)")
+	mode = config.get("SSO_MODE", "cloudflare").lower()
+
+	if(mode == "mock"):
+		if(execution_environment != Environment.Staging):
+			raise NotImplementedError("Cannot use SSO_MODE=mock outside staging environment")
+
+		# hardcode user to email test@test.com
+		sso = MockSSO()
+	elif(mode == "admin"):
+		if(execution_environment != Environment.Staging):
+			raise NotImplementedError("Cannot use SSO_MODE=admin outside staging environment")
+
+		sso = None
+	elif(mode == "cloudflare"):
+		try:
+			sso = CloudflareAccessSSO(config["CLOUDFLARE_ACCESS_CERTS"], config["CLOUDFLARE_POLICY_AUD"])
+		except KeyError:
+			raise Exception("Missing SSO config options... (CLOUDFLARE_ACCESS_CERTS, CLOUDFLARE_POLICY_AUD)")
+	else:
+		raise NotImplementedError("Unknown/unhandled SSO mode: " + mode)
 
 	async def _get_account(phone: str) -> TelegramAccount:
 		if (phone in lookup):
