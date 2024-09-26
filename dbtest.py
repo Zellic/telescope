@@ -15,6 +15,7 @@ async def main():
 	rbac = UserPrivilegeManager(db)
 	await rbac.init()
 	print(rbac.get_privileges_for_pair([1,2], [1,2]))
+	print(await rbac.get_or_create_user("test2@lol.com"))
 
 	await db.close_all()
 #

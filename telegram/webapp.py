@@ -4,10 +4,13 @@ import os
 import re
 import sys
 
-from quart import request, Quart, send_from_directory, abort, Response
+from quart import request, Quart, send_from_directory, abort, Response, Request
 from quart_cors import cors
 
+from database.accesscontrol import UserPrivilegeManager, Privilege
 from database.accounts import AccountManager, TelegramAccount
+from sso.cloudflare import CloudflareAccessSSO
+from sso.mock import MockSSO
 from telegram.auth.api import AuthorizationSuccess, ConnectionClosed, ClientNotStarted
 from telegram.auth.base import StaticSecrets
 from telegram.auth.schemes.staging import TelegramStaging
@@ -31,13 +34,26 @@ def is_allowed_file(path, root):
 	except OSError:
 		return False
 
-def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clientFor: any, environment: Environment):
+def create_webapp(
+		config: dict,
+		manager: TelegramClientManager,
+		accounts: AccountManager,
+		clientFor: any,
+		environment: Environment,
+		privmanager: UserPrivilegeManager,
+):
 	execution_environment = environment
 	app = Quart(__name__)
 	# allow requests from the nextjs frontend dev server
 	app = cors(app, allow_origin="http://localhost:3000")
 	frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'telescope-webui-dist')
 	lookup = {}
+
+	# try:
+	# 	sso = CloudflareAccessSSO(config["CLOUDFLARE_ACCESS_CERTS"], config["CLOUDFLARE_POLICY_AUD"])
+	# except KeyError:
+	# 	raise Exception("Missing SSO config options... (CLOUDFLARE_ACCESS_CERTS, CLOUDFLARE_POLICY_AUD)")
+	sso = MockSSO()
 
 	async def _get_account(phone: str) -> TelegramAccount:
 		if (phone in lookup):
@@ -47,6 +63,21 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 
 		lookup[phone] = account
 		return account
+
+	async def privilegesFor(request: Request, account: TelegramAccount) -> set[Privilege]:
+		"""retrieve the set of privileges this user (as determined by their cloudflare SSO email) has on this TG account"""
+		email = await sso.get_email(request)
+
+		if(email is None):
+			return set()
+
+		user = await privmanager.get_or_create_user(email)
+
+		if(user.is_admin):
+			return set(x for x in Privilege)
+
+		privs = await privmanager.get_privileges_on_account(user, account)
+		return privs
 
 	@app.route("/clients")
 	async def clients():
@@ -58,7 +89,12 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			code_module = next((x for x in user._modules if isinstance(x, GetAuthCode)), None)
 
 			# TODO: should probably batch this...
+			# ^ actually when we couple accounts with db objects they will be cached
 			account = await _get_account(user.auth.phone)
+			privileges = await privilegesFor(request, account)
+
+			if(Privilege.VIEW not in privileges):
+				return None
 
 			return {
 				"name": None if info is None or info.first_name is None or info.last_name is None else info.first_name + " " + info.last_name,
@@ -75,10 +111,11 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 					"stage": user.auth.status.name,
 					"inputRequired": user.auth.status.requiresInput,
 					"error": user.auth.status.error if hasattr(user.auth.status, "error") else None,
-				}
+				},
+				"privileges": [x.value for x in privileges],
 			}
 
-		items = [await makeblob(x) for x in manager.clients]
+		items = [y for y in [await makeblob(x) for x in manager.clients] if y is not None]
 		ret = {
 			'hash': str(hash(json.dumps(items))),
 			'environment': execution_environment.name,
@@ -107,9 +144,17 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 			if not matching_client:
 				return json.dumps({"error": f"No client found with phone number {phone}"}), 404
 
+			privileges = await privilegesFor(request, await _get_account(phone))
+
+			if(Privilege.LOGIN not in privileges):
+				return json.dumps(
+					{"error": f"Insufficient privileges to provide for {phone}"}
+				), 403
+
 			if matching_client.auth.status.name != stage:
 				return json.dumps(
-					{"error": f"Client stage mismatch. Expected {matching_client.auth.status.name}, got {stage}"}), 400
+					{"error": f"Client stage mismatch. Expected {matching_client.auth.status.name}, got {stage}"}
+				), 400
 
 			try:
 				matching_client.auth.status.provideValue(value)
@@ -119,6 +164,8 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		except Exception as e:
 			return json.dumps({"error": f"Unexpected error: {str(e)}"}), 500
 
+	# TODO: restrict this to admins only, since everyone else will use the self serve UI
+	# or maybe just get rid of it entirely. doesn't the self serve UI handle this?
 	@app.route("/addtgaccount", methods=["POST"])
 	async def addtgaccount():
 		try:
@@ -148,7 +195,7 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 
 			if result.success:
 				await manager.add_client(clientFor(phone_number))
-				print(f"failed to add account: added account successfully ({phone_number})")
+				print(f"added account successfully: {phone_number}")
 				return json.dumps({"message": "Account added successfully"}), 201
 			else:
 				print(f"failed to add account: {result.error_message}")
@@ -187,6 +234,13 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		if(client is None):
 			return json.dumps({"error": f"Couldn't find client with phone number: {phone}"}), 500
 
+		privileges = await privilegesFor(request, await _get_account(phone))
+
+		if (Privilege.MANAGE_CONNECTION_STATE not in privileges):
+			return json.dumps(
+				{"error": f"Insufficient privileges to manage connection state for {phone}"}
+			), 403
+
 		if(not client.is_started()):
 			return json.dumps({"error": f"Client was not started"}), 500
 
@@ -218,6 +272,13 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		if(client is None):
 			return json.dumps({"error": f"Couldn't find client with phone number: {phone}"}), 500
 
+		privileges = await privilegesFor(request, await _get_account(phone))
+
+		if (Privilege.MANAGE_CONNECTION_STATE not in privileges):
+			return json.dumps(
+				{"error": f"Insufficient privileges to manage connection state for {phone}"}
+			), 403
+
 		if(client.is_started()):
 			return json.dumps({"error": f"Client is already started"}), 500
 
@@ -231,6 +292,13 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 
 		if(client is None):
 			return json.dumps({"error": f"Couldn't find client with phone number: {phone}"}), 500
+
+		privileges = await privilegesFor(request, await _get_account(phone))
+
+		if (Privilege.REMOVE_ACCOUNT not in privileges):
+			return json.dumps(
+				{"error": f"Insufficient privileges to delete account {phone}"}
+			), 403
 
 		async def shutdown_and_remove():
 			if (client is not None and not client.is_stopped()):
@@ -266,6 +334,13 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 		if(client is None):
 			return json.dumps({"error": f"Couldn't find client with phone number: {phone}"}), 500
 
+		privileges = await privilegesFor(request, await _get_account(phone))
+
+		if (Privilege.EDIT_TWO_FACTOR_PASSWORD not in privileges):
+			return json.dumps(
+				{"error": f"Insufficient privileges to set two factor password for {phone}"}
+			), 403
+
 		res = await accounts.set_two_factor_password(phone, payload['password'])
 
 		if(res.success):
@@ -287,6 +362,9 @@ def create_webapp(manager: TelegramClientManager, accounts: AccountManager, clie
 
 	@app.route('/addtestaccount')
 	async def addtestaccount():
+		if(execution_environment != Environment.Staging):
+			return "This route is only valid in a staging environment.", 501
+
 		phone = TelegramStaging.generate_phone()
 		email = ''
 		comment = ''
