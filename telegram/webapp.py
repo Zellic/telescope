@@ -34,6 +34,8 @@ def is_allowed_file(path, root):
 	except OSError:
 		return False
 
+_ALL_PRIVILEGES = set(x for x in Privilege)
+
 def create_webapp(
 		config: dict,
 		manager: TelegramClientManager,
@@ -49,11 +51,20 @@ def create_webapp(
 	frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'telescope-webui-dist')
 	lookup = {}
 
-	# try:
-	# 	sso = CloudflareAccessSSO(config["CLOUDFLARE_ACCESS_CERTS"], config["CLOUDFLARE_POLICY_AUD"])
-	# except KeyError:
-	# 	raise Exception("Missing SSO config options... (CLOUDFLARE_ACCESS_CERTS, CLOUDFLARE_POLICY_AUD)")
-	sso = MockSSO()
+	sso = None
+	if(execution_environment == Environment.Staging):
+		mode = config.get("SSO_MODE", "cloudflare")
+
+		if(mode == "mock"):
+			# hardcode user to email test@test.com
+			sso = MockSSO()
+		elif(mode == "admin"):
+			sso = None
+		elif(mode == "cloudflare"):
+			try:
+				sso = CloudflareAccessSSO(config["CLOUDFLARE_ACCESS_CERTS"], config["CLOUDFLARE_POLICY_AUD"])
+			except KeyError:
+				raise Exception("Missing SSO config options... (CLOUDFLARE_ACCESS_CERTS, CLOUDFLARE_POLICY_AUD)")
 
 	async def _get_account(phone: str) -> TelegramAccount:
 		if (phone in lookup):
@@ -66,6 +77,14 @@ def create_webapp(
 
 	async def privilegesFor(request: Request, account: TelegramAccount) -> set[Privilege]:
 		"""retrieve the set of privileges this user (as determined by their cloudflare SSO email) has on this TG account"""
+
+		if(sso is None):
+			if(execution_environment != Environment.Staging):
+				raise NotImplementedError()
+
+			# while debugging, simply show all accounts
+			return _ALL_PRIVILEGES
+
 		email = await sso.get_email(request)
 
 		if(email is None):
@@ -74,7 +93,7 @@ def create_webapp(
 		user = await privmanager.get_or_create_user(email)
 
 		if(user.is_admin):
-			return set(x for x in Privilege)
+			return _ALL_PRIVILEGES
 
 		privs = await privmanager.get_privileges_on_account(user, account)
 		return privs

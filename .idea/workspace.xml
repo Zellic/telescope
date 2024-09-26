@@ -4,23 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Switch to caching for rbac">
-      <change afterPath="$PROJECT_DIR$/sso/cloudflare.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sso/mock.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sso/ssomodule.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_staging.5unluA/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_staging.5unluA/schema/information_schema.FNRwLQ.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_staging.5unluA/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_staging.5unluA/schema/pg_catalog.0S1ZNQ.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_staging.5unluA/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_staging.5unluA/schema/public.abK9xQ.meta" afterDir="false" />
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Basic privilege system works">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/accesscontrol.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/accesscontrol.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/database/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbtest.py" beforeDir="false" afterPath="$PROJECT_DIR$/dbtest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mainloop.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainloop.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/telegram/auth/schemes/staging.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/auth/schemes/staging.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/telegram/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/webapp.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -293,15 +278,7 @@
       <workItem from="1726756193879" duration="4025000" />
       <workItem from="1726879331178" duration="11541000" />
       <workItem from="1727087213228" duration="40101000" />
-      <workItem from="1727337416519" duration="2015000" />
-    </task>
-    <task id="LOCAL-00043" summary="* whoops">
-      <option name="closed" value="true" />
-      <created>1721410704849</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1721410704849</updated>
+      <workItem from="1727337416519" duration="2320000" />
     </task>
     <task id="LOCAL-00044" summary="* reeeeeeeee">
       <option name="closed" value="true" />
@@ -687,7 +664,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727174915310</updated>
     </task>
-    <option name="localTasksCounter" value="92" />
+    <task id="LOCAL-00092" summary="* Basic privilege system works">
+      <option name="closed" value="true" />
+      <created>1727339453817</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1727339453817</updated>
+    </task>
+    <option name="localTasksCounter" value="93" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -716,7 +701,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* Docker ignore" />
     <MESSAGE value="* update web ui&#10;* add error support" />
     <MESSAGE value="* Handle SQL errors correctly.&#10;* Persist username into DB for reconnects" />
     <MESSAGE value="* Add connect/disconnect support, update UI" />
@@ -741,7 +725,8 @@
     <MESSAGE value="* Refactor DB layer to be async using aiopg, fix environment API route" />
     <MESSAGE value="* Access control" />
     <MESSAGE value="* Switch to caching for rbac" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Switch to caching for rbac" />
+    <MESSAGE value="* Basic privilege system works" />
+    <option name="LAST_COMMIT_MESSAGE" value="* Basic privilege system works" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
