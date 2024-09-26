@@ -7,6 +7,7 @@ from typing import Callable, Optional, Coroutine, Any
 
 from quart import Quart
 
+from database.accesscontrol import UserPrivilegeManager
 from database.accounts import AccountManager
 from database.core import Database
 from telegram.auth.base import StaticSecrets
@@ -15,7 +16,6 @@ from telegram.manager import TelegramClientManager
 from telegram.util import Environment
 from telegram.webapp import create_webapp
 
-
 # dotenv wouldn't install...
 def read_env_file(file_path):
 	env_dict = {}
@@ -23,7 +23,7 @@ def read_env_file(file_path):
 	with open(file_path, 'r') as file:
 		for line in file:
 			line = line.strip()
-			if not line:
+			if not line or line.startswith("#"):
 				continue
 
 			key, value = line.split('=', 1)
@@ -47,16 +47,22 @@ class MainLoop:
 		try:
 			extra = read_env_file(".env")
 			self.config.update(extra)
-		except:
-			pass
+		except Exception as ex:
+			print("Failed to read .env file: " + str(ex))
 
-		if(len(self.config.get('TWO_FACTOR_ENCRYPTION_KEY', '')) != 32):
+		try:
+			if(len(self.config.get('TWO_FACTOR_ENCRYPTION_KEY', '')) != 32):
+				raise Exception("TWO_FACTOR_ENCRYPTION_KEY must be exactly 32 characters.")
+		except KeyError:
 			raise Exception("Must set TWO_FACTOR_ENCRYPTION_KEY within environment file or environment variables.")
 
+		# TODO: these do not give useful error messages if they're missing
+		# TODO: this stuff is gross, use some kind DI or similar
 		self.db = Database(self.config['DB_DSN'])
 		self.accounts = AccountManager(self.db, self.config['TWO_FACTOR_ENCRYPTION_KEY'])
 		self.API_ID = self.config['API_ID']
 		self.API_HASH = self.config['API_HASH']
+		self.privmanager = UserPrivilegeManager(self.db)
 
 		self.manager = TelegramClientManager()
 		self._app: Optional[Quart] = None
@@ -72,6 +78,7 @@ class MainLoop:
 		self._did_init = True
 
 		await self.accounts.init()
+		await self.privmanager.init()
 
 	def _check_init(self):
 		if(not self._did_init):
@@ -85,7 +92,7 @@ class MainLoop:
 	async def run(self, clientGenerator: Callable[[str], TelegramClient]):
 		self._check_init()
 
-		self._app = create_webapp(self.manager, self.accounts, clientGenerator, self.environment)
+		self._app = create_webapp(self.config, self.manager, self.accounts, clientGenerator, self.environment, self.privmanager)
 		host = "localhost" if self.config.get("DEBUG", "false").lower() == "true" else "0.0.0.0"
 
 		self._idiot_quart_task = self._app.run_task(host, 8888)

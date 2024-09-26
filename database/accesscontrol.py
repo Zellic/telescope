@@ -1,4 +1,5 @@
 import sys
+import time
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Set, ClassVar, Optional, Any
@@ -13,6 +14,9 @@ class Privilege(Enum):
     LOGIN = "login"
     MANAGE_CONNECTION_STATE = "manage_connection_state"
     REMOVE_ACCOUNT = "remove_account"
+
+def _get_privilege(x) -> Optional[Privilege]:
+    return next((y for y in Privilege if y.value.lower() == x.lower()), None)
 
 DEFAULT_PRIVILEGE_SET_FOR_OWN_ACCOUNT = {
     Privilege.VIEW,
@@ -48,11 +52,13 @@ class User:
     id: int
     email: str
     roles: List[int]
+    is_admin: bool
     CREATE_TABLE: ClassVar[str] = """
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
-    roles INTEGER[]
+    roles INTEGER[],
+    is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 """
 
@@ -70,7 +76,7 @@ CREATE TABLE IF NOT EXISTS telegram_privileges (
 );
 """
 
-TABLES = {Role, TelegramGroup, User, TelegramPrivilegeSet}
+TABLES = [Role, TelegramGroup, User, TelegramPrivilegeSet]
 
 class UserPrivilegeManager:
     def __init__(self, db: Database):
@@ -85,8 +91,10 @@ class UserPrivilegeManager:
 
         await self.reload_cache()
 
+    # TODO: invalidate this periodically if it gets too out of date by timestamp
     async def reload_cache(self):
         self.cache = {
+            'when': time.monotonic(),
             'roles': await self._load_roles(),
             'groups': await self._load_groups(),
             'privileges': {(x.group_id, x.role_id): x for x in (await self._load_privileges())}
@@ -107,6 +115,17 @@ class UserPrivilegeManager:
         result = await self.db.execute(query)
         return [TelegramPrivilegeSet(*x) for x in result.data] if result.success else []
 
+    async def get_or_create_user(self, email: str) -> User:
+        ret = await self.get_user(email)
+
+        if(ret == None):
+            query = "INSERT INTO users (email) VALUES (%s) RETURNING *"
+            result = await self.db.execute(query, (email,))
+
+            return User(*result.data[0])
+
+        return ret
+
     async def get_user(self, email: str) -> Optional[User]:
         query = "SELECT * FROM users WHERE email = %s"
         result = await self.db.execute(query, (email,))
@@ -120,15 +139,16 @@ class UserPrivilegeManager:
 
         return User(*result.data[0])
 
-    def get_privileges_for_pair(self, roles: List[int], groups: List[int]) -> set[Any]:
-        all_privileges = set()
+    # TODO: invalidate the cache if it's been cached too long...
+    async def get_privileges_for_pair(self, roles: List[int], groups: List[int]) -> set[Privilege]:
+        all_privileges: set[str] = set()
         for role in roles:
             for group in groups:
-                privset = self.cache['privileges'].get((group, role), [])
+                privset = self.cache['privileges'].get((group, role), set())
                 all_privileges.update(privset.privileges)
-        return all_privileges
+        return set([y for y in [_get_privilege(x) for x in all_privileges] if y is not None])
 
-    def get_privileges_on_account(self, user: User, account: TelegramAccount) -> set[str]:
+    async def get_privileges_on_account(self, user: User, account: TelegramAccount) -> set[Privilege]:
         extra = DEFAULT_PRIVILEGE_SET_FOR_OWN_ACCOUNT if account.email and user.email == account.email else set()
-        extra.update(self.get_privileges_for_pair(user.roles, account.groups))
+        extra.update(await self.get_privileges_for_pair(user.roles or [], account.groups or []))
         return extra

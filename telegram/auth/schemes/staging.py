@@ -1,8 +1,24 @@
 import random
 from typing import Optional
 
-from telegram.auth.base import AuthenticationProvider, AuthenticationScheme, StaticSecrets
+from telegram.auth.base import AuthenticationScheme, StaticSecrets
 from telegram.client import TelegramClient
+
+
+def name_me():
+	first_names = [
+		"Thor", "Odin", "Loki", "Freya", "Frigg", "Baldur", "Tyr", "Njord", "Skadi",
+		"Zeus", "Apollo", "Athena", "Hera", "Ares", "Hermes", "Hades", "Artemis", "Demeter"
+	]
+
+	last_names = [
+		"Smith", "Johnson", "Brown", "Taylor", "Anderson", "Jackson", "White", "Harris", "Martin"
+	]
+
+	first_name = random.choice(first_names)
+	last_name = random.choice(last_names)
+
+	return (first_name, last_name)
 
 class TelegramStaging(AuthenticationScheme):
 	@staticmethod
@@ -45,7 +61,8 @@ class TelegramStaging(AuthenticationScheme):
 		raise NotImplementedError()
 
 	def authorizationStateWaitRegistration(self, client: TelegramClient, value: any):
-		client.send({'@type': 'registerUser', 'first_name': "Herp", 'last_name': "Derp"})
+		name = name_me()
+		client.send({'@type': 'registerUser', 'first_name': name[0], 'last_name': name[1]})
 
 	def authorizationStateWaitPassword(self, client: TelegramClient, value: any):
 		client.send({'@type': 'checkAuthenticationPassword', 'password': "password"})

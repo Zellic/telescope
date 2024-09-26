@@ -46,7 +46,7 @@ class AccountManager:
 		return ret
 
 	async def getAccounts(self) -> List[TelegramAccount]:
-		query = "SELECT id, phone_number, username, email, comment, two_factor_password FROM telegram_accounts"
+		query = "SELECT id, phone_number, username, email, comment, two_factor_password, groups FROM telegram_accounts"
 		results = await self.db.execute(query)
 
 		if(results.success == False):
@@ -110,7 +110,7 @@ class AccountManager:
 			print(f"Failed to set two factor password: {e}")
 
 	async def get_account(self, phone_number: str) -> Optional[TelegramAccount]:
-		query = "SELECT id, phone_number, username, email, comment, two_factor_password FROM telegram_accounts WHERE phone_number = %s"
+		query = "SELECT id, phone_number, username, email, comment, two_factor_password, groups FROM telegram_accounts WHERE phone_number = %s"
 		result = await self.db.execute(query, (phone_number,))
 
 		if(result.success == False or len(result.data) == 0):
