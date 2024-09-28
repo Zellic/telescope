@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Add debug support for privilege system">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/telegram/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/webapp.py" afterDir="false" />
-    </list>
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* whoops" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,41 +42,41 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.asdf.executor": "Run",
-    "Python.base.executor": "Run",
-    "Python.client.executor": "Run",
-    "Python.cloudflare.executor": "Run",
-    "Python.dbtest (1).executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.mainweb.executor": "Run",
-    "Python.pgcrypt.executor": "Run",
-    "Python.test.executor": "Debug",
-    "Python.webapp.executor": "Run",
-    "Python.webmain.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "E:/Zellic/telescope/telescope-webui-dist",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.sourceCode.Markdown",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.asdf.executor&quot;: &quot;Run&quot;,
+    &quot;Python.base.executor&quot;: &quot;Run&quot;,
+    &quot;Python.client.executor&quot;: &quot;Run&quot;,
+    &quot;Python.cloudflare.executor&quot;: &quot;Run&quot;,
+    &quot;Python.dbtest (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.mainweb.executor&quot;: &quot;Run&quot;,
+    &quot;Python.pgcrypt.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.webapp.executor&quot;: &quot;Run&quot;,
+    &quot;Python.webmain.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Zellic/telescope/telescope-webui-dist&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Markdown&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ],
-    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
-      "PostgreSQL"
+    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
+      &quot;PostgreSQL&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Zellic\telescope\telescope-webui-dist" />
@@ -278,15 +275,7 @@
       <workItem from="1726756193879" duration="4025000" />
       <workItem from="1726879331178" duration="11541000" />
       <workItem from="1727087213228" duration="40101000" />
-      <workItem from="1727337416519" duration="2534000" />
-    </task>
-    <task id="LOCAL-00045" summary="* reeee">
-      <option name="closed" value="true" />
-      <created>1721411554671</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1721411554671</updated>
+      <workItem from="1727337416519" duration="2544000" />
     </task>
     <task id="LOCAL-00046" summary="* reeeeeeeeeeeeee">
       <option name="closed" value="true" />
@@ -672,7 +661,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727339768141</updated>
     </task>
-    <option name="localTasksCounter" value="94" />
+    <task id="LOCAL-00094" summary="* whoops">
+      <option name="closed" value="true" />
+      <created>1727339959263</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1727339959263</updated>
+    </task>
+    <option name="localTasksCounter" value="95" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -720,13 +717,13 @@
     <MESSAGE value="* Fix client disconnect bug" />
     <MESSAGE value="* Encrypt two factor passwords" />
     <MESSAGE value="* reee pycharm stop being helpful" />
-    <MESSAGE value="* whoops" />
     <MESSAGE value="* Refactor DB layer to be async using aiopg, fix environment API route" />
     <MESSAGE value="* Access control" />
     <MESSAGE value="* Switch to caching for rbac" />
     <MESSAGE value="* Basic privilege system works" />
     <MESSAGE value="* Add debug support for privilege system" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Add debug support for privilege system" />
+    <MESSAGE value="* whoops" />
+    <option name="LAST_COMMIT_MESSAGE" value="* whoops" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
