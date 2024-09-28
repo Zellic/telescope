@@ -400,7 +400,7 @@ def create_webapp(
 
 		if result.success:
 			await manager.add_client(clientFor(phone))
-			print(f"failed to add account: added account successfully ({phone})")
+			print(f"added account successfully ({phone})")
 			return json.dumps({"message": "Account added successfully"}), 201
 		else:
 			print(f"failed to add account: {result.error_message}")
