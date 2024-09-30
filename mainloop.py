@@ -67,7 +67,7 @@ class MainLoop:
 		self.manager = TelegramClientManager()
 		self._app: Optional[Quart] = None
 		self._shutting_down = False
-		self._idiot_quart_task = None
+		self._quart_task = None
 
 		self._did_init = False
 
@@ -93,15 +93,16 @@ class MainLoop:
 		self._check_init()
 
 		self._app = create_webapp(self.config, self.manager, self.accounts, clientGenerator, self.environment, self.privmanager)
-		host = "localhost" if self.config.get("DEBUG", "false").lower() == "true" else "0.0.0.0"
+		host = self.config.get("HOST", "localhost").lower()
+		port = int(self.config.get("PORT", "8888"))
 
-		self._idiot_quart_task = self._app.run_task(host, 8888)
+		self._quart_task = self._app.run_task(host, port)
 		# we can't pass this to gather or it will eat control+c events for some reason...
 		# it's okay because the manager runs forever, and we shut the manager down AFTER we shut the webapp down
 		#
 		# we awake .start() because we need the resulting task returned from it, not the async coroutine from the
 		# async method...
-		await asyncio.gather(await self.manager.start(), self._idiot_quart_task)
+		await asyncio.gather(await self.manager.start(), self._quart_task)
 
 	async def shutdown(self):
 		self._check_init()
