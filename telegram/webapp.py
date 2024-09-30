@@ -411,8 +411,11 @@ def create_webapp(
 		path = os.path.join(frontend_path, asset_path)
 		if not is_allowed_file(path, frontend_path):
 			abort(404)
-		if os.path.isfile(path):
-			return await send_from_directory(frontend_path, asset_path)
+		try_paths = [path, path + ".html", path + ".htm"]
+		for path in try_paths:
+			if os.path.isfile(path):
+				dir, file = os.path.split(path)
+				return await send_from_directory(dir, file)
 		abort(404)
 
 	@app.route('/', defaults={'path': ''})
