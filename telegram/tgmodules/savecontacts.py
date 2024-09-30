@@ -82,7 +82,6 @@ class TelegramContact:
 		)
 		return hashlib.md5(data.encode()).hexdigest()
 
-
 	def to_db_tuple(self) -> tuple:
 		return (
 			self.contact_id,
@@ -218,6 +217,6 @@ class SaveContacts(TelegramModule):
 			return
 
 		print("DM with user: " + repr(user))
-		result = self.db.execute(insert_sql, user.to_db_tuple())
+		result = await self.db.execute(insert_sql, user.to_db_tuple())
 		if(not result.success):
 			raise Exception(f"Failed to update contact table: {result.error_message}")
