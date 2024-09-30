@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Update webui-dist">
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* requirements.txt">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -279,15 +279,7 @@
       <workItem from="1727087213228" duration="40101000" />
       <workItem from="1727337416519" duration="2544000" />
       <workItem from="1727516206752" duration="3485000" />
-      <workItem from="1727732218041" duration="4659000" />
-    </task>
-    <task id="LOCAL-00048" summary="* derp">
-      <option name="closed" value="true" />
-      <created>1721411842487</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1721411842487</updated>
+      <workItem from="1727732218041" duration="4717000" />
     </task>
     <task id="LOCAL-00049" summary="* whoopsie, mount ./accounts into the container">
       <option name="closed" value="true" />
@@ -673,7 +665,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727738113363</updated>
     </task>
-    <option name="localTasksCounter" value="97" />
+    <task id="LOCAL-00097" summary="* requirements.txt">
+      <option name="closed" value="true" />
+      <created>1727738284039</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1727738284039</updated>
+    </task>
+    <option name="localTasksCounter" value="98" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -702,7 +702,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* Add connect/disconnect support, update UI" />
     <MESSAGE value="* Missed files..." />
     <MESSAGE value="* Fix regex" />
     <MESSAGE value="* Change query" />
@@ -727,7 +726,8 @@
     <MESSAGE value="* whoops" />
     <MESSAGE value="* derp" />
     <MESSAGE value="* Update webui-dist" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Update webui-dist" />
+    <MESSAGE value="* requirements.txt" />
+    <option name="LAST_COMMIT_MESSAGE" value="* requirements.txt" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
