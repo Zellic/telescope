@@ -23,7 +23,6 @@ itsdangerous==2.2.0
 Jinja2==3.1.4
 MarkupSafe==2.1.5
 priority==2.0.0
-psycopg2==2.9.9
 psycopg2-binary==2.9.9
 pycparser==2.22
 PyJWT==2.9.0
