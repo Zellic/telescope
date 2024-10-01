@@ -148,7 +148,7 @@ Currently the web UI is not built automatically by this repository's Dockerfile.
 
 Role-Based Access Control (RBAC)
 -------------------------------------------
-### Database schema
+### Database usage
 Telescope uses an RBAC system to manage user privileges, which are defined in the following Postgres tables:
 
 1.  `roles` Maps role IDs to human readable names.
@@ -203,7 +203,11 @@ Telegram Policies
 -------------------------------------------
 On the Telegram production servers, if you authenticate on an account more than five times in a day - whether successful or not - you will not be able to authenticate again on that account for that day.
 
-Unusual numbers of authentications, especially failed attempts, may risk your Telegram API key being banned. Telescope does not attempt to prevent this. **Please use responsibly.**
+Unusual numbers of authentications, especially failed attempts, may risk your Telegram API key being banned. Telescope does not attempt to prevent this.
+
+Note that restarting Telescope will not cause any accounts to authenticate again. Telegram session tokens are stored by tdlib in the `accounts/` folder. Deleting that folder will cause all accounts to authenticate again.
+
+ **Please use responsibly.**
 
 Development Using the Telegram Test Server
 -------------------------------------------
@@ -226,10 +230,10 @@ Telescope supports using the [Telegram test environment](https://core.telegram.o
       It will be visible if:
 	
 	  - You are in `SSO_MODE=MOCK` and the Telegram account is set to `test@test.com`.
-	  - You are in `SSO_MODE=MOCK` and the `test@test.com` account has `is_admin` set to `true`.
+	  - You are in `SSO_MODE=MOCK` and the `test@test.com` user has `is_admin` in the `users` table set to `true`.
 	  - You are in `SSO_MODE=MOCK` and you have configured RBAC privileges that would allow you to see the account.
 	  - You are in `SSO_MODE=cloudflare` and use Cloudflare Access during development.
-	  - You are in `SSO_MODE=disable`, so the RBAC system does not hide any accounts.
+	  - You are in `SSO_MODE=disable`, so the RBAC system grants all privileges universally.
 
 4.  **Authenticate test account**:
 
