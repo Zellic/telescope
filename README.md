@@ -86,35 +86,35 @@ Build Instructions
 
 ### Production setup
 
-1.  **Postgres**:
+1.  **Postgres**
 
     Install and configure Postgres - a DSN will be required.
 
-2.  **Build Docker Image**:
+2.  **Build Docker image**
     
     `docker compose build`
     
-3.  **Create Accounts Directory**:
+3.  **Create accounts directory**
     
     This is where TDLib data will live, including Telegram session persistence. This folder must be mounted into the container via Docker Compose.
 
     `mkdir accounts`
     
-4.  **Define Environment Variables**:
+4.  **Define environment variables**
     
     Create a `.env` file with the environment variables listed in the [Configuration](#configuration) section.
     
-5.  **Start the Application**:
+5.  **Start the application**
     
     `docker compose up`
 
 ### Development setup
 
-1.  **Build the TDLib Python JSON library**:
+1.  **Build the TDLib Python JSON library**
     
     Follow the build instructions for the TDLib Python JSON library from the [official TDLib documentation](https://tdlib.github.io/td/build.html?language=Python).
     
-2.  **Copy TDLib to natives/**:
+2.  **Copy TDLib to natives/**
     
     Copy the contents of `td/tdlib` to the following platform-specific folders:
     
@@ -128,7 +128,7 @@ Build Instructions
     * **Linux**: `natives/linux/lib/libtdjson.so`
     * **Macintosh**: `natives/darwin/lib/libtdjson.dylib`
 	
-3.  **Set up Python virtualenv**:
+3.  **Set up Python virtualenv**
     
 	Remember to always activate the virtualenv before running Telescope.
 	
@@ -138,7 +138,7 @@ Build Instructions
     python3 -m pip install -r requirements.txt
 	```
     
-4.  **Set environment variables**:
+4.  **Set environment variables**
     
     Define the necessary environment variables as detailed in the [Configuration](#configuration) section.
 
