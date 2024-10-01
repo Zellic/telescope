@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* change sso mode key">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* new readme">
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -280,15 +279,7 @@
       <workItem from="1727087213228" duration="40101000" />
       <workItem from="1727337416519" duration="2544000" />
       <workItem from="1727516206752" duration="3485000" />
-      <workItem from="1727732218041" duration="11450000" />
-    </task>
-    <task id="LOCAL-00053" summary="* Fix control+c">
-      <option name="closed" value="true" />
-      <created>1721693792436</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1721693792436</updated>
+      <workItem from="1727732218041" duration="11577000" />
     </task>
     <task id="LOCAL-00054" summary="* Comment">
       <option name="closed" value="true" />
@@ -674,7 +665,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727742380425</updated>
     </task>
-    <option name="localTasksCounter" value="102" />
+    <task id="LOCAL-00102" summary="* new readme">
+      <option name="closed" value="true" />
+      <created>1727746039499</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1727746039499</updated>
+    </task>
+    <option name="localTasksCounter" value="103" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -703,7 +702,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* Show comment and email&#10;* Don't lose username when disconnecting client" />
     <MESSAGE value="* Add delete modal" />
     <MESSAGE value="* disconnect/reconnect should preserve usernames" />
     <MESSAGE value="* Document testing" />
@@ -728,7 +726,8 @@
     <MESSAGE value="* Missed await" />
     <MESSAGE value="* serve_static implicitly rewrites HTML extensions (try_files directive in nginx)" />
     <MESSAGE value="* change sso mode key" />
-    <option name="LAST_COMMIT_MESSAGE" value="* change sso mode key" />
+    <MESSAGE value="* new readme" />
+    <option name="LAST_COMMIT_MESSAGE" value="* new readme" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
