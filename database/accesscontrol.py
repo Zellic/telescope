@@ -145,7 +145,6 @@ class UserPrivilegeManager:
     async def get_privileges_for_pair(self, roles: List[int], groups: List[int]) -> set[Privilege]:
         if self.is_cache_expired():
             await self.reload_cache()
-        else:
 
         all_privileges: set[str] = set()
         for role in roles:
