@@ -90,21 +90,21 @@ Build Instructions
 
     Install and configure Postgres - a DSN will be required.
 
-1.  **Build Docker Image**:
+2.  **Build Docker Image**:
     
     `docker compose build`
     
-2.  **Create Accounts Directory**:
+3.  **Create Accounts Directory**:
     
     This is where TDLib data will live, including Telegram session persistence. This folder must be mounted into the container via Docker Compose.
 
     `mkdir accounts`
     
-3.  **Define Environment Variables**:
+4.  **Define Environment Variables**:
     
     Create a `.env` file with the environment variables listed in the [Configuration](#configuration) section.
     
-4.  **Start the Application**:
+5.  **Start the Application**:
     
     `docker compose up`
 
@@ -120,13 +120,13 @@ Build Instructions
     
     * **Windows**: `natives/windows`
     * **Linux**: `natives/linux`
-    * **macOS**: `natives/darwin`
+    * **Macintosh**: `natives/darwin`
     
     The resulting paths should look like:
     
     * **Windows**: `natives/windows/tdjson.dll`
     * **Linux**: `natives/linux/lib/libtdjson.so`
-    * **macOS**: `natives/darwin/lib/libtdjson.dylib`
+    * **Macintosh**: `natives/darwin/lib/libtdjson.dylib`
 	
 3.  **Set up Python virtualenv**:
     
@@ -221,7 +221,9 @@ Telescope supports using the [Telegram test environment](https://core.telegram.o
     
     Use the "Add Test Account" button in the web UI to automatically add a test account.
     
-    * **Note**: You will likely not see the test account due to default RBAC configuration lacking VIEW privilege, unless:
+    * **Note**: You will likely not see the test account due to the default RBAC configuration lacking the VIEW privilege.
+      
+      It will be visible if:
 	
 	  - You are in `SSO_MODE=MOCK` and the Telegram account is set to `test@test.com`.
 	  - You are in `SSO_MODE=MOCK` and the `test@test.com` account has `is_admin` set to `true`.
