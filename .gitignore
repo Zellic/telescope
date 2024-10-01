@@ -3,3 +3,4 @@ tdlib
 .venv
 .venv2
 accounts
+__pycache__

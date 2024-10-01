@@ -4,7 +4,7 @@ import os
 import re
 import sys
 
-from quart import request, Quart, send_from_directory, abort, Response, Request
+from quart import request, Quart, send_from_directory, abort, Response, Request, websocket
 from quart_cors import cors
 
 from database.accesscontrol import UserPrivilegeManager, Privilege
@@ -103,42 +103,55 @@ def create_webapp(
 		privs = await privmanager.get_privileges_on_account(user, account)
 		return privs
 
+	async def makeblob(user: TelegramClient):
+		info_module = next((x for x in user._modules if isinstance(x, UserInfo)), None)
+		info = None if info_module is None else info_module.info
+
+		code_module = next((x for x in user._modules if isinstance(x, GetAuthCode)), None)
+
+		# TODO: should probably batch this...
+		# ^ actually when we couple accounts with db objects they will be cached
+		account = await _get_account(user.auth.phone)
+		privileges = await privilegesFor(request, account)
+
+		if(Privilege.VIEW not in privileges):
+			return None
+
+		return {
+			"name": None if info is None or info.first_name is None or info.last_name is None else info.first_name + " " + info.last_name,
+			"username": None if info is None else info.username,
+			"phone": user.auth.phone,
+			"email": None if account is None else account.email,
+			"comment": None if account is None else account.comment,
+			"lastCode": None if code_module is None or code_module.code is None else {
+				"value": int(code_module.code),
+				"date": code_module.timestamp,
+			},
+			"two_factor_pass_is_set": False if account is None else account.two_factor_password is not None,
+			"status": {
+				"stage": user.auth.status.name,
+				"inputRequired": user.auth.status.requiresInput,
+				"error": user.auth.status.error if hasattr(user.auth.status, "error") else None,
+			},
+			"privileges": [x.value for x in privileges],
+		}
+
+	@app.websocket('/socket')
+	async def ws():
+		items = [y for y in [await makeblob(x) for x in manager.clients] if y is not None]
+		await websocket.send(json.dumps({
+			'id': 'initial',
+			'hash': str(hash(json.dumps(items))),
+			'environment': execution_environment.name,
+			'items': items,
+		}))
+
+		while True:
+			message = await websocket.receive()
+
 	@app.route("/clients")
 	async def clients():
 		oldhash = request.args.get("hash")
-		async def makeblob(user: TelegramClient):
-			info_module = next((x for x in user._modules if isinstance(x, UserInfo)), None)
-			info = None if info_module is None else info_module.info
-
-			code_module = next((x for x in user._modules if isinstance(x, GetAuthCode)), None)
-
-			# TODO: should probably batch this...
-			# ^ actually when we couple accounts with db objects they will be cached
-			account = await _get_account(user.auth.phone)
-			privileges = await privilegesFor(request, account)
-
-			if(Privilege.VIEW not in privileges):
-				return None
-
-			return {
-				"name": None if info is None or info.first_name is None or info.last_name is None else info.first_name + " " + info.last_name,
-				"username": None if info is None else info.username,
-				"phone": user.auth.phone,
-				"email": None if account is None else account.email,
-				"comment": None if account is None else account.comment,
-				"lastCode": None if code_module is None or code_module.code is None else {
-					"value": int(code_module.code),
-					"date": code_module.timestamp,
-				},
-				"two_factor_pass_is_set": False if account is None else account.two_factor_password is not None,
-				"status": {
-					"stage": user.auth.status.name,
-					"inputRequired": user.auth.status.requiresInput,
-					"error": user.auth.status.error if hasattr(user.auth.status, "error") else None,
-				},
-				"privileges": [x.value for x in privileges],
-			}
-
 		items = [y for y in [await makeblob(x) for x in manager.clients] if y is not None]
 		ret = {
 			'hash': str(hash(json.dumps(items))),

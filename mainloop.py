@@ -14,7 +14,7 @@ from telegram.auth.base import StaticSecrets
 from telegram.client import TelegramClient
 from telegram.manager import TelegramClientManager
 from telegram.util import Environment
-from telegram.webapp import create_webapp
+from telegram.webapp.webapp import WebApp
 
 # dotenv wouldn't install...
 def read_env_file(file_path):
@@ -66,6 +66,7 @@ class MainLoop:
 
 		self.manager = TelegramClientManager()
 		self._app: Optional[Quart] = None
+		self._webapp = None
 		self._shutting_down = False
 		self._quart_task = None
 
@@ -92,7 +93,9 @@ class MainLoop:
 	async def run(self, clientGenerator: Callable[[str], TelegramClient]):
 		self._check_init()
 
-		self._app = create_webapp(self.config, self.manager, self.accounts, clientGenerator, self.environment, self.privmanager)
+		self._webapp = WebApp(self.config, self.manager, self.accounts, clientGenerator, self.environment, self.privmanager)
+		self._app = self._webapp.app
+
 		host = self.config.get("HOST", "localhost").lower()
 		port = int(self.config.get("PORT", "8888"))
 
