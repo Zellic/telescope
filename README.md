@@ -1,44 +1,254 @@
-telegram enterprise account management
+Telescope
+=========
 
-## Building/updating the web UI
+Telescope is an enterprise account management system for Telegram accounts, created by Zellic. It allows organizations to manage multiple organization-controlled Telegram accounts with role-based access control (RBAC) and single sign-on (SSO) authentication.
 
-The `telescope-webui` repository must be built manually 
-and committed to this repo:
-- static export: `next build`, make sure `output: 
-  'export',` is set in 
-  `next.config.js`
-- copy the contents of the `out` folder to 
-  `telescope-webui-dist` in this repo
+Table of Contents
+-------------------------------------------
 
-In the future we should probably automate this via 
-docker and a submodule.
+* [Features](#features)
+* [Requirements](#requirements)
+* [Usage](#usage)
+* [Configuration](#configuration)
+* [Build Instructions](#build-instructions)
+    * [Production Setup](#production-setup)
+    * [Development Setup](#development-setup)
+	* [Updating the web UI](#updating-the-web-ui)
+* [Role\-Based Access Control (RBAC)](#role-based-access-control-rbac)
+    * [Database schema](#database-schema)
+    * [Example](#example)
+    * [Privileges](#privileges)
+* [Telegram Policies](#telegram-policies)
+* [Development Using Telegram Test Server](#development-using-telegram-test-server)
+* [Pluggable Module System](#pluggable-module-system)
+* [Disclaimer](#disclaimer)
+* [License](#license)
 
-## Testing
-When testing during development you should use `test.py` 
-instead of `main.py`, which will use the 
-`TelegramStaging` authentication scheme rather than 
-`TelegramProduction`. You will not be able to use real
-Telegram accounts under this configuration, and you should
-use a separate testing or staging database via environment
-variables.
+Features
+-------------------------------------------
 
-This allows for using `TelegramStaging.generate_phone()` 
-- per [Telegram's API documentation](https://core.telegram.org/api/auth#test-accounts), we may make as 
-  many accounts as we need to (only on the test DC), and 
-  authenticating repeatedly, as well as authentication 
-  failures, will not penalize our app ID.
+* **Role-Based Access Control**: Assign privileges based on SSO email.
+* **Contact Management**: Stores all one-on-one contacts found on an account in Postgres.
+* **Enterprise Login**: Allows privileged users to retrieve two-factor codes to log into accounts.
+* **Pluggable Module System**: Extend functionality by adding custom modules.
 
-For testing purposes it is possible to add accounts to 
-the manager directly, but for a production-like 
-environment test accounts should be generated with 
-`generate_phone` and added to the database via SQL query.
-Unfortunately, in production we use eleven digit phone 
-numbers and the web UI is designed with that in mind, 
-but the test DC *requires* 10 digit phone numbers. Thus, 
-you cannot add a test account to the database via the 
-Add Account modal in the web UI.
+Requirements
+-------------------------------------------
+* PostgreSQL
+* Docker
+* Telegram API tokens (see [here](https://my.telegram.org))
+* Cloudflare Access (PRs welcome for other providers.)
 
-Keep in mind the auth code can be 
-derived from the phone number, and `TelegramStaging` 
-will print the appropriate log-in code at initialization 
-time for each account.
+Usage
+-------------------------------------------
+
+Telegram accounts may be added using the "Add Account" button on the main route (`/`), or added through the self-serve onboarding interface at `/onboarding`.
+
+When you add a new account, Telescope will proceed through the authentication steps one-by-one. If it requires more information, like an authentication code or two-factor password, the stage indicator will turn red, and the 'Provide' button will become available. Simply click that button and provide the required information so authentication can continue.
+
+Currently, not finishing authentication in a timely manner will cause the Telegram authentication code to expire. As authenticating too often is prohibited by Telegram, Telescope will not try again on its own, rather, you must explicitly click the disconnect and reconnect buttons to begin authentication again.
+
+The visibility of accounts, or actions related to accounts, is determined by the (RBAC system)[#role-based-access-control-rbac) privileges.
+
+Configuration
+-------------------------------------------
+Set the following environment variables in a `.env` file, which will be loaded by Docker Compose, or read from the project root if run without a container.
+
+They may also be defined as environment variables by your shell.
+
+* `HOST` The hostname to listen on (defaults to `localhost`).
+* `PORT` The port to listen on (defaults to `8888`).
+* `API_ID` Your Telegram API ID from your [Telegram app](https://my.telegram.org).
+* `API_HASH` Your Telegram API hash from your [Telegram app](https://my.telegram.org).
+* `DB_DSN` Database connection string (e.g., `user=postgres dbname=your_dbname host=your_postgres_ip password=your_password`).
+* `TWO_FACTOR_ENCRYPTION_KEY` A 32-character encryption key.
+* `SSO_MODE` Authentication mode. Options are:
+    * `cloudflare` For Cloudflare Access.
+    * `mock` For development only; hardcodes email to `test@test.com`.
+    * `disable` Skips privileges altogether, as if every user had administrator privileges.
+* `CLOUDFLARE_ACCESS_CERTS` Your Cloudflare Access team subdomain (see [Cloudflare documentation](https://developers.cloudflare.com/cloudflare-one/faq/getting-started-faq)).
+* `CLOUDFLARE_POLICY_AUD` Your Cloudflare Access `AUD` tag (see [Cloudflare documentation](https://developers.cloudflare.com/cloudflare-one/identity/authorization-cookie/validating-json/#get-your-aud-tag)).
+
+Example config (all keys are correctly sized random strings for demonstration purposes):
+
+```
+API_ID=12345678
+API_HASH=bce79c00b935bc325432991f88a19f0d
+DB_DSN="user=postgres dbname=telescope_proud host=192.168.1.1 password=CorrectHorseBatteryStaple"
+TWO_FACTOR_ENCRYPTION_KEY="dEMHhIw2jscdbKDq4orzevzlt7i7B3Rt"
+CLOUDFLARE_ACCESS_CERTS="https://yourteam.cloudflareaccess.com/cdn-cgi/access/certs"
+CLOUDFLARE_POLICY_AUD="e490adb9f86599ae40e26783d31e878ac69b85ab04ab04c67a0608f25181e872"
+SSO_MODE="cloudflare"
+```
+
+Build Instructions
+-------------------------------------------
+
+### Production Setup
+
+1.  **Postgres**:
+
+    Install and configure Postgres - a DSN will be required.
+
+1.  **Build Docker Image**:
+    
+    `docker compose build`
+    
+2.  **Create Accounts Directory**:
+    
+    This is where TDLib data will live, including Telegram session persistence. This folder must be mounted into the container via Docker Compose.
+
+    `mkdir accounts`
+    
+3.  **Define Environment Variables**:
+    
+    Create a `.env` file with the environment variables listed in the [Configuration](#configuration) section.
+    
+4.  **Start the Application**:
+    
+    `docker compose up`
+
+### Development Setup
+
+1.  **Build the TDLib Python JSON library**:
+    
+    Follow the build instructions for the TDLib Python JSON library from the [official TDLib documentation](https://tdlib.github.io/td/build.html?language=Python).
+    
+2.  **Copy TDLib to natives/**:
+    
+    Copy the contents of `td/tdlib` to the following platform-specific folders:
+    
+    * **Windows**: `natives/windows`
+    * **Linux**: `natives/linux`
+    * **macOS**: `natives/darwin`
+    
+    The resulting paths should look like:
+    
+    * **Windows**: `natives/windows/tdjson.dll`
+    * **Linux**: `natives/linux/lib/libtdjson.so`
+    * **macOS**: `natives/darwin/lib/libtdjson.dylib`
+	
+3.  **Set up Python virtualenv**:
+    
+	Remember to always activate the virtualenv before running Telescope.
+	
+	```
+	virtualenv .venv
+	. .venv/bin/activate
+    python3 -m pip install -r requirements.txt
+	```
+    
+4.  **Set environment variables**:
+    
+    Define the necessary environment variables as detailed in the [Configuration](#configuration) section.
+
+### Updating the web UI
+
+Currently the web UI is not built automatically by this repository's Dockerfile. In order to update the web UI, you must build a static export of the [web UI repository](https://github.com/Zellic/telescope-webui) and copy the contents of the `out` folder to the `telescope-webui-dist` folder in this repository. PRs to improve this process are welcome.
+
+Role-Based Access Control (RBAC)
+-------------------------------------------
+### Database schema
+Telescope uses an RBAC system to manage user privileges, which are defined in the following Postgres tables:
+
+1.  `roles` Maps role IDs to human readable names.
+
+2.  `users` When you first visit the application, a row is added to the `users` table using your SSO email. This account can be set as `is_admin=true`, granting total permissions, or have one or more role IDs assigned using PostgreSQL array syntax (e.g., `{1, 2}`).
+    
+3.  `telegram_groups` Maps Telegram group IDs to human readable names.
+    
+4.  `telegram_accounts` Telegram accounts may be assigned one or more group IDs in the `group` field.
+    
+5.  `telegram_privileges` Assign specific privileges to roles for Telegram accounts within specific groups.
+    
+### Example
+	
+For example, to grant the `sales` role (ID: 1) privileges on the `sales` account group (ID: 1):
+
+```sql
+INSERT INTO telegram_privileges (group_id, role_id, privileges)  VALUES (1, 1, '{"view", "login", "manage_connection_state"}');
+```
+
+But the `management` role (ID: 2) may also have privileges on the `sales` account group (ID: 1):
+
+```sql
+INSERT INTO telegram_privileges (group_id, role_id, privileges)  VALUES (1, 2, '{"view", "login", "manage_connection_state", "remove_account"}');
+```
+
+### Privileges
+
+Privileges are cached and refresh every five minutes. The current set of privileges are:
+
+- `view`
+  
+  Whether this user may see this account at all.
+
+- `edit_two_factor_password`
+  
+  Whether this user may edit the account's two-factor password.
+  
+- `login`
+  
+  Whether this user may retrieve the most recent authentication code for this account, allowing them to log in to Telegram with this account. (Note: There is currently no way to retrieve two-factor *passwords*, Telescope only uses them internally if provided.)
+
+- `manage_connection_state`
+  
+  Whether this user may connect or disconnect Telescope's Telegram session for this account. Note that this does *not* clear the tdlib session token, so **this will not count as authenticating again**, rather, it is the same as closing and reopening your Telegram app on desktop.
+
+- `remove_account`
+  
+  Whether this user may remove this account from Telegram (drop the row from the database).
+
+Telegram Policies
+-------------------------------------------
+On the Telegram production servers, if you authenticate on an account more than five times in a day - whether successful or not - you will not be able to authenticate again on that account for that day.
+
+Unusual numbers of authentications, especially failed attempts, may risk your Telegram API key being banned. Telescope does not attempt to prevent this. **Please use responsibly.**
+
+Development Using Telegram Test Server
+-------------------------------------------
+Telescope supports using the [Telegram test environment](https://core.telegram.org/api/auth#test-accounts) during development.
+
+1.  **Database**:
+
+    Real Telegram accounts should not try to authenticate to the test environment. Instead, configure a separate DSN for testing.
+
+2.  **Run test entry point**:
+    
+    Instead of running `main.py`, use `test.py`.
+    
+3.  **Add test account**:
+    
+    Use the "Add Test Account" button in the web UI to automatically add a test account.
+    
+    * **Note**: You will likely not see the test account due to default RBAC configuration lacking VIEW privilege, unless:
+	
+	  - You are in `SSO_MODE=MOCK` and the Telegram account is set to `test@test.com`.
+	  - You are in `SSO_MODE=MOCK` and the `test@test.com` account has `is_admin` set to `true`.
+	  - You are in `SSO_MODE=MOCK` and you have configured RBAC privileges that would allow you to see the account.
+	  - You are in `SSO_MODE=cloudflare` and use Cloudflare Access during development.
+	  - You are in `SSO_MODE=disable`, so the RBAC system does not hide any accounts.
+
+4.  **Authenticate test account**:
+
+    Telegram test accounts have authentication codes automatically set based on their phone number. The web UI will display each account's authentication code in the leftmost column of the main page.
+	
+	Test accounts do *not* have two-factor passwords set by default, however, other Telegram developers may happen to use the same random phone number and set a two-factor password on it while testing. If you are prompted for a two-factor password, simply remove that account and add another one.
+	
+	Similarly, test accounts may have inappropriate names set by third parties during their use of the Telegram test environment. As these servers are operated by the Telegram corporation, this is outside our control.
+
+Pluggable Module System
+-------------------------------------------
+Telescope features a pluggable module system that allows for extending functionality. For example, the `SaveContacts` module handles storing contacts.
+
+Event types used in the `@OnEvent` decorator come directly from the [official TDLib API documentation](https://core.telegram.org/tdlib/docs/classtd_1_1td__api_1_1_update.html).
+
+Note: You may set `LOG_ALL=True` at the top of `tdlib.py` to dump all TDLib JSON messages if the TDLib documentation is insufficient or unclear.
+
+Disclaimer
+-------------------------------------------
+Zellic makes no warranties, express or implied, regarding this project's performance or fitness for a particular purpose. Use at your own risk, and we disclaim any liability for damages arising from improper use, software malfunction, or unforeseen consequences.
+
+License
+-------------------------------------------
+TODO
