@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* serve_static implicitly rewrites HTML extensions (try_files directive in nginx)">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/information_schema.FNRwLQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/information_schema.FNRwLQ.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/pg_catalog.0S1ZNQ.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/public.abK9xQ.meta" afterDir="false" />
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* change sso mode key">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/telegram/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/webapp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -284,15 +280,7 @@
       <workItem from="1727087213228" duration="40101000" />
       <workItem from="1727337416519" duration="2544000" />
       <workItem from="1727516206752" duration="3485000" />
-      <workItem from="1727732218041" duration="8745000" />
-    </task>
-    <task id="LOCAL-00052" summary="* control+c handler">
-      <option name="closed" value="true" />
-      <created>1721693262225</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1721693262225</updated>
+      <workItem from="1727732218041" duration="11450000" />
     </task>
     <task id="LOCAL-00053" summary="* Fix control+c">
       <option name="closed" value="true" />
@@ -678,7 +666,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727739410647</updated>
     </task>
-    <option name="localTasksCounter" value="101" />
+    <task id="LOCAL-00101" summary="* change sso mode key">
+      <option name="closed" value="true" />
+      <created>1727742380425</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1727742380425</updated>
+    </task>
+    <option name="localTasksCounter" value="102" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -707,7 +703,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* Change query" />
     <MESSAGE value="* Show comment and email&#10;* Don't lose username when disconnecting client" />
     <MESSAGE value="* Add delete modal" />
     <MESSAGE value="* disconnect/reconnect should preserve usernames" />
@@ -732,7 +727,8 @@
     <MESSAGE value="* requirements.txt" />
     <MESSAGE value="* Missed await" />
     <MESSAGE value="* serve_static implicitly rewrites HTML extensions (try_files directive in nginx)" />
-    <option name="LAST_COMMIT_MESSAGE" value="* serve_static implicitly rewrites HTML extensions (try_files directive in nginx)" />
+    <MESSAGE value="* change sso mode key" />
+    <option name="LAST_COMMIT_MESSAGE" value="* change sso mode key" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
