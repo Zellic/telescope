@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Missed await">
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* serve_static implicitly rewrites HTML extensions (try_files directive in nginx)">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/information_schema.FNRwLQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/information_schema.FNRwLQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/pg_catalog.0S1ZNQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/82730b02-0995-41cc-91ac-7e5c20f55e96/storage_v2/_src_/database/telescope_prod.jCn3Yw/schema/public.abK9xQ.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/telegram/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/webapp.py" afterDir="false" />
     </list>
@@ -280,15 +284,7 @@
       <workItem from="1727087213228" duration="40101000" />
       <workItem from="1727337416519" duration="2544000" />
       <workItem from="1727516206752" duration="3485000" />
-      <workItem from="1727732218041" duration="5745000" />
-    </task>
-    <task id="LOCAL-00051" summary="* Add graceful shutdown (in theory?)">
-      <option name="closed" value="true" />
-      <created>1721689008271</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1721689008272</updated>
+      <workItem from="1727732218041" duration="8745000" />
     </task>
     <task id="LOCAL-00052" summary="* control+c handler">
       <option name="closed" value="true" />
@@ -674,7 +670,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727738711925</updated>
     </task>
-    <option name="localTasksCounter" value="100" />
+    <task id="LOCAL-00100" summary="* serve_static implicitly rewrites HTML extensions (try_files directive in nginx)">
+      <option name="closed" value="true" />
+      <created>1727739410647</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1727739410647</updated>
+    </task>
+    <option name="localTasksCounter" value="101" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -703,7 +707,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* Fix regex" />
     <MESSAGE value="* Change query" />
     <MESSAGE value="* Show comment and email&#10;* Don't lose username when disconnecting client" />
     <MESSAGE value="* Add delete modal" />
@@ -728,18 +731,10 @@
     <MESSAGE value="* Update webui-dist" />
     <MESSAGE value="* requirements.txt" />
     <MESSAGE value="* Missed await" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Missed await" />
+    <MESSAGE value="* serve_static implicitly rewrites HTML extensions (try_files directive in nginx)" />
+    <option name="LAST_COMMIT_MESSAGE" value="* serve_static implicitly rewrites HTML extensions (try_files directive in nginx)" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/telegram/webapp.py</url>
-          <line>418</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="read_env_file(&quot;.env&quot;)" language="Python" />
@@ -753,7 +748,7 @@
     <SUITE FILE_PATH="coverage/telescope$base.coverage" NAME="base Coverage Results" MODIFIED="1726644433530" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/accesscontrol" />
     <SUITE FILE_PATH="coverage/telescope$pgcrypt.coverage" NAME="pgcrypt Coverage Results" MODIFIED="1723543054008" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/database" />
     <SUITE FILE_PATH="coverage/telescope$asdf.coverage" NAME="asdf Coverage Results" MODIFIED="1727093383304" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/telescope$test.coverage" NAME="test Coverage Results" MODIFIED="1727739053752" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/telescope$test.coverage" NAME="test Coverage Results" MODIFIED="1727739364366" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/telescope$dbtest__1_.coverage" NAME="dbtest (1) Coverage Results" MODIFIED="1727335274389" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/telescope$webapp.coverage" NAME="webapp Coverage Results" MODIFIED="1719006269600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
     <SUITE FILE_PATH="coverage/telescope$cloudflare.coverage" NAME="cloudflare Coverage Results" MODIFIED="1727325356309" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/sso" />

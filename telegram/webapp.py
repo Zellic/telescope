@@ -61,10 +61,7 @@ def create_webapp(
 
 		# hardcode user to email test@test.com
 		sso = MockSSO()
-	elif(mode == "admin"):
-		if(execution_environment != Environment.Staging):
-			raise NotImplementedError("Cannot use SSO_MODE=admin outside staging environment")
-
+	elif(mode == "disable"):
 		sso = None
 	elif(mode == "cloudflare"):
 		try:
