@@ -253,7 +253,7 @@ Note: You may set `LOG_ALL=True` at the top of `tdlib.py` to dump all TDLib JSON
 
 Disclaimer
 -------------------------------------------
-Zellic makes no warranties, express or implied, regarding this project's performance or fitness for a particular purpose. Use at your own risk, and we disclaim any liability for damages arising from improper use, software malfunction, or unforeseen consequences.
+Zellic makes no warranties, express or implied, regarding this project's performance or fitness for a particular purpose. Use at your own risk. We disclaim any liability for damages arising from improper use, software malfunction, or unforeseen consequences.
 
 License
 -------------------------------------------
