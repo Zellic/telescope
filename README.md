@@ -46,7 +46,7 @@ Telegram accounts may be added using the "Add Account" button on the main route 
 
 When you add a new account, Telescope will proceed through the authentication steps one-by-one. If it requires more information, like an authentication code or two-factor password, the stage indicator will turn red, and the 'Provide' button will become available. Simply click that button and provide the required information so authentication can continue.
 
-Currently, not finishing authentication in a timely manner will cause the Telegram authentication code to expire. As authenticating too often is prohibited by Telegram, Telescope will not try again on its own, rather, you must explicitly click the disconnect and reconnect buttons to begin authentication again.
+Currently, not completing authentication in a timely manner will cause the Telegram authentication code to expire. As authenticating too often is prohibited by Telegram, Telescope will not try again on its own. You must explicitly click the disconnect and reconnect buttons to begin authentication again.
 
 The visibility of accounts, or actions related to accounts, is determined by the [RBAC system](#role-based-access-control-rbac) privileges.
 
@@ -120,19 +120,19 @@ Build Instructions
     
     * **Windows**: `natives/windows`
     * **Linux**: `natives/linux`
-    * **Macintosh**: `natives/darwin`
+    * **macOS**: `natives/darwin`
     
     The resulting paths should look like:
     
     * **Windows**: `natives/windows/tdjson.dll`
     * **Linux**: `natives/linux/lib/libtdjson.so`
-    * **Macintosh**: `natives/darwin/lib/libtdjson.dylib`
+    * **macOS**: `natives/darwin/lib/libtdjson.dylib`
 	
 3.  **Set up Python virtualenv**
     
 	Remember to always activate the virtualenv before running Telescope.
 	
-	```
+	```bash
 	virtualenv .venv
 	. .venv/bin/activate
     python3 -m pip install -r requirements.txt
