@@ -74,7 +74,7 @@ Example config (all keys are correctly sized random strings for demonstration pu
 ```
 API_ID=12345678
 API_HASH=bce79c00b935bc325432991f88a19f0d
-DB_DSN="user=postgres dbname=telescope_proud host=192.168.1.1 password=CorrectHorseBatteryStaple"
+DB_DSN="user=postgres dbname=telescope_prod host=192.168.1.1 password=CorrectHorseBatteryStaple"
 TWO_FACTOR_ENCRYPTION_KEY="dEMHhIw2jscdbKDq4orzevzlt7i7B3Rt"
 CLOUDFLARE_ACCESS_CERTS="https://yourteam.cloudflareaccess.com/cdn-cgi/access/certs"
 CLOUDFLARE_POLICY_AUD="e490adb9f86599ae40e26783d31e878ac69b85ab04ab04c67a0608f25181e872"
