@@ -11,15 +11,15 @@ Table of Contents
 * [Usage](#usage)
 * [Configuration](#configuration)
 * [Build Instructions](#build-instructions)
-    * [Production Setup](#production-setup)
-    * [Development Setup](#development-setup)
+    * [Production setup](#production-setup)
+    * [Development setup](#development-setup)
 	* [Updating the web UI](#updating-the-web-ui)
 * [Role\-Based Access Control (RBAC)](#role-based-access-control-rbac)
     * [Database schema](#database-schema)
     * [Example](#example)
     * [Privileges](#privileges)
 * [Telegram Policies](#telegram-policies)
-* [Development Using Telegram Test Server](#development-using-telegram-test-server)
+* [Development Using the Telegram Test Server](#development-using-the-telegram-test-server)
 * [Pluggable Module System](#pluggable-module-system)
 * [Disclaimer](#disclaimer)
 * [License](#license)
@@ -48,7 +48,7 @@ When you add a new account, Telescope will proceed through the authentication st
 
 Currently, not finishing authentication in a timely manner will cause the Telegram authentication code to expire. As authenticating too often is prohibited by Telegram, Telescope will not try again on its own, rather, you must explicitly click the disconnect and reconnect buttons to begin authentication again.
 
-The visibility of accounts, or actions related to accounts, is determined by the (RBAC system)[#role-based-access-control-rbac) privileges.
+The visibility of accounts, or actions related to accounts, is determined by the [RBAC system](#role-based-access-control-rbac) privileges.
 
 Configuration
 -------------------------------------------
@@ -84,7 +84,7 @@ SSO_MODE="cloudflare"
 Build Instructions
 -------------------------------------------
 
-### Production Setup
+### Production setup
 
 1.  **Postgres**:
 
@@ -108,7 +108,7 @@ Build Instructions
     
     `docker compose up`
 
-### Development Setup
+### Development setup
 
 1.  **Build the TDLib Python JSON library**:
     
@@ -205,7 +205,7 @@ On the Telegram production servers, if you authenticate on an account more than 
 
 Unusual numbers of authentications, especially failed attempts, may risk your Telegram API key being banned. Telescope does not attempt to prevent this. **Please use responsibly.**
 
-Development Using Telegram Test Server
+Development Using the Telegram Test Server
 -------------------------------------------
 Telescope supports using the [Telegram test environment](https://core.telegram.org/api/auth#test-accounts) during development.
 
