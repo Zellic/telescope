@@ -29,7 +29,7 @@ Features
 
 * **Role-Based Access Control**: Assign privileges based on SSO email.
 * **Contact Management**: Stores all one-on-one contacts found on an account in Postgres.
-* **Enterprise Login**: Allows privileged users to retrieve two-factor codes to log into accounts.
+* **Employee Account Takeover**: Allows privileged users to retrieve two-factor codes to log into accounts. Stores 2FA passwords encrypted with a master key on disk.
 * **Pluggable Module System**: Extend functionality by adding custom modules.
 
 Requirements
@@ -254,7 +254,3 @@ Note: You may set `LOG_ALL=True` at the top of `tdlib.py` to dump all TDLib JSON
 Disclaimer
 -------------------------------------------
 Zellic makes no warranties, express or implied, regarding this project's performance or fitness for a particular purpose. Use at your own risk. We disclaim any liability for damages arising from improper use, software malfunction, or unforeseen consequences.
-
-License
--------------------------------------------
-TODO
