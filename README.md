@@ -108,6 +108,20 @@ Build Instructions
     
     `docker compose up`
 
+5. **Grant yourself admin privileges**
+
+   No accounts will be visible unless you have privileges on them. As the operating user, you must set yourself as an administrator (granting all privileges), or configure role-based access control (see [here](#role-based-access-control-rbac).)
+
+   To grant administrator access visit your deployed instance once so a corresponding `user` row is created in the Postgres database.
+
+   Set your `is_admin` field to `true` using your SSO email:
+
+   ```sql
+   UPDATE users SET is_admin=true WHERE email='person@yourdomain.com';
+   ```
+
+   Wait five minutes for the cache to clear, or restart Telescope.
+
 ### Development setup
 
 1.  **Build the TDLib Python JSON library**
@@ -142,19 +156,9 @@ Build Instructions
     
     Define the necessary environment variables as detailed in the [Configuration](#configuration) section.
 
-5. **Grant yourself admin privileges**
+5. **Development**
 
-   No accounts will be visible unless you have privileges on them. As the operating user, you must set yourself as an administrator (granting all privileges), or configure role-based access control (see [here](#role-based-access-control-rbac).)
-
-   To grant administrator access visit your deployed instance once so a corresponding `user` row is created in the Postgres database.
-
-   Set your `is_admin` field to `true` using your SSO email:
-
-   ```sql
-   UPDATE users SET is_admin=true WHERE email='person@yourdomain.com';
-   ```
-
-   Wait five minutes for the cache to clear, or restart Telescope.
+    See [the development section](#development-using-the-telegram-test-server) for more details.
 
 ### Updating the web UI
 
