@@ -1,5 +1,6 @@
 import asyncio
 import json
+import re
 import sys
 from enum import Enum
 from json import JSONDecodeError
@@ -8,6 +9,7 @@ from quart import websocket, Blueprint, request
 
 from database.accesscontrol import Privilege
 from telegram.auth.api import ClientNotStarted
+from telegram.auth.base import StaticSecrets
 from telegram.auth.schemes.staging import TelegramStaging
 from telegram.tgmodules.userinfo import UserInfo
 from telegram.util import Environment
@@ -17,19 +19,23 @@ websocket_bp = Blueprint('socket_bp', __name__)
 
 class MessageSendType(str, Enum):
     CLIENT_START = 'CLIENT_START'
+    ADD_ACCOUNT_RESPONSE = "ADD_ACCOUNT_RESPONSE",
     ADD_TEST_ACCOUNT_RESPONSE = "ADD_TEST_ACCOUNT_RESPONSE"
     SUBMIT_VALUE_RESPONSE = "SUBMIT_VALUE_RESPONSE"
     DELETE_ACCOUNT_RESPONSE = "DELETE_ACCOUNT_RESPONSE"
     CONNECT_CLIENT_RESPONSE = "CONNECT_CLIENT_RESPONSE"
     DISCONNECT_CLIENT_RESPONSE = "DISCONNECT_CLIENT_RESPONSE"
+    SET_PASSWORD_RESPONSE = "SET_PASSWORD_RESPONSE"
 
 
 class MessageRecvType(str, Enum):
+    ADD_ACCOUNT = "ADD_ACCOUNT"
     ADD_TEST_ACCOUNT = 'ADD_TEST_ACCOUNT'
     SUBMIT_VALUE = 'SUBMIT_VALUE'
     DELETE_ACCOUNT = "DELETE_ACCOUNT"
     CONNECT_CLIENT = "CONNECT_CLIENT"
     DISCONNECT_CLIENT = "DISCONNECT_CLIENT"
+    SET_PASSWORD = "SET_PASSWORD"
 
 
 class Websocket:
@@ -238,6 +244,83 @@ class Websocket:
         await asyncio.create_task(shutdown_client())
         await self.send_ok_response(MessageSendType.DISCONNECT_CLIENT_RESPONSE)
 
+    async def set_password(self, data):
+        if not all(key in data for key in ['password', 'phone']):
+            await self.send_error_response(MessageSendType.SET_PASSWORD_RESPONSE, "Invalid payload structure")
+            return
+
+        phone = data['phone']
+        password = data['password']
+
+        client = next((x for x in self.webapp.client_manager.clients if x.auth.phone == phone), None)
+
+        if client is None:
+            await self.send_error_response(MessageSendType.SET_PASSWORD_RESPONSE,
+                                           f"Couldn't find client with phone number: {phone}")
+            return
+
+        privileges = await self.webapp.privilegesFor(request, await self.webapp.get_tg_account(phone))
+
+        if Privilege.EDIT_TWO_FACTOR_PASSWORD not in privileges:
+            await self.send_error_response(MessageSendType.SET_PASSWORD_RESPONSE,
+                                           f"Insufficient privileges to set two factor password for {phone}")
+            return
+
+        res = await self.webapp.account_manager.set_two_factor_password(phone, password)
+
+        if res.success:
+            (await self.webapp.get_tg_account(phone)).two_factor_password = password
+
+            if client.auth.scheme.secrets is not None:
+                client.auth.scheme.secrets.two_factor_password = password
+            else:
+                client.auth.scheme.secrets = StaticSecrets(two_factor_password=password)
+
+            await self.send_ok_response(MessageSendType.SET_PASSWORD_RESPONSE)
+        else:
+            sys.stderr.write("[!] failed to set password on account due to DB error: " + res.error_message + "\n")
+            await self.send_error_response(MessageSendType.SET_PASSWORD_RESPONSE,
+                                           "Failed to set password due to DB error, see stderr.")
+
+    async def add_account(self, data):
+        try:
+            if not 'phone' in data:
+                await self.send_error_response(MessageSendType.ADD_ACCOUNT_RESPONSE, "Invalid payload structure")
+                return
+
+            phone_number = data['phone']
+            email = data.get('email', None)
+            comment = data.get('comment', None)
+
+            if not re.match(r'^\d{11}$', phone_number):
+                print("failed to add account: phone number must be 11 digits")
+                await self.send_error_response(MessageSendType.ADD_ACCOUNT_RESPONSE, "Phone number must be exactly 11 digits")
+                return
+
+            if email and not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+                print("failed to add account: invalid email format")
+                await self.send_error_response(MessageSendType.ADD_ACCOUNT_RESPONSE, "Invalid email format")
+                return
+
+            if comment and (len(comment) < 1 or len(comment) > 300):
+                print("failed to add account: comment must be between 1 and 300 characters")
+                await self.send_error_response(MessageSendType.ADD_ACCOUNT_RESPONSE, "Comment must be between 1 and 300 characters")
+                return
+
+            result = await self.webapp.account_manager.add_account(phone_number, email, comment)
+
+            if result.success:
+                await self.webapp.client_manager.add_client(self.webapp.clientFor(phone_number))
+                print(f"added account successfully: {phone_number}")
+                await self.send_ok_response(MessageSendType.ADD_ACCOUNT_RESPONSE)
+            else:
+                print(f"failed to add account: {result.error_message}")
+                await self.send_error_response(MessageSendType.ADD_ACCOUNT_RESPONSE, result.error_message)
+                return
+        except Exception as e:
+            print(f"failed to add account: unexpected error - {str(e)}")
+            return json.dumps({"error": f"Unexpected error: {str(e)}"}), 500
+
     async def run(self):
         if self.webapp.client_manager.socket_needs_update():
             await self.send_clients()
@@ -273,6 +356,12 @@ class Websocket:
             case MessageRecvType.DISCONNECT_CLIENT:
                 data = msg['data']
                 await self.disconnect_client(data)
+            case MessageRecvType.SET_PASSWORD:
+                data = msg['data']
+                await self.set_password(data)
+            case MessageRecvType.ADD_ACCOUNT:
+                data = msg['data']
+                await self.add_account(data)
 
 
 @websocket_bp.websocket('/socket')
