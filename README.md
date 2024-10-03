@@ -142,6 +142,16 @@ Build Instructions
     
     Define the necessary environment variables as detailed in the [Configuration](#configuration) section.
 
+5. **Grant yourself admin privileges**
+
+   Visit your deployed instance once so a corresponding `user` row is created in the Postgres database.
+
+   Set your `is_admin` field to `true` using your SSO email:
+
+   ```sql
+   UPDATE users SET is_admin=true WHERE email='person@yourdomain.com';
+   ```
+
 ### Updating the web UI
 
 Currently the web UI is not built automatically by this repository's Dockerfile. In order to update the web UI, you must build a static export of the [web UI repository](https://github.com/Zellic/telescope-webui) and copy the contents of the `out` folder to the `telescope-webui-dist` folder in this repository. PRs to improve this process are welcome.
