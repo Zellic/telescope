@@ -62,7 +62,7 @@ class MainLoop:
 		self.accounts = AccountManager(self.db, self.config['TWO_FACTOR_ENCRYPTION_KEY'])
 		self.API_ID = self.config['API_ID']
 		self.API_HASH = self.config['API_HASH']
-		self.privmanager = UserPrivilegeManager(self.db)
+		self.privmanager = UserPrivilegeManager(self.db, int(self.config.get("PRIVILEGE_REFRESH_TIME_IN_MINUTES", "300")))
 
 		self.manager = TelegramClientManager()
 		self._app: Optional[Quart] = None

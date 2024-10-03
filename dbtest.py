@@ -12,7 +12,7 @@ async def main():
 	# await db.execute(User.CREATE_TABLE)
 	# await db.execute("INSERT INTO users (email, roles) VALUES ('asdf@whatever.com', '{1, 2}')")
 	# print(await db.execute("SELECT roles FROM users WHERE email = %s", ("asdf@whatever.com",)))
-	rbac = UserPrivilegeManager(db)
+	rbac = UserPrivilegeManager(db, 300)
 	await rbac.init()
 	print(rbac.get_privileges_for_pair([1,2], [1,2]))
 	print(await rbac.get_or_create_user("test2@lol.com"))

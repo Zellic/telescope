@@ -77,12 +77,12 @@ CREATE TABLE IF NOT EXISTS telegram_privileges (
 """
 
 TABLES = [Role, TelegramGroup, User, TelegramPrivilegeSet]
-CACHE_EXPIRY = 60 * 5 # 5 minutes
 
 class UserPrivilegeManager:
-    def __init__(self, db: Database):
+    def __init__(self, db: Database, cache_expiration_time_in_minutes: int):
         self.db = db
         self.cache = {}
+        self.cache_expiration_time_in_minutes = cache_expiration_time_in_minutes
 
     async def init(self):
         for table in TABLES:
@@ -101,7 +101,7 @@ class UserPrivilegeManager:
         }
 
     def is_cache_expired(self):
-        return time.monotonic() - self.cache['when'] > CACHE_EXPIRY
+        return time.monotonic() - self.cache['when'] > self.cache_expiration_time_in_minutes
 
     async def _load_roles(self) -> List[Role]:
         query = "SELECT * FROM roles"
