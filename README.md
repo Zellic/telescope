@@ -144,13 +144,17 @@ Build Instructions
 
 5. **Grant yourself admin privileges**
 
-   Visit your deployed instance once so a corresponding `user` row is created in the Postgres database.
+   No accounts will be visible unless you have privileges on them. As the operating user, you must set yourself as an administrator (granting all privileges), or configure role-based access control (see [here](#role-based-access-control-rbac).)
+
+   To grant administrator access visit your deployed instance once so a corresponding `user` row is created in the Postgres database.
 
    Set your `is_admin` field to `true` using your SSO email:
 
    ```sql
    UPDATE users SET is_admin=true WHERE email='person@yourdomain.com';
    ```
+
+   Wait five minutes for the cache to clear, or restart Telescope.
 
 ### Updating the web UI
 
