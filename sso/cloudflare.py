@@ -4,7 +4,7 @@ from typing import Optional
 
 import jwt
 import requests
-from quart import Request
+from quart import Request, websocket
 
 from sso.ssomodule import SSOModule
 
@@ -49,10 +49,9 @@ class CloudflareAccessSSO(SSOModule):
     def __init__(self, certs_url, policy_aud):
         self.cjwt = CloudflareJWT(certs_url, policy_aud)
 
-    async def get_email(self, request: Request) -> Optional[str]:
-        auth = request.cookies.get("CF_Authorization")
-
-        if(auth is None):
+    async def get_email(self) -> Optional[str]:
+        auth = websocket.cookies.get("CF_Authorization")
+        if auth is None:
             return None
 
         return self.cjwt.verify_token(auth)

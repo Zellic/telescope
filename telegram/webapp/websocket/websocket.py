@@ -8,6 +8,7 @@ from json import JSONDecodeError
 from quart import websocket, Blueprint, request
 
 from database.accesscontrol import Privilege
+from sso.cloudflare import CloudflareAccessSSO
 from telegram.auth.api import ClientNotStarted
 from telegram.auth.base import StaticSecrets
 from telegram.auth.schemes.staging import TelegramStaging
@@ -18,6 +19,7 @@ from telegram.webapp.websocket.util import tg_client_blob, get_webapp
 websocket_bp = Blueprint('socket_bp', __name__)
 
 class MessageSendType(str, Enum):
+    SSO_START = "SSO_START"
     CLIENT_START = 'CLIENT_START'
     ADD_ACCOUNT_RESPONSE = "ADD_ACCOUNT_RESPONSE",
     ADD_TEST_ACCOUNT_RESPONSE = "ADD_TEST_ACCOUNT_RESPONSE"
@@ -26,7 +28,6 @@ class MessageSendType(str, Enum):
     CONNECT_CLIENT_RESPONSE = "CONNECT_CLIENT_RESPONSE"
     DISCONNECT_CLIENT_RESPONSE = "DISCONNECT_CLIENT_RESPONSE"
     SET_PASSWORD_RESPONSE = "SET_PASSWORD_RESPONSE"
-
 
 class MessageRecvType(str, Enum):
     ADD_ACCOUNT = "ADD_ACCOUNT"
@@ -321,6 +322,14 @@ class Websocket:
             print(f"failed to add account: unexpected error - {str(e)}")
             return json.dumps({"error": f"Unexpected error: {str(e)}"}), 500
 
+    async def send_sso_start(self):
+        if isinstance(self.webapp.sso, CloudflareAccessSSO):
+            email = await self.webapp.sso.get_email()
+            if email is not None:
+                await self.send(MessageSendType.SSO_START, {
+                    'email': email,
+                })
+
     async def run(self):
         if self.webapp.client_manager.socket_needs_update():
             await self.send_clients()
@@ -363,11 +372,11 @@ class Websocket:
                 data = msg['data']
                 await self.add_account(data)
 
-
 @websocket_bp.websocket('/socket')
 async def socket():
     ws = Websocket()
     await ws.send_clients()
+    await ws.send_sso_start()
 
     while True:
         await ws.run()

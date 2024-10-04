@@ -1,3 +1,4 @@
+import os
 import sys
 
 from database.accesscontrol import UserPrivilegeManager
@@ -28,7 +29,9 @@ class AccountManager:
 	def __init__(self, db: Database, encryption_key: str):
 		self.db = db
 		self.encryption_key = encryption_key
-		self.rbac = UserPrivilegeManager(db)
+		self.config = dict(os.environ)
+		# TODO: this is duplicated from mainloop.py
+		self.rbac = UserPrivilegeManager(db, int(self.config.get("PRIVILEGE_REFRESH_TIME_IN_MINUTES", "300")))
 
 	async def init(self):
 		result = await self.db.execute(create_table_sql)

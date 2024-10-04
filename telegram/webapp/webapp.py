@@ -108,7 +108,7 @@ class WebApp:
             # while debugging, simply show all accounts
             return _ALL_PRIVILEGES
 
-        email = await self.sso.get_email(req)
+        email = await self.sso.get_email()
         if email is None:
             return set()
 
