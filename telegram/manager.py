@@ -18,6 +18,7 @@ class TelegramClientManager:
         self._stop_event = asyncio.Event()
         self._task = None
         self._started = False
+        self._socket_needs_update = False
 
     async def add_client(self, client: TelegramClient, start = True):
         self.clients.append(client)
@@ -27,6 +28,7 @@ class TelegramClientManager:
 
         if(self._started and start):
             await client.start()
+        self._socket_needs_update = True
 
     def _try_dispatch_event(self):
         event = self.tdlib.receive()
@@ -43,6 +45,7 @@ class TelegramClientManager:
 
         # noinspection PyProtectedMember
         client._event_received(event)
+        self._socket_needs_update = True
         return True
 
     async def _receive_loop(self):
@@ -92,3 +95,9 @@ class TelegramClientManager:
 
         async for _ in self.stop_and_yield():
             pass
+
+    def update_socket(self):
+        self._socket_needs_update = False
+
+    def socket_needs_update(self):
+        return self._socket_needs_update

@@ -83,6 +83,7 @@ class UserPrivilegeManager:
         self.db = db
         self.cache = {}
         self.cache_expiration_time_in_minutes = cache_expiration_time_in_minutes
+        self._socket_needs_update = False
 
     async def init(self):
         for table in TABLES:
@@ -142,9 +143,16 @@ class UserPrivilegeManager:
 
         return User(*result.data[0])
 
+    def update_socket(self):
+        self._socket_needs_update = False
+
+    def socket_needs_update(self):
+        return self._socket_needs_update
+
     async def get_privileges_for_pair(self, roles: List[int], groups: List[int]) -> set[Privilege]:
         if self.is_cache_expired():
             await self.reload_cache()
+            self._socket_needs_update = True
 
         all_privileges: set[str] = set()
         for role in roles:

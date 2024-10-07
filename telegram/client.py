@@ -65,7 +65,6 @@ class TelegramClient:
 				self.auth.status = ErrorOccurred(f"[{event['code']}] {event['message']}")
 			else:
 				self.auth.status = ErrorOccurred(f"{event['message']}")
-
 			return
 		elif event['@type'] == 'updateAuthorizationState':
 			auth_state = event['authorization_state']
