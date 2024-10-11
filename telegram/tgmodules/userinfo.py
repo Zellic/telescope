@@ -1,4 +1,5 @@
 import dataclasses
+import sys
 from typing import Optional
 
 from database.accounts import AccountManager
@@ -37,13 +38,19 @@ class UserInfo(TelegramModule):
 
 		old = self.info
 
-		info = await client.sendAwaitingReply({'@type': 'getMe'})
+		try:
+			info = await client.sendAwaitingReply({'@type': 'getMe'})
+		except Exception as ex:
+			sys.stderr.write(f'getMe failed for {self.phonenumber}')
+			return
+
 		self.info = UserInfoContainer(
 			info['id'],
 			info['first_name'],
 			info['last_name'],
 			info['usernames']['editable_username'] if 'usernames' in info and info['usernames'] is not None else None
 		)
+
 
 		old_username = None if old is None else old.db_username()
 		new_username = None if self.info is None or self.info.db_username() is None else self.info.db_username()

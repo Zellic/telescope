@@ -1,4 +1,5 @@
 import asyncio
+import json
 import sys
 from typing import List
 
@@ -44,7 +45,12 @@ class TelegramClient:
 
 		self.send(query)
 
-		return await future
+		payload = await future
+		if payload.get('@type', None) == 'error':
+			sys.stderr.write(f'Got bad payload from sendAwaitingReply - \n Query: {json.dumps(query)}\n Payload: {json.dumps(payload)}\n')
+			raise Exception(f'Got error reply from sendAwaitingReply with {query}')
+
+		return payload
 
 	def _event_received(self, event):
 		extra = event.get('@extra')
