@@ -38,7 +38,7 @@ class WebApp:
         self.account_manager = accounts
         self.client_manager = manager
         self.privilege_manager = privmanager
-        self.frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", 'telescope-webui-dist')
+        self.frontend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", 'telescope-webui-dist')
         self.account_cache = {}
 
         _app = Quart(__name__)

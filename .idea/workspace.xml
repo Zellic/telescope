@@ -4,8 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* Load cache expiry time from environment variable">
+    <list default="true" id="acc60318-e049-4b44-b9a1-4785ef675b98" name="Changes" comment="* update webui">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telegram/webapp/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/telegram/webapp/webapp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/404.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/9sWrF1NUsv8SHN3ue3ZNS/_buildManifest.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/9sWrF1NUsv8SHN3ue3ZNS/_ssgManifest.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/284-7888b29090006c6d.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/49-a7a51a45678fc4b7.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/74efd9f1-d34d2f190074b63d.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/940-57ffcc1f7ce842b0.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/app/layout-2261c2f130624acd.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/app/onboarding/page-ab84c807de55b5cf.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/_next/static/chunks/app/page-7a5bb3a826f81465.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/index.txt" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/index.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/onboarding.html" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/onboarding.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/telescope-webui-dist/onboarding.txt" beforeDir="false" afterPath="$PROJECT_DIR$/telescope-webui-dist/onboarding.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,41 +59,41 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.asdf.executor&quot;: &quot;Run&quot;,
-    &quot;Python.base.executor&quot;: &quot;Run&quot;,
-    &quot;Python.client.executor&quot;: &quot;Run&quot;,
-    &quot;Python.cloudflare.executor&quot;: &quot;Run&quot;,
-    &quot;Python.dbtest (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.mainweb.executor&quot;: &quot;Run&quot;,
-    &quot;Python.pgcrypt.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.webapp.executor&quot;: &quot;Run&quot;,
-    &quot;Python.webmain.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/Zellic/telescope/telescope-webui-dist&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Markdown&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.asdf.executor": "Run",
+    "Python.base.executor": "Run",
+    "Python.client.executor": "Run",
+    "Python.cloudflare.executor": "Run",
+    "Python.dbtest (1).executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.mainweb.executor": "Run",
+    "Python.pgcrypt.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.webapp.executor": "Run",
+    "Python.webmain.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "E:/Zellic/telescope/telescope-webui-dist",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "settings.sync",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ],
-    &quot;com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect&quot;: [
-      &quot;PostgreSQL&quot;
+    "com.intellij.ide.scratch.LRUPopupBuilder$1/SQL Dialect": [
+      "PostgreSQL"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Zellic\telescope\telescope-webui-dist" />
@@ -282,15 +297,13 @@
       <workItem from="1727732218041" duration="14292000" />
       <workItem from="1727928470554" duration="210000" />
       <workItem from="1727929351102" duration="280000" />
-      <workItem from="1728317791271" duration="1299000" />
-    </task>
-    <task id="LOCAL-00062" summary="* derp">
-      <option name="closed" value="true" />
-      <created>1721704742747</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
-      <option name="project" value="LOCAL" />
-      <updated>1721704742747</updated>
+      <workItem from="1728317791271" duration="2708000" />
+      <workItem from="1728336300871" duration="160000" />
+      <workItem from="1728339083897" duration="1180000" />
+      <workItem from="1728345764297" duration="6817000" />
+      <workItem from="1728407625312" duration="27000" />
+      <workItem from="1728407677551" duration="16000" />
+      <workItem from="1728657138200" duration="730000" />
     </task>
     <task id="LOCAL-00063" summary="* why are you like this quart">
       <option name="closed" value="true" />
@@ -676,7 +689,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727929616837</updated>
     </task>
-    <option name="localTasksCounter" value="111" />
+    <task id="LOCAL-00111" summary="* update webui">
+      <option name="closed" value="true" />
+      <created>1728319557460</created>
+      <option name="number" value="00111" />
+      <option name="presentableId" value="LOCAL-00111" />
+      <option name="project" value="LOCAL" />
+      <updated>1728319557460</updated>
+    </task>
+    <option name="localTasksCounter" value="112" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -705,7 +726,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="* space" />
     <MESSAGE value="* Fix telescope terminating probably" />
     <MESSAGE value="* 2FA password support - NOT TESTED YET" />
     <MESSAGE value="* Two factor!" />
@@ -730,7 +750,8 @@
     <MESSAGE value="* Update README.md" />
     <MESSAGE value="* Build webui version" />
     <MESSAGE value="* Load cache expiry time from environment variable" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Load cache expiry time from environment variable" />
+    <MESSAGE value="* update webui" />
+    <option name="LAST_COMMIT_MESSAGE" value="* update webui" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
@@ -746,7 +767,7 @@
     <SUITE FILE_PATH="coverage/telescope$base.coverage" NAME="base Coverage Results" MODIFIED="1726644433530" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/accesscontrol" />
     <SUITE FILE_PATH="coverage/telescope$pgcrypt.coverage" NAME="pgcrypt Coverage Results" MODIFIED="1723543054008" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/database" />
     <SUITE FILE_PATH="coverage/telescope$asdf.coverage" NAME="asdf Coverage Results" MODIFIED="1727093383304" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/telescope$test.coverage" NAME="test Coverage Results" MODIFIED="1727928619048" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/telescope$test.coverage" NAME="test Coverage Results" MODIFIED="1728657840809" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/telescope$dbtest__1_.coverage" NAME="dbtest (1) Coverage Results" MODIFIED="1727335274389" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/telescope$webapp.coverage" NAME="webapp Coverage Results" MODIFIED="1719006269600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/telegram" />
     <SUITE FILE_PATH="coverage/telescope$cloudflare.coverage" NAME="cloudflare Coverage Results" MODIFIED="1727325356309" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/sso" />
