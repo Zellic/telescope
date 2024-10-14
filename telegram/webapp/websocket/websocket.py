@@ -9,6 +9,7 @@ from quart import websocket, Blueprint, request
 
 from database.accesscontrol import Privilege
 from sso.cloudflare import CloudflareAccessSSO
+from sso.mock import MockSSO
 from telegram.auth.api import ClientNotStarted
 from telegram.auth.base import StaticSecrets
 from telegram.auth.schemes.staging import TelegramStaging
@@ -277,7 +278,7 @@ class Websocket:
             return await self.send_error_response(MessageSendType.ADD_ACCOUNT_RESPONSE, f"Unexpected error: {str(e)}")
 
     async def send_sso_start(self):
-        if isinstance(self.webapp.sso, CloudflareAccessSSO):
+        if self.webapp.sso is not None:
             email = await self.webapp.sso.get_email()
             if email is not None:
                 await self.send(MessageSendType.SSO_START, {
