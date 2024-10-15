@@ -45,7 +45,8 @@ class WebApp:
         # TODO: if next.js decides, hey i wanna use port 3001, everything will explode!
         #       the websocket wont connect due to this cors policy :D
         self.app = cors(_app, allow_origin=["http://127.0.0.1:8888", "http://localhost:8888",
-                                            "http://127.0.0.1:3000", "http://localhost:3000"])
+                                            "http://127.0.0.1:3000", "http://localhost:3000",
+                                            *(config.get('CORS_POLICY').split(';') if config.get('CORS_POLICY') else [])])
         self.app.config['webapp'] = self
 
         self.setup_sso(config)

@@ -58,6 +58,7 @@ They may also be defined as environment variables by your shell.
 
 * `HOST` The hostname to listen on (defaults to `localhost`).
 * `PORT` The port to listen on (defaults to `8888`).
+* `CORS_POLICY` The allowed origins for interacting with the websocket (e.g., `"https://example.com;https://example2.com"`)
 * `API_ID` Your Telegram API ID from your [Telegram app](https://my.telegram.org).
 * `API_HASH` Your Telegram API hash from your [Telegram app](https://my.telegram.org).
 * `DB_DSN` Database connection string (e.g., `user=postgres dbname=your_dbname host=your_postgres_ip password=your_password`).
