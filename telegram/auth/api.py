@@ -158,7 +158,7 @@ class APIAuth(AuthenticationProvider):
 
 		self.status.waitForValue(wait)
 
-	# only implemented for staging, not used in production
+	# only implemented for development, not used in production
 	def authorizationStateWaitRegistration(self, client: 'TelegramClient'):
 		self.status = RegistrationRequired()
 		self.scheme.authorizationStateWaitRegistration(client, None)

@@ -78,8 +78,8 @@ class WebApp:
         mode = config.get("SSO_MODE", "cloudflare").lower()
 
         if mode == "mock":
-            if self.execution_environment != Environment.Staging:
-                raise NotImplementedError("Cannot use SSO_MODE=mock outside staging environment")
+            if self.execution_environment != Environment.Development:
+                raise NotImplementedError("Cannot use SSO_MODE=mock outside development environment")
 
             # hardcode user to email test@test.com
             self.sso = MockSSO()
@@ -106,7 +106,7 @@ class WebApp:
         """retrieve the set of privileges this user (as determined by their cloudflare SSO email) has on this TG account"""
 
         if self.sso is None:
-            if self.execution_environment != Environment.Staging:
+            if self.execution_environment != Environment.Development:
                 raise NotImplementedError()
 
             # while debugging, simply show all accounts

@@ -3,17 +3,17 @@ from typing import Optional
 from mainloop import MainLoop
 from telegram.auth.api import APIAuth
 from telegram.auth.base import StaticSecrets
-from telegram.auth.schemes.staging import TelegramStaging
+from telegram.auth.schemes.development import TelegramDevelopment
 from telegram.client import TelegramClient
 from telegram.tgmodules.getcode import GetAuthCode
 from telegram.tgmodules.userinfo import UserInfo
 from telegram.util import Environment
 
 def main():
-	core = MainLoop(Environment.Staging)
+	core = MainLoop(Environment.Development)
 
 	def testClientForClosure(phonenumber, username: Optional[str]=None, secrets: Optional[StaticSecrets]=None):
-		scheme = TelegramStaging(phonenumber, core.API_ID, core.API_HASH, "accounts/" + phonenumber, secrets)
+		scheme = TelegramDevelopment(phonenumber, core.API_ID, core.API_HASH, "accounts/" + phonenumber, secrets)
 		return TelegramClient(APIAuth(phonenumber, scheme), [
 			UserInfo(phonenumber, core.accounts, username),
 			GetAuthCode()
@@ -27,7 +27,7 @@ def main():
 				None if account.two_factor_password is None else StaticSecrets(account.two_factor_password)
 			))
 
-	# core.addClient(testClientForClosure(TelegramStaging.generate_phone(), None, False))
+	# core.addClient(testClientForClosure(TelegramDevelopment.generate_phone(), None, False))
 	core.mainLoop(onStart, testClientForClosure)
 
 if __name__ == "__main__":

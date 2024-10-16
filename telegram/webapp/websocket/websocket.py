@@ -12,7 +12,7 @@ from sso.cloudflare import CloudflareAccessSSO
 from sso.mock import MockSSO
 from telegram.auth.api import ClientNotStarted
 from telegram.auth.base import StaticSecrets
-from telegram.auth.schemes.staging import TelegramStaging
+from telegram.auth.schemes.development import TelegramDevelopment
 from telegram.tgmodules.userinfo import UserInfo
 from telegram.util import Environment
 from telegram.webapp.websocket.util import tg_client_blob, get_webapp
@@ -121,13 +121,13 @@ class Websocket:
         return all(key in payload for key in keys)
 
     async def add_test_account(self):
-        if self.webapp.execution_environment != Environment.Staging:
+        if self.webapp.execution_environment != Environment.Development:
             return await self.send_error_response(
                 MessageSendType.ADD_TEST_ACCOUNT_RESPONSE,
-                "This route is only valid in a staging environment."
+                "This route is only valid in a development environment."
             )
 
-        phone = TelegramStaging.generate_phone()
+        phone = TelegramDevelopment.generate_phone()
         email = ''
         comment = ''
 

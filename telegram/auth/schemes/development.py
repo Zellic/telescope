@@ -20,7 +20,7 @@ def name_me():
 
 	return (first_name, last_name)
 
-class TelegramStaging(AuthenticationScheme):
+class TelegramDevelopment(AuthenticationScheme):
 	@staticmethod
 	def generate_phone():
 		code = str(random.randint(1, 3))
