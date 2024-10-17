@@ -1,5 +1,6 @@
 import asyncio
 import json
+import re
 import sys
 from typing import List
 
@@ -46,7 +47,23 @@ class TelegramClient:
 		self.send(query)
 
 		payload = await future
-		if payload.get('@type', None) == 'error':
+
+		# Parse time out of the 'Too Many Requests' response (code 429)
+		# {'@type': 'error', 'code': 429, 'message': 'Too Many Requests: retry after 32', '@extra': 1, '@client_id': 2}
+		if payload.get('@type', None) == 'error' and payload.get('code', None) == 429:
+			msg = payload.get("message", "")
+			time = re.search(r'retry after (\d+)', msg)
+			if time:
+				retry_after = int(time.group(1))
+				sys.stderr.write(f'Received 429 error, retrying after {retry_after} seconds.\n')
+				# https://github.com/tdlib/td/issues/682#issuecomment-1100713528, seconds not milliseconds
+				await asyncio.sleep(retry_after)
+				return await self.sendAwaitingReply(query)
+			else:
+				sys.stderr.write(
+					f'Failed to parse retry time from sendAwaitingReply - \n Query: {json.dumps(query)}\n Payload: {json.dumps(payload)}\n')
+				raise Exception(f'Failed to parse retry time from sendAwaitingReply with {query}')
+		elif payload.get('@type', None) == 'error':
 			sys.stderr.write(f'Got bad payload from sendAwaitingReply - \n Query: {json.dumps(query)}\n Payload: {json.dumps(payload)}\n')
 			raise Exception(f'Got error reply from sendAwaitingReply with {query}')
 
