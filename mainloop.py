@@ -9,6 +9,7 @@ from quart import Quart
 
 from database.accesscontrol import UserPrivilegeManager
 from database.accounts import AccountManager
+from database.accounttype import TelegramAccount
 from database.core import Database
 from telegram.auth.base import StaticSecrets
 from telegram.client import TelegramClient
@@ -131,7 +132,7 @@ class MainLoop:
 		# this library sucks
 		sys.exit(0)
 
-	def mainLoop(self, runOnStart: Callable[[], Coroutine[Any, Any, None]], clientGenerator: Callable[[str, Optional[str], Optional[StaticSecrets]], TelegramClient]):
+	def mainLoop(self, runOnStart: Callable[[], Coroutine[Any, Any, None]], clientGenerator: Callable[[TelegramAccount], TelegramClient]):
 		# make aiopg work on windows
 		if sys.version_info >= (3, 8) and sys.platform.lower().startswith("win"):
 			asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())

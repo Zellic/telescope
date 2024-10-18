@@ -134,7 +134,7 @@ class Websocket:
         result = await self.webapp.account_manager.add_account(phone, email, comment, True)
 
         if result.success:
-            await self.webapp.client_manager.add_client(self.webapp.clientFor(phone))
+            await self.webapp.client_manager.add_client(self.webapp.clientFor(result.result))
             print(f"added account successfully ({phone})")
             await self.send_ok_response(MessageSendType.ADD_TEST_ACCOUNT_RESPONSE)
         else:
@@ -267,7 +267,7 @@ class Websocket:
             result = await self.webapp.account_manager.add_account(phone_number, email, comment)
 
             if result.success:
-                await self.webapp.client_manager.add_client(self.webapp.clientFor(phone_number))
+                await self.webapp.client_manager.add_client(self.webapp.clientFor(result.result))
                 print(f"added account successfully: {phone_number}")
                 await self.send_ok_response(MessageSendType.ADD_ACCOUNT_RESPONSE)
             else:

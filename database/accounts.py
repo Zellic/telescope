@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS telegram_accounts (
 class AddAccountResult(NamedTuple):
 	success: bool
 	error_message: Optional[str]
+	result: Optional[TelegramAccount]
 
 class AccountManager:
 	def __init__(self, db: Database, encryption_key: str):
@@ -60,28 +61,30 @@ class AccountManager:
 	async def add_account(self, phone_number: str, email: Optional[str] = None, comment: Optional[str] = None, development: bool = False) -> AddAccountResult:
 		phone_length = 10 if development else 11
 		if not re.match(f'^\\d{{{phone_length}}}$', phone_number):
-			return AddAccountResult(False, "Phone number must be exactly 11 digits")
+			return AddAccountResult(False, "Phone number must be exactly 11 digits", None)
 
 		# todo: use a proper library
 		if email and not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
-			return AddAccountResult(False, "Invalid email format")
+			return AddAccountResult(False, "Invalid email format", None)
 
 		if comment and (len(comment) < 1 or len(comment) > 300):
-			return AddAccountResult(False, "Comment must be between 1 and 300 characters")
+			return AddAccountResult(False, "Comment must be between 1 and 300 characters", None)
 
 		insert_query = """
         INSERT INTO telegram_accounts (phone_number, email, comment)
         VALUES (%s, %s, %s)
+		RETURNING id, phone_number, email, comment
         """
 
 		try:
 			result = await self.db.execute(insert_query, (phone_number, email, comment))
 			if result.success:
-				return AddAccountResult(True, None)
+				account = result.data[0]
+				return AddAccountResult(True, None, TelegramAccount(id=account[0], phone_number=account[1], email=account[2], comment=account[3], username=None, two_factor_password=None, groups=None))
 			else:
-				return AddAccountResult(False, f"Failed to insert account: {result.error_message}")
+				return AddAccountResult(False, f"Failed to insert account: {result.error_message}", None)
 		except Exception as e:
-			return AddAccountResult(False, f"Database error: {str(e)}")
+			return AddAccountResult(False, f"Database error: {str(e)}", None)
 
 	async def set_username(self, phone_number: str, username: str) -> None:
 		insert_query = """

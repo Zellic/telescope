@@ -1,5 +1,6 @@
 from typing import Optional
 
+from database.accounttype import TelegramAccount
 from mainloop import MainLoop
 from telegram.auth.api import APIAuth
 from telegram.auth.base import StaticSecrets
@@ -13,25 +14,18 @@ from telegram.util import Environment
 def main():
 	core = MainLoop(Environment.Production)
 
-	def clientForClosure(phonenumber, username: Optional[str]=None, secrets: Optional[StaticSecrets]=None):
-		scheme = TelegramProduction(core.API_ID, core.API_HASH, "accounts/" + phonenumber, secrets, True)
-		return TelegramClient(APIAuth(phonenumber, scheme), [
-			UserInfo(
-				phonenumber,
-				core.accounts,
-				username,
-			),
-			SaveContacts(core.db, phonenumber),
+	def clientForClosure(account: TelegramAccount):
+		secrets = None if account.two_factor_password is None else StaticSecrets(account.two_factor_password)
+		scheme = TelegramProduction(core.API_ID, core.API_HASH, "accounts/" + account.phone_number, secrets, True)
+		return TelegramClient(APIAuth(account.phone_number, scheme), [
+			UserInfo(account.phone_number, core.accounts, account.username),
+			SaveContacts(core.db, account.phone_number),
 			GetAuthCode()
 		])
 
 	async def onStart():
 		for account in await core.accounts.getAccounts():
-			await core.addClient(clientForClosure(
-				account.phone_number,
-				account.username,
-				None if account.two_factor_password is None else StaticSecrets(account.two_factor_password)
-			))
+			await core.addClient(clientForClosure(account))
 
 	core.mainLoop(onStart, clientForClosure)
 
