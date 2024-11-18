@@ -30,7 +30,7 @@ class MessageSendType(str, Enum):
     CONNECT_CLIENT_RESPONSE = "CONNECT_CLIENT_RESPONSE"
     DISCONNECT_CLIENT_RESPONSE = "DISCONNECT_CLIENT_RESPONSE"
     SET_PASSWORD_RESPONSE = "SET_PASSWORD_RESPONSE"
-
+    GET_PASSWORD_RESPONSE = "GET_PASSWORD_RESPONSE"
 
 class MessageRecvType(str, Enum):
     ADD_ACCOUNT = "ADD_ACCOUNT"
@@ -40,6 +40,7 @@ class MessageRecvType(str, Enum):
     CONNECT_CLIENT = "CONNECT_CLIENT"
     DISCONNECT_CLIENT = "DISCONNECT_CLIENT"
     SET_PASSWORD = "SET_PASSWORD"
+    GET_PASSWORD = "GET_PASSWORD"
 
 # TODO: can be made cleaner by deriving message_type from function name, but then
 #       that creates the restriction of function names MUST BE types, which may
@@ -243,6 +244,28 @@ class Websocket:
             await self.send_error_response(MessageSendType.SET_PASSWORD_RESPONSE,
                                            "Failed to set password due to DB error, see stderr.")
 
+    @validate_payload(MessageSendType.GET_PASSWORD_RESPONSE, ['phone'])
+    async def get_password(self, data):
+        target = data['phone']
+
+        email = await self.webapp.sso.get_email()
+        if email is None:
+            await self.send_error_response(MessageSendType.GET_PASSWORD_RESPONSE, "You lack an SSO email, which is required for admin only functions")
+            return
+
+        user = await self.webapp.privilege_manager.get_user(email)
+        if not user.is_admin:
+            await self.send_error_response(MessageSendType.GET_PASSWORD_RESPONSE, "Only admins can use this function")
+            return
+
+        password = (await self.webapp.get_tg_account(target)).two_factor_password
+
+        await self.send(MessageSendType.GET_PASSWORD_RESPONSE, {
+            'status': "OK",
+            'value': password,
+            'error': None,
+        })
+
     @validate_payload(MessageSendType.ADD_ACCOUNT_RESPONSE, ['phone'])
     async def add_account(self, data):
         try:
@@ -325,6 +348,8 @@ class Websocket:
                 await self.set_password(data)
             case MessageRecvType.ADD_ACCOUNT:
                 await self.add_account(data)
+            case MessageRecvType.GET_PASSWORD:
+                await self.get_password(data)
 
 
 @websocket_bp.websocket('/socket')
