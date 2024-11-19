@@ -31,6 +31,7 @@ class MessageSendType(str, Enum):
     DISCONNECT_CLIENT_RESPONSE = "DISCONNECT_CLIENT_RESPONSE"
     SET_PASSWORD_RESPONSE = "SET_PASSWORD_RESPONSE"
     GET_PASSWORD_RESPONSE = "GET_PASSWORD_RESPONSE"
+    TERMINATE_OTHER_SESSIONS = "TERMINATE_OTHER_SESSIONS_RESPONSE"
 
 class MessageRecvType(str, Enum):
     ADD_ACCOUNT = "ADD_ACCOUNT"
@@ -41,6 +42,7 @@ class MessageRecvType(str, Enum):
     DISCONNECT_CLIENT = "DISCONNECT_CLIENT"
     SET_PASSWORD = "SET_PASSWORD"
     GET_PASSWORD = "GET_PASSWORD"
+    TERMINATE_OTHER_SESSIONS = "TERMINATE_OTHER_SESSIONS"
 
 # TODO: can be made cleaner by deriving message_type from function name, but then
 #       that creates the restriction of function names MUST BE types, which may
@@ -266,6 +268,24 @@ class Websocket:
             'error': None,
         })
 
+    @validate_payload(MessageSendType.TERMINATE_OTHER_SESSIONS, ['phone'])
+    @require_privilege(MessageSendType.TERMINATE_OTHER_SESSIONS, Privilege.MANAGE_CONNECTION_STATE)
+    async def terminate_other_sessions(self, data, client):
+        if not client.is_started():
+            return await self.send_error_response(MessageSendType.TERMINATE_OTHER_SESSIONS, f"Client is not connected")
+
+        try:
+            result = await client.sendAwaitingReply({'@type': 'terminateAllOtherSessions'})
+        except Exception as e:
+            await self.send_error_response(MessageSendType.TERMINATE_OTHER_SESSIONS, str(e))
+            return
+
+        if result["@type"] == "ok":
+            await self.send_ok_response(MessageSendType.TERMINATE_OTHER_SESSIONS)
+        else:
+            sys.stderr.write(f"terminate_other_sessions failure for client {data['phone']} - {result['message']}")
+            await self.send_error_response(MessageSendType.TERMINATE_OTHER_SESSIONS, "Failed to terminate other sessions")
+
     @validate_payload(MessageSendType.ADD_ACCOUNT_RESPONSE, ['phone'])
     async def add_account(self, data):
         try:
@@ -350,6 +370,8 @@ class Websocket:
                 await self.add_account(data)
             case MessageRecvType.GET_PASSWORD:
                 await self.get_password(data)
+            case MessageRecvType.TERMINATE_OTHER_SESSIONS:
+                await self.terminate_other_sessions(data)
 
 
 @websocket_bp.websocket('/socket')
