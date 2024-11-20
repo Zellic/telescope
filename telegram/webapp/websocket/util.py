@@ -38,6 +38,7 @@ async def tg_client_blob(webapp: 'WebApp', user: TelegramClient):
             "date": code_module.timestamp,
         },
         "two_factor_pass_is_set": False if account is None else account.two_factor_password is not None,
+        "two_factor_protected": None if info is None else info.has_2fa,
         "status": {
             "stage": user.auth.status.name,
             "inputRequired": user.auth.status.requiresInput,
