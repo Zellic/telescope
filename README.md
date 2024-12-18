@@ -29,7 +29,7 @@ Features
 
 * **Role-Based Access Control**: Assign privileges based on SSO email.
 * **Contact Management**: Stores all one-on-one contacts found on an account in Postgres.
-* **Employee Account Takeover**: Allows privileged users to retrieve two-factor codes to log into accounts. Stores 2FA passwords encrypted with a master key on disk.
+* **Employee Account Recovery**: Allows privileged users to retrieve two-factor codes to log into accounts. Stores 2FA passwords encrypted with a master key on disk.
 * **Pluggable Module System**: Extend functionality by adding custom modules.
 
 Requirements
