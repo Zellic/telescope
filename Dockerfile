@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /app/tdlib/natives/linux \
     && git clone https://github.com/tdlib/td.git \
     && cd td \
+    && git checkout 53acb2b5343511432db5aa2091937c3d294c7faa \
     && rm -rf build \
     && mkdir build \
     && cd build \
