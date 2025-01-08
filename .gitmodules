@@ -1,0 +1,3 @@
+[submodule "telescope-webui"]
+	path = telescope-webui
+	url = https://github.com/Zellic/telescope-webui.git

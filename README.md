@@ -161,10 +161,6 @@ Build Instructions
 
     See [the development section](#development-using-the-telegram-test-server) for more details.
 
-### Updating the web UI
-
-Currently the web UI is not built automatically by this repository's Dockerfile. In order to update the web UI, you must build a static export of the [web UI repository](https://github.com/Zellic/telescope-webui) and copy the contents of the `out` folder to the `telescope-webui-dist` folder in this repository. PRs to improve this process are welcome.
-
 Role-Based Access Control (RBAC)
 -------------------------------------------
 ### Database usage

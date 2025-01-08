@@ -3,7 +3,7 @@ FROM python:3.10-slim
 WORKDIR /build
 
 RUN apt-get update && apt-get install -y \
-    make git zlib1g-dev libssl-dev gperf php-cli cmake g++ \
+    make git zlib1g-dev libssl-dev gperf php-cli cmake g++ nodejs npm \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /app/tdlib/natives/linux \
@@ -17,6 +17,10 @@ RUN mkdir -p /app/tdlib/natives/linux \
     && cmake --build . --target install
 
 COPY . /app
+
+RUN cd /app/telescope-webui \
+    && npm install --force \
+    && npm run build
 
 RUN pip install -r /app/requirements.txt
 
