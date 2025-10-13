@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y \
     make git zlib1g-dev libssl-dev gperf php-cli cmake g++ nodejs npm \
     && rm -rf /var/lib/apt/lists/*
 
+# If you experience weird crashes during build reduce the number of
+# cores used. Works well with 2GB of ram/core.
 RUN mkdir -p /app/tdlib/natives/linux \
     && git clone https://github.com/tdlib/td.git \
     && cd td \
@@ -14,7 +16,7 @@ RUN mkdir -p /app/tdlib/natives/linux \
     && mkdir build \
     && cd build \
     && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/app/natives/linux .. \
-    && cmake --build . --target install
+    && cmake --build . --target install -j $(nproc)
 
 COPY . /app
 
