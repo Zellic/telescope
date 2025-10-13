@@ -1,0 +1,34 @@
+name: Build Telescope
+
+on:
+  push:
+    branches: ["deploy/"]
+
+jobs:
+  build-telescope:
+    uses: Zellic/github-workflows/.github/workflows/build-push-image.yml@main
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    with:
+      registry: ghcr.io
+      image_name: telescope
+      context: .
+      dockerfile: Dockerfile
+
+  patch-chart:
+    needs: build-telescope
+    uses: ./.github/workflows/patch-chart.yml
+    with:
+      charts_repo: zellic/chartss
+      charts_branch: main
+      chart_file_path: charts/telescope/values-staging.yaml
+      chart_value: telescope.tag
+      new_value: ${{ needs.build-telescope.outputs.image_tag }}
+      commit_message: "Update telescope tag to ${{ needs.build-telescope.outputs.image_tag }}"
+      source_repo: ${{ github.repository }}
+      source_commit: ${{ github.sha }}
+      source_branch: ${{ github.ref_name }}
+    secrets:
+      CHARTS_REPO_TOKEN: ${{ secrets.CHARTS_REPO_TOKEN }}
