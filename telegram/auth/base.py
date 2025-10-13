@@ -29,6 +29,20 @@ class StaticSecrets:
 	two_factor_password: Optional[str]
 
 class AuthenticationScheme:
+	"""
+	Handles the core Telegram authentication protocol and API communication.
+	
+	This class is responsible for:
+	- Managing Telegram API parameters (API ID, hash, database directory)
+	- Sending authentication requests to Telegram's servers
+	- Implementing the low-level authentication protocol
+	
+	It does NOT handle user input collection - it only knows how to communicate
+	with Telegram once it receives the required values (phone numbers, codes, etc.).
+	
+	Examples: TelegramProduction, TelegramDevelopment
+	"""
+
 	secrets: Optional[StaticSecrets]
 
 	def authorizationStateClosing(self, client: 'TelegramClient'):
@@ -61,8 +75,23 @@ class AuthenticationScheme:
 	def authorizationStateWaitPassword(self, client: 'TelegramClient', value: any):
 		raise NotImplementedError()
 
-# this is a wrapper used by stdin and web input to provide secrets during auth flow
 class AuthenticationProvider:
+	"""
+	Collects user input during authentication and delegates to an AuthenticationScheme.
+	
+	This class is responsible for:
+	- Gathering user input (phone numbers, codes, passwords) through various methods
+	- Managing authentication state and status
+	- Providing different input interfaces (console, web API, etc.)
+	- Delegating actual Telegram communication to an AuthenticationScheme
+	
+	It acts as a wrapper/adapter that handles user interaction while the scheme
+	handles the actual Telegram protocol. This separation allows mixing different
+	input methods with different Telegram configurations.
+	
+	Examples: APIAuth (web interface), ProductionWithPrompt (console input)
+	"""
+
 	phone: str
 	status: APIAuthState
 	scheme: AuthenticationScheme

@@ -14,7 +14,7 @@ def main():
 
 	def testClientForClosure(phonenumber, username: Optional[str]=None, secrets: Optional[StaticSecrets]=None):
 		scheme = TelegramDevelopment(phonenumber, core.API_ID, core.API_HASH, "accounts/" + phonenumber, secrets)
-		return TelegramClient(APIAuth(phonenumber, scheme), [
+		return TelegramClient(APIAuth(phonenumber, scheme, core.accounts), [
 			UserInfo(phonenumber, core.accounts, username),
 			GetAuthCode()
 		])

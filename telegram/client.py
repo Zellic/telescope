@@ -142,6 +142,14 @@ class TelegramClient:
 		if(self.is_started()):
 			raise Exception("Already started")
 
+		# Check for phone code expiration before starting
+		if await self.auth.check_phone_code_expiration(self):
+			# Phone code has expired, disconnect the session
+			# This will put the client back to the disconnected state
+			# so reconnecting will generate a new phone code
+			await self.stop()
+			return
+
 		if(not self._initialized_modules):
 			self._initialized_modules = True
 			for module in self._modules:

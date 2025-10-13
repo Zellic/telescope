@@ -11,11 +11,11 @@ from telegram.tgmodules.userinfo import UserInfo
 from telegram.util import Environment
 
 def main():
-	core = MainLoop(Environment.Production)
+	core = MainLoop(Environment.Development)
 
 	def clientForClosure(phonenumber, username: Optional[str]=None, secrets: Optional[StaticSecrets]=None):
 		scheme = TelegramProduction(core.API_ID, core.API_HASH, "accounts/" + phonenumber, secrets, True)
-		return TelegramClient(APIAuth(phonenumber, scheme), [
+		return TelegramClient(APIAuth(phonenumber, scheme, core.accounts), [
 			UserInfo(
 				phonenumber,
 				core.accounts,
