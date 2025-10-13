@@ -15,7 +15,7 @@ RUN mkdir -p /app/tdlib/natives/linux \
     && rm -rf build \
     && mkdir build \
     && cd build \
-    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/app/natives/linux .. \
+    && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/ .. \
     && cmake --build . --target install -j $(nproc)
 
 COPY . /app
