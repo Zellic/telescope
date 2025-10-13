@@ -1,0 +1,58 @@
+services:
+  telescope:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8888:8888"
+      - "127.0.0.1:3000:3000"
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - .:/app:rw
+      - ./accounts:/app/accounts:rw
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8888
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - VIRTUAL_ENV=/app/.venv
+    working_dir: /app
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+
+  telescope-webui:
+    build:
+      context: ./telescope-webui
+      dockerfile: Dockerfile
+    volumes:
+      - ./telescope-webui:/app:rw
+    network_mode: "service:telescope"
+    command: ["npm", "run", "dev"]
+    user: "${UID:-1000}:${GID:-1000}"
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=telescope_dev
+    ports:
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  backend:

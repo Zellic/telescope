@@ -9,6 +9,12 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from telegram.webapp.webapp import WebApp
 
+EXPORT_MESSAGE_TEXT_CHUNKS = [
+    "Data export request",
+    "we received a request from your account to export your Telegram data",
+    "For security reasons, please confirm this request by pressing the Allow button at the bottom of this message using one of your mobile devices",
+]
+
 # DO NOT CALL THIS FUNCTION OUTSIDE OF REQUESTS !
 def get_webapp() -> 'WebApp':
     return current_app.config.get('webapp')
@@ -46,3 +52,43 @@ async def tg_client_blob(webapp: 'WebApp', user: TelegramClient):
         },
         "privileges": [x.value for x in privileges],
     }
+
+async def iterate_chat_history(client: TelegramClient, chat_id: int, from_message_id: int | None = None, offset: int | None = None, chunk_size: int = 30):
+    query = {'@type': 'getChatHistory', 'chat_id': chat_id, 'from_message_id': from_message_id, 'offset': offset, 'limit': chunk_size}
+    query_no_none = {k: v for k, v in query.items() if v is not None}
+
+    while True:
+        response = await client.sendAwaitingReply(query_no_none)
+        messages = response['messages']
+        for message in messages:
+            yield message
+        from_message_id = messages[-1]['id']
+
+def is_export_request_message(message: dict) -> dict | None:
+    try: 
+        if message['@type'] != 'message':
+            return None
+        content = message['content']
+        if content['@type'] != 'messageText':
+            return None
+        text = content['text']
+        if text['@type'] != 'formattedText':
+            return None
+        message_text = text['text']
+        if all(chunk in message_text for chunk in EXPORT_MESSAGE_TEXT_CHUNKS):
+            return message
+    except KeyError:
+        return None
+
+def get_export_request_approve_data(message: dict) -> str | None:
+    try:
+        reply_markup = message['reply_markup']
+        if reply_markup['@type'] != 'replyMarkupInlineKeyboard':
+            return None
+        keyboard = reply_markup['rows']
+        for row in keyboard:
+            for button in row:
+                if button['@type'] == 'inlineKeyboardButton' and button['text'] == "Allow":
+                    return button['type']['data']
+    except KeyError:
+        return None

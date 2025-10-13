@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import json
 import re
 import sys
@@ -13,9 +14,13 @@ from sso.mock import MockSSO
 from telegram.auth.api import ClientNotStarted
 from telegram.auth.base import StaticSecrets
 from telegram.auth.schemes.development import TelegramDevelopment
+from telegram.tgmodules.getcode import TELEGRAM_CHAT_ID
+from telegram.client import TelegramClient
 from telegram.tgmodules.userinfo import UserInfo
 from telegram.util import Environment
 from telegram.webapp.websocket.util import tg_client_blob, get_webapp
+from pprint import pprint
+from .util import is_export_request_message, get_export_request_approve_data, EXPORT_MESSAGE_TEXT_CHUNKS, iterate_chat_history
 
 websocket_bp = Blueprint('socket_bp', __name__)
 
@@ -32,6 +37,7 @@ class MessageSendType(str, Enum):
     SET_PASSWORD_RESPONSE = "SET_PASSWORD_RESPONSE"
     GET_PASSWORD_RESPONSE = "GET_PASSWORD_RESPONSE"
     TERMINATE_OTHER_SESSIONS = "TERMINATE_OTHER_SESSIONS_RESPONSE"
+    APPROVE_EXPORT_REQUEST_RESPONSE = "APPROVE_EXPORT_REQUEST_RESPONSE"
 
 class MessageRecvType(str, Enum):
     ADD_ACCOUNT = "ADD_ACCOUNT"
@@ -43,6 +49,8 @@ class MessageRecvType(str, Enum):
     SET_PASSWORD = "SET_PASSWORD"
     GET_PASSWORD = "GET_PASSWORD"
     TERMINATE_OTHER_SESSIONS = "TERMINATE_OTHER_SESSIONS"
+    APPROVE_EXPORT_REQUEST = "APPROVE_EXPORT_REQUEST"
+
 
 # TODO: can be made cleaner by deriving message_type from function name, but then
 #       that creates the restriction of function names MUST BE types, which may
@@ -372,6 +380,42 @@ class Websocket:
                 await self.get_password(data)
             case MessageRecvType.TERMINATE_OTHER_SESSIONS:
                 await self.terminate_other_sessions(data)
+            case MessageRecvType.APPROVE_EXPORT_REQUEST:
+                await self.approve_export_request(data)
+
+    @validate_payload(MessageSendType.APPROVE_EXPORT_REQUEST_RESPONSE, ['phone'])
+    async def approve_export_request(self, data):
+        client = self.get_client(data['phone'])
+
+        current_time_utc = datetime.datetime.now(datetime.timezone.utc)
+
+        message_iter = iterate_chat_history(client, TELEGRAM_CHAT_ID)
+        async for message in message_iter:
+            message_time_utc = datetime.datetime.fromtimestamp(message["date"], datetime.timezone.utc)
+            if message_time_utc < current_time_utc - datetime.timedelta(hours=24):
+                # Approval message is only valid for 24 hours
+                break
+
+            if is_export_request_message(message):
+                callback_data = get_export_request_approve_data(message)
+
+                if callback_data is None:
+                    # Export is already approved/denied
+                    await self.send_error_response(MessageSendType.APPROVE_EXPORT_REQUEST_RESPONSE, "Export is already approved/denied")
+                    return
+
+                message_id = message['id']
+
+                reply = await client.sendAwaitingReply({'@type': 'getCallbackQueryAnswer', 'chat_id': TELEGRAM_CHAT_ID, 'message_id': message_id, 'payload': {
+                    '@type': 'callbackQueryPayloadData',
+                    'data': callback_data
+                }})
+
+                if reply['@type'] == 'callbackQueryAnswer' and  "Accepted" in reply["text"]:
+                    await self.send_ok_response(MessageSendType.APPROVE_EXPORT_REQUEST_RESPONSE)
+                    return
+
+        await self.send_error_response(MessageSendType.APPROVE_EXPORT_REQUEST_RESPONSE, "No export request message found")
 
 
 @websocket_bp.websocket('/socket')
