@@ -23,8 +23,7 @@ def name_me():
 class TelegramDevelopment(AuthenticationScheme):
 	@staticmethod
 	def generate_phone():
-		# code = str(random.randint(1, 3))
-		code = str(2)
+		code = str(random.randint(1, 3))
 		end = random.randint(1111, 9999)
 		ends = f"{end:04d}"
 		return f"99966{code}{ends}"
