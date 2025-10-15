@@ -19,6 +19,13 @@ CREATE TABLE IF NOT EXISTS telegram_accounts (
     two_factor_password TEXT,
     groups INTEGER[]
 );
+
+CREATE TABLE IF NOT EXISTS phone_code_timeouts (
+    phone_number TEXT PRIMARY KEY,
+    request_time REAL NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (phone_number) REFERENCES telegram_accounts(phone_number) ON DELETE CASCADE
+);
 """
 
 class AddAccountResult(NamedTuple):
@@ -120,6 +127,30 @@ class AccountManager:
 			return None
 
 		return self._make_account_decrypted(*result.data[0])
+
+	async def set_phone_code_timeout(self, phone_number: str, request_time: float):
+		"""Store phone code timeout information"""
+		query = """
+		INSERT INTO phone_code_timeouts (phone_number, request_time) 
+		VALUES (%s, %s) 
+		ON CONFLICT (phone_number) 
+		DO UPDATE SET request_time = %s, created_at = CURRENT_TIMESTAMP
+		"""
+		await self.db.execute(query, (phone_number, request_time, request_time))
+
+	async def get_phone_code_timeout(self, phone_number: str) -> Optional[float]:
+		"""Get phone code timeout information"""
+		query = "SELECT request_time FROM phone_code_timeouts WHERE phone_number = %s"
+		result = await self.db.execute(query, (phone_number,))
+
+		if result.success and len(result.data) > 0:
+			return result.data[0][0]
+		return None
+
+	async def clear_phone_code_timeout(self, phone_number: str):
+		"""Clear phone code timeout information"""
+		query = "DELETE FROM phone_code_timeouts WHERE phone_number = %s"
+		await self.db.execute(query, (phone_number,))
 
 	async def delete_account(self, phone_number: str) -> QueryResult:
 		query = "DELETE FROM telegram_accounts WHERE phone_number = %s"

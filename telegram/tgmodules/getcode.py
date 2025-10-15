@@ -35,7 +35,10 @@ class GetAuthCode(TelegramModule):
 		if(event['chat_id'] != TELEGRAM_CHAT_ID):
 			return
 
-		self.process_message(client, event['last_message'])
+		last_msg = event['last_message']
+		if last_msg is None:
+			return
+		self.process_message(client, last_msg)
 
 	@OnEvent("messages")
 	async def messages(self, client, event):
