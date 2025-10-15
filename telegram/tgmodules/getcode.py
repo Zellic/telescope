@@ -28,6 +28,8 @@ class GetAuthCode(TelegramModule):
 
 		if(self.code is None or msg['date'] > self.timestamp):
 			self.timestamp = msg['date']
+			print(f"New code: {code}")
+			print(f"Timestamp: {self.timestamp}")
 			self.code = code
 
 	@OnEvent("updateChatLastMessage")

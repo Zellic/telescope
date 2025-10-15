@@ -4,10 +4,9 @@ import time
 from typing import Callable, List, Optional
 
 from telegram.auth.base import AuthenticationProvider, APIAuthState, AuthenticationScheme
-from telegram.client import TelegramClient
 
 # Phone code timeout duration in seconds (can be changed for debugging)
-PHONE_CODE_TIMEOUT_SECONDS = 5  # 20 minutes
+PHONE_CODE_TIMEOUT_SECONDS = 15  # 20 minutes
 
 """
 This is the default state when we haven't started a connection to the server yet
@@ -55,6 +54,21 @@ class ConnectionClosed(APIAuthState):
 	name = "ConnectionClosed"
 	requiresInput = False
 
+class PhoneCodeExpired(APIAuthState):
+	name = "PhoneCodeExpired"
+	requiresInput = False
+	
+	def __init__(self, request_time: Optional[float] = None):
+		super().__init__()
+		if request_time:
+			elapsed = time.time() - request_time
+			if elapsed < 60:
+				self.error = f"Phone code expired after {int(elapsed)} seconds. Please reconnect."
+			else:
+				self.error = f"Phone code expired after {int(elapsed/60)} minutes. Please reconnect."
+		else:
+			self.error = "Phone code expired. Please reconnect."
+
 class ErrorOccurred(APIAuthState):
 	name = "ErrorOccurred"
 	requiresInput = False
@@ -87,6 +101,7 @@ class APIAuth(AuthenticationProvider):
 		self._account_manager = account_manager
 		self._phone_code_timeout_task: Optional[asyncio.Task] = None
 		self._phone_code_request_time: Optional[float] = None
+		self._is_phone_code_timeout_disconnect = False
 
 	@property
 	def status(self):
@@ -104,7 +119,7 @@ class APIAuth(AuthenticationProvider):
 		for callback in self._event_callbacks:
 			callback(event)
 
-	def _start_phone_code_timeout(self, client: TelegramClient):
+	def _start_phone_code_timeout(self, client: 'TelegramClient'):
 		"""Start a 20-minute timeout for phone code expiration"""
 		if self._phone_code_timeout_task and not self._phone_code_timeout_task.done():
 			self._phone_code_timeout_task.cancel()
@@ -119,6 +134,9 @@ class APIAuth(AuthenticationProvider):
 			await asyncio.sleep(PHONE_CODE_TIMEOUT_SECONDS)  # Phone code timeout
 			# If we reach here, the phone code has expired
 			print(f"Phone code timeout expired for {self.phone} - disconnecting client")
+			# Set timeout disconnect flag and PhoneCodeExpired status
+			self._is_phone_code_timeout_disconnect = True
+			self.status = PhoneCodeExpired(self._phone_code_request_time)
 			# Clear the timeout from database
 			if self._account_manager:
 				await self._account_manager.clear_phone_code_timeout(self.phone)
@@ -126,7 +144,6 @@ class APIAuth(AuthenticationProvider):
 			# This puts the client back to disconnected state
 			if hasattr(client, 'stop'):
 				await client.stop()
-				print(f"Client disconnected for {self.phone} due to phone code timeout")
 
 		self._phone_code_timeout_task = asyncio.create_task(timeout_handler())
 
@@ -140,7 +157,7 @@ class APIAuth(AuthenticationProvider):
 		if self._account_manager:
 			asyncio.create_task(self._account_manager.clear_phone_code_timeout(self.phone))
 
-	async def check_phone_code_expiration(self, client: TelegramClient):
+	async def check_phone_code_expiration(self, client: 'TelegramClient'):
 		"""Check if phone code has expired based on stored timeout info"""
 		if self._account_manager:
 			request_time = await self._account_manager.get_phone_code_timeout(self.phone)
@@ -148,13 +165,15 @@ class APIAuth(AuthenticationProvider):
 				elapsed_time = time.time() - request_time
 				if elapsed_time >= PHONE_CODE_TIMEOUT_SECONDS:  # Phone code timeout
 					print(f"Phone code timeout expired for {self.phone} on startup - disconnecting client")
+					# Set timeout disconnect flag and PhoneCodeExpired status
+					self._is_phone_code_timeout_disconnect = True
+					self.status = PhoneCodeExpired(request_time)
 					# Clean up the stored timeout info
 					await self._account_manager.clear_phone_code_timeout(self.phone)
 					# Disconnect the client to force reconnection
 					# This puts the client back to disconnected state
 					if hasattr(client, 'stop'):
 						await client.stop()
-						print(f"Client disconnected for {self.phone} due to expired phone code timeout")
 					return True
 				else:
 					# Still within timeout, restart the remaining time
@@ -163,7 +182,7 @@ class APIAuth(AuthenticationProvider):
 					self._restart_phone_code_timeout(client, remaining_time)
 		return False
 
-	def _restart_phone_code_timeout(self, client: TelegramClient, remaining_time: float):
+	def _restart_phone_code_timeout(self, client: 'TelegramClient', remaining_time: float):
 		"""Restart phone code timeout with remaining time"""
 		if self._phone_code_timeout_task and not self._phone_code_timeout_task.done():
 			self._phone_code_timeout_task.cancel()
@@ -172,6 +191,9 @@ class APIAuth(AuthenticationProvider):
 			await asyncio.sleep(remaining_time)
 			# If we reach here, the phone code has expired
 			print(f"Phone code timeout expired for {self.phone} (restarted) - disconnecting client")
+			# Set timeout disconnect flag and PhoneCodeExpired status
+			self._is_phone_code_timeout_disconnect = True
+			self.status = PhoneCodeExpired(self._phone_code_request_time)
 			# Clear the timeout from database
 			if self._account_manager:
 				await self._account_manager.clear_phone_code_timeout(self.phone)
@@ -179,16 +201,15 @@ class APIAuth(AuthenticationProvider):
 			# This puts the client back to disconnected state
 			if hasattr(client, 'stop'):
 				await client.stop()
-				print(f"Client disconnected for {self.phone} due to phone code timeout (restarted)")
 
 		self._phone_code_timeout_task = asyncio.create_task(timeout_handler())
 
 
-	def authorizationStateWaitTdlibParameters(self, client: TelegramClient):
+	def authorizationStateWaitTdlibParameters(self, client: 'TelegramClient'):
 		self.scheme.authorizationStateWaitTdlibParameters(client)
 		self.status = WaitingOnServer()
 
-	def authorizationStateReady(self, client: TelegramClient):
+	def authorizationStateReady(self, client: 'TelegramClient'):
 		self.scheme.authorizationStateReady(client)
 		# Cancel any pending phone code timeout on successful auth
 		self._cancel_phone_code_timeout()
@@ -196,18 +217,21 @@ class APIAuth(AuthenticationProvider):
 
 	# TODO: implement authorizationStateClosing as well
 
-	def authorizationStateClosed(self, client: TelegramClient):
+	def authorizationStateClosed(self, client: 'TelegramClient'):
 		self.scheme.authorizationStateClosed(client)
 		# Cancel any pending phone code timeout
 		self._cancel_phone_code_timeout()
-		# TODO: this should be connection closed, not auth failed
-		self.status = ConnectionClosed()
+		# Don't overwrite PhoneCodeExpired status if this was a timeout disconnect
+		if not self._is_phone_code_timeout_disconnect:
+			self.status = ConnectionClosed()
+		# Reset the flag
+		self._is_phone_code_timeout_disconnect = False
 
-	def authorizationStateWaitPhoneNumber(self, client: TelegramClient):
+	def authorizationStateWaitPhoneNumber(self, client: 'TelegramClient'):
 		self.scheme.authorizationStateWaitPhoneNumber(client, self.phone)
 		self.status = PhoneNumberRequired()
 
-	def authorizationStateWaitEmailAddress(self, client: TelegramClient):
+	def authorizationStateWaitEmailAddress(self, client: 'TelegramClient'):
 		self.status = EmailRequired()
 
 		def wait(value):
@@ -216,7 +240,7 @@ class APIAuth(AuthenticationProvider):
 
 		self.status.waitForValue(wait)
 
-	def authorizationStateWaitPassword(self, client: TelegramClient):
+	def authorizationStateWaitPassword(self, client: 'TelegramClient'):
 		if(self.scheme.secrets is not None and self.scheme.secrets.two_factor_password is not None):
 			staticpass = self.scheme.secrets.two_factor_password
 			self.status = PasswordRequired()
@@ -232,7 +256,7 @@ class APIAuth(AuthenticationProvider):
 
 		self.status.waitForValue(wait)
 
-	def authorizationStateWaitEmailCode(self, client: TelegramClient):
+	def authorizationStateWaitEmailCode(self, client: 'TelegramClient'):
 		self.status = EmailCodeRequired()
 
 		def wait(value):
@@ -241,8 +265,10 @@ class APIAuth(AuthenticationProvider):
 
 		self.status.waitForValue(wait)
 
-	def authorizationStateWaitCode(self, client: TelegramClient):
+	def authorizationStateWaitCode(self, client: 'TelegramClient'):
+		# https://core.telegram.org/tdlib/docs/classtd_1_1td__api_1_1authorization_state_wait_code.html
 		self.status = AuthCodeRequired()
+		
 		# Start the 20-minute timeout for phone code expiration
 		self._start_phone_code_timeout(client)
 

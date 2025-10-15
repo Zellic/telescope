@@ -7,6 +7,7 @@ from typing import List
 from telegram.auth.base import AuthenticationProvider
 from telegram.module import TelegramModule
 from telegram.tdlib import TDLib
+from telegram.auth.api import PhoneCodeExpired
 
 def eprint(*args, **kwargs):
 	print(*args, file=sys.stderr, **kwargs)
@@ -148,6 +149,9 @@ class TelegramClient:
 			# This will put the client back to the disconnected state
 			# so reconnecting will generate a new phone code
 			await self.stop()
+			self.webapp.client_manager.clients.remove(self)
+			self.auth.status = PhoneCodeExpired()
+			await self.webapp.client_manager.add_client(self, start=False)
 			return
 
 		if(not self._initialized_modules):
@@ -162,20 +166,35 @@ class TelegramClient:
 
 	async def stop(self):
 		if (not self.is_started()):
-			print("Client wasn't started yet.")
+			# Reset state even if not started to ensure clean state
+			self._started = False
+			self._initialized_modules = False
 			return
 
 		if(self._stop_future):
 			if(self._stop_future.done()):
-				print("Already stopped client, but received stop again???")
+				# Reset state for potential reconnection
+				self._started = False
+				self._initialized_modules = False
 				return
 			else:
-				print("Client is already stopping, but received stop again")
+				# Wait for the existing stop to complete, then reset state
+				await self._stop_future
+				self._stop_future = None
+				self._started = False
+				self._initialized_modules = False
 				return
 
 		self._stop_future = asyncio.Future()
 		self.send({'@type': 'close'})
 
-		await self._stop_future
-		self._stop_future = None
-		self._started = False
+		try:
+			# Wait for stop future with timeout to prevent hanging
+			await asyncio.wait_for(self._stop_future, timeout=5.0)
+		except asyncio.TimeoutError:
+			pass  # Timeout is expected in some cases
+		finally:
+			self._stop_future = None
+			# Reset state for potential reconnection
+			self._started = False
+			self._initialized_modules = False
